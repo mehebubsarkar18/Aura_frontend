@@ -55,6 +55,15 @@ export const api = {
     return await handleResponse(res);
   },
 
+  completeOnboarding: async (profileData) => {
+    const res = await fetch(`${API_BASE_URL}/auth/onboarding`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(profileData),
+    });
+    return await handleResponse(res);
+  },
+
   updateGoals: async (goals) => {
     const res = await fetch(`${API_BASE_URL}/auth/goals`, {
       method: 'PUT',
@@ -64,18 +73,56 @@ export const api = {
     return await handleResponse(res);
   },
 
+  changePassword: async (passwordData) => {
+    const res = await fetch(`${API_BASE_URL}/auth/password`, {
+      method: 'PUT',
+      headers: getHeaders(),
+      body: JSON.stringify(passwordData),
+    });
+    return await handleResponse(res);
+  },
+
   logout: () => {
     localStorage.removeItem('token');
   },
 
+  getPublicStats: async () => {
+    const res = await fetch(`${API_BASE_URL}/auth/stats?t=${Date.now()}`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    return await handleResponse(res);
+  },
+
+  submitPublicRating: async (rating) => {
+    const res = await fetch(`${API_BASE_URL}/auth/rating`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ rating }),
+    });
+    return await handleResponse(res);
+  },
+
   // Dashboard endpoint
-  getTodaySummary: async () => {
-    const res = await fetch(`${API_BASE_URL}/dashboard/summary`, {
+  getTodaySummary: async (date) => {
+    const url = date 
+      ? `${API_BASE_URL}/dashboard/summary?date=${date}`
+      : `${API_BASE_URL}/dashboard/summary`;
+    const res = await fetch(url, {
       method: 'GET',
       headers: getHeaders(),
     });
     return await handleResponse(res);
   },
+
+  getDashboardHistory: async () => {
+    const res = await fetch(`${API_BASE_URL}/dashboard/history`, {
+      method: 'GET',
+      headers: getHeaders(),
+    });
+    return await handleResponse(res);
+  },
+
 
   // Workout endpoints
   getWorkoutHistory: async () => {
@@ -104,6 +151,17 @@ export const api = {
     return await handleResponse(res);
   },
 
+  getNutritionHistory: async (date) => {
+    const url = date 
+      ? `${API_BASE_URL}/nutrition/history?date=${date}`
+      : `${API_BASE_URL}/nutrition/history`;
+    const res = await fetch(url, {
+      method: 'GET',
+      headers: getHeaders(),
+    });
+    return await handleResponse(res);
+  },
+
   logFood: async (foodData) => {
     const res = await fetch(`${API_BASE_URL}/nutrition/food`, {
       method: 'POST',
@@ -122,6 +180,14 @@ export const api = {
     return await handleResponse(res);
   },
 
+  deleteFood: async (foodId) => {
+    const res = await fetch(`${API_BASE_URL}/nutrition/food/${foodId}`, {
+      method: 'DELETE',
+      headers: getHeaders(),
+    });
+    return await handleResponse(res);
+  },
+
   // Wellness endpoints
   getWellnessHistory: async () => {
     const res = await fetch(`${API_BASE_URL}/wellness/history`, {
@@ -136,6 +202,32 @@ export const api = {
       method: 'POST',
       headers: getHeaders(),
       body: JSON.stringify(wellnessData),
+    });
+    return await handleResponse(res);
+  },
+  
+  deleteWellnessLog: async (id) => {
+    const res = await fetch(`${API_BASE_URL}/wellness/log/${id}`, {
+      method: 'DELETE',
+      headers: getHeaders(),
+    });
+    return await handleResponse(res);
+  },
+
+  // Weight endpoints
+  getWeightHistory: async () => {
+    const res = await fetch(`${API_BASE_URL}/weight/history`, {
+      method: 'GET',
+      headers: getHeaders(),
+    });
+    return await handleResponse(res);
+  },
+
+  logWeight: async (weightData) => {
+    const res = await fetch(`${API_BASE_URL}/weight/log`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(weightData),
     });
     return await handleResponse(res);
   },

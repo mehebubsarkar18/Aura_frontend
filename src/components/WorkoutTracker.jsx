@@ -1,478 +1,276 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { api } from '../utils/api';
-import { Play, Pause, Square, Plus, Trash2, Calendar, Clock, Flame, Dumbbell } from 'lucide-react';
+import { Play, Pause, Calendar, Clock, Flame, Dumbbell, ArrowLeft } from 'lucide-react';
+
+// Import workout icons
+import pushupsIcon from '../assets/workout-icons/icons8-pushups-50.png';
+import squatsIcon from '../assets/workout-icons/icons8-squats-50.png';
+import yogaIcon from '../assets/workout-icons/icons8-yoga-50.png';
+import pilatesIcon from '../assets/workout-icons/icons8-pilates-50.png';
+import meditationIcon from '../assets/workout-icons/icons8-meditation-50.png';
+import gymnasticsIcon from '../assets/workout-icons/icons8-gymnastics-50.png';
 
 const PRESETS = [
-  {
-    name: 'Upper Body Push',
-    exercises: [
-      { name: 'Barbell Bench Press', sets: [{ reps: 10, weightKg: 60 }] },
-      { name: 'Dumbbell Overhead Press', sets: [{ reps: 10, weightKg: 15 }] },
-      { name: 'Incline Dumbbell Press', sets: [{ reps: 10, weightKg: 20 }] },
-    ]
-  },
-  {
-    name: 'Leg Day Blast',
-    exercises: [
-      { name: 'Barbell Back Squats', sets: [{ reps: 12, weightKg: 80 }] },
-      { name: 'Romanian Deadlifts', sets: [{ reps: 10, weightKg: 70 }] },
-      { name: 'Leg Extensions', sets: [{ reps: 12, weightKg: 40 }] },
-    ]
-  },
-  {
-    name: 'Core & Cardio Burn',
-    exercises: [
-      { name: 'Plank Hold', sets: [{ reps: 60, weightKg: 0 }] },
-      { name: 'Hanging Leg Raises', sets: [{ reps: 12, weightKg: 0 }] },
-      { name: 'Kettlebell Swings', sets: [{ reps: 15, weightKg: 16 }] },
-    ]
-  }
+  { id: 0, name: 'Strength Training', icon: pushupsIcon, color: 'var(--color-orange)', durationMin: 10, calsPerMin: 12 },
+  { id: 1, name: 'HIIT Cardio', icon: gymnasticsIcon, color: '#f87171', durationMin: 7, calsPerMin: 15 },
+  { id: 2, name: 'Bodyweight Basics', icon: squatsIcon, color: 'var(--color-cyan)', durationMin: 5, calsPerMin: 8 },
+  { id: 3, name: 'Yoga & Flow', icon: yogaIcon, color: 'var(--color-green)', durationMin: 15, calsPerMin: 4 },
+  { id: 4, name: 'Pilates Core', icon: pilatesIcon, color: 'var(--color-violet)', durationMin: 10, calsPerMin: 7 },
+  { id: 5, name: 'Mindful Rest', icon: meditationIcon, color: '#94a3b8', durationMin: 3, calsPerMin: 2 }
 ];
 
-const WorkoutTracker = ({ onWorkoutLogged }) => {
+const WorkoutTracker = ({ onWorkoutLogged, onViewHistory, initialViewHistory = false, onBack }) => {
   const [history, setHistory] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [activeSession, setActiveSession] = useState(false);
-  
-  // Timer States
-  const [time, setTime] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(0); // Countdown state
   const [timerRunning, setTimerRunning] = useState(false);
-  const timerRef = useRef(null);
+  const [routineName, setRoutineName] = useState('');
+  const [activeIcon, setActiveIcon] = useState(null);
+  const [totalDuration, setTotalDuration] = useState(0);
+  const [calsPerMin, setCalsPerMin] = useState(5);
+  const [inProgressId, setInProgressId] = useState(null);
+  
+  const intervalRef = useRef(null);
 
-  // Active Workout Structure
-  const [routineName, setRoutineName] = useState('My Custom Workout');
-  const [activeExercises, setActiveExercises] = useState([]);
-  const [caloriesBurned, setCaloriesBurned] = useState(150);
-
-  useEffect(() => {
-    fetchHistory();
+  const fetchHistory = useCallback(async () => {
+    try {
+      const res = await api.getWorkoutHistory();
+      if (res.success) setHistory(res.workouts || []);
+    } catch (error) {
+      console.error('Workout fetch failed', error);
+    }
   }, []);
 
-  const fetchHistory = async () => {
-    setLoading(true);
-    try {
-      const data = await api.getWorkoutHistory();
-      setHistory(data.workouts || []);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Synthesize Web Audio sounds for retro-premium micro-feedbacks
-  const playAudioCue = (type) => {
-    try {
-      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      
-      if (type === 'success') {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(659.25, audioCtx.currentTime); // E5
-        osc.frequency.setValueAtTime(987.77, audioCtx.currentTime + 0.1); // B5
-        gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.25);
-        osc.start(audioCtx.currentTime);
-        osc.stop(audioCtx.currentTime + 0.25);
-      } else if (type === 'click') {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(329.63, audioCtx.currentTime); // E4
-        gain.gain.setValueAtTime(0.03, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
-        osc.start(audioCtx.currentTime);
-        osc.stop(audioCtx.currentTime + 0.08);
-      } else if (type === 'finish') {
-        // Play minor ascending arpeggio (magical recovery tune)
-        const notes = [523.25, 659.25, 783.99, 1046.50]; // C Maj chord arpeggio
-        notes.forEach((freq, idx) => {
-          const osc = audioCtx.createOscillator();
-          const gain = audioCtx.createGain();
-          osc.connect(gain);
-          gain.connect(audioCtx.destination);
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(freq, audioCtx.currentTime + idx * 0.12);
-          gain.gain.setValueAtTime(0.02, audioCtx.currentTime + idx * 0.12);
-          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + idx * 0.12 + 0.5);
-          osc.start(audioCtx.currentTime + idx * 0.12);
-          osc.stop(audioCtx.currentTime + idx * 0.12 + 0.5);
-        });
-      }
-    } catch (e) {
-      console.log('Audio Context muted / blocked');
-    }
-  };
-
-  // Timer Handlers
-  const handleStartTimer = () => {
-    playAudioCue('click');
-    setTimerRunning(true);
-    timerRef.current = setInterval(() => {
-      setTime(prevTime => prevTime + 1);
-    }, 1000);
-  };
-
-  const handlePauseTimer = () => {
-    playAudioCue('click');
-    setTimerRunning(false);
-    clearInterval(timerRef.current);
-  };
-
-  const handleResetTimer = () => {
-    playAudioCue('click');
-    setTimerRunning(false);
-    clearInterval(timerRef.current);
-    setTime(0);
-  };
-
-  const startSession = (preset = null) => {
-    playAudioCue('success');
-    setActiveSession(true);
-    setTime(0);
-    setTimerRunning(true);
-    timerRef.current = setInterval(() => {
-      setTime(prev => prev + 1);
-    }, 1000);
-
-    if (preset) {
-      setRoutineName(preset.name);
-      setActiveExercises(JSON.parse(JSON.stringify(preset.exercises))); // Deep Copy
+  // Load persistent session on mount
+  useEffect(() => {
+    if (initialViewHistory) {
+      fetchHistory();
     } else {
-      setRoutineName('My Custom Workout');
-      setActiveExercises([{ name: 'Barbell Bench Press', sets: [{ reps: 10, weightKg: 60 }] }]);
+      const saved = localStorage.getItem('aura_workout_session');
+      if (saved) {
+        const session = JSON.parse(saved);
+        const today = new Date().toISOString().split('T')[0];
+        if (session.date === today) {
+          setRoutineName(session.routineName);
+          setTotalDuration(session.totalDuration);
+          setTimeLeft(session.timeLeft);
+          setCalsPerMin(session.calsPerMin);
+          setInProgressId(session.presetId);
+          setActiveSession(false); // Show list first, don't force timer view
+          setTimerRunning(false); 
+          
+          // Map icon back
+          const preset = PRESETS.find(p => p.id === session.presetId);
+          if (preset) setActiveIcon(preset.icon);
+        } else {
+          localStorage.removeItem('aura_workout_session');
+        }
+      }
     }
+  }, [fetchHistory, initialViewHistory]);
+
+  // Save session progress to localStorage
+  useEffect(() => {
+    if (inProgressId !== null) {
+      const sessionData = {
+        presetId: inProgressId,
+        routineName,
+        totalDuration,
+        timeLeft,
+        calsPerMin,
+        date: new Date().toISOString().split('T')[0]
+      };
+      localStorage.setItem('aura_workout_session', JSON.stringify(sessionData));
+    }
+  }, [inProgressId, routineName, totalDuration, timeLeft, calsPerMin]);
+
+  const startSession = (preset) => {
+    // Check if we should resume
+    const saved = localStorage.getItem('aura_workout_session');
+    if (saved) {
+      const session = JSON.parse(saved);
+      if (session.presetId === preset.id) {
+        setTimeLeft(session.timeLeft);
+        setTotalDuration(session.totalDuration);
+        setRoutineName(session.routineName);
+        setCalsPerMin(session.calsPerMin);
+        setInProgressId(preset.id);
+        setActiveIcon(preset.icon);
+        setActiveSession(true);
+        setTimerRunning(true);
+        return;
+      }
+    }
+
+    // New session
+    setRoutineName(preset.name);
+    setActiveIcon(preset.icon);
+    setCalsPerMin(preset.calsPerMin);
+    setTotalDuration(preset.durationMin);
+    setTimeLeft(preset.durationMin * 60); // Convert min to sec
+    setInProgressId(preset.id);
+    setActiveSession(true);
+    setTimerRunning(true);
   };
 
-  // Routine Builders
-  const addExercise = () => {
-    playAudioCue('click');
-    setActiveExercises([...activeExercises, { name: 'New Exercise', sets: [{ reps: 10, weightKg: 20 }] }]);
-  };
-
-  const removeExercise = (idx) => {
-    playAudioCue('click');
-    setActiveExercises(activeExercises.filter((_, i) => i !== idx));
-  };
-
-  const updateExerciseName = (idx, name) => {
-    const updated = [...activeExercises];
-    updated[idx].name = name;
-    setActiveExercises(updated);
-  };
-
-  const addSet = (exIdx) => {
-    playAudioCue('success');
-    const updated = [...activeExercises];
-    const prevSet = updated[exIdx].sets[updated[exIdx].sets.length - 1] || { reps: 10, weightKg: 20 };
-    updated[exIdx].sets.push({ reps: prevSet.reps, weightKg: prevSet.weightKg });
-    setActiveExercises(updated);
-  };
-
-  const removeSet = (exIdx, setIdx) => {
-    playAudioCue('click');
-    const updated = [...activeExercises];
-    updated[exIdx].sets = updated[exIdx].sets.filter((_, i) => i !== setIdx);
-    setActiveExercises(updated);
-  };
-
-  const updateSetMetric = (exIdx, setIdx, key, val) => {
-    const updated = [...activeExercises];
-    updated[exIdx].sets[setIdx][key] = Number(val);
-    setActiveExercises(updated);
-  };
+  useEffect(() => {
+    if (timerRunning && timeLeft > 0) {
+      intervalRef.current = setInterval(() => setTimeLeft(p => p - 1), 1000);
+    } else if (timeLeft === 0 && activeSession) {
+      setTimerRunning(false);
+      clearInterval(intervalRef.current);
+    } else {
+      clearInterval(intervalRef.current);
+    }
+    return () => clearInterval(intervalRef.current);
+  }, [timerRunning, timeLeft, activeSession]);
 
   const finishWorkout = async () => {
-    playAudioCue('finish');
-    clearInterval(timerRef.current);
-    setTimerRunning(false);
-
-    const durationMins = Math.max(1, Math.round(time / 60));
-    // Simple calorie model: active body burns ~7.5 kcal per active workout minute
-    const computedCals = Math.round(durationMins * 7.5);
-
+    const timeElapsedMin = Math.ceil((totalDuration * 60 - timeLeft) / 60);
+    const calories = timeElapsedMin * calsPerMin;
     try {
-      await api.logWorkout({
-        routineName,
-        exercisesCompleted: activeExercises,
-        durationMinutes: durationMins,
-        caloriesBurned: computedCals,
+      await api.logWorkout({ 
+        routineName, 
+        durationMinutes: timeElapsedMin || 1, 
+        caloriesBurned: calories,
+        exercisesCompleted: [] 
       });
-
       setActiveSession(false);
-      setTime(0);
-      fetchHistory();
+      setTimerRunning(false);
+      setInProgressId(null);
+      localStorage.removeItem('aura_workout_session');
       onWorkoutLogged();
-    } catch (err) {
-      alert('Failed to log workout: ' + err.message);
+    } catch (error) {
+      console.error('Failed to log workout', error);
+      alert('Failed to log workout');
     }
   };
 
-  // Format digital stopwatch display
-  const formatTime = (secs) => {
-    const mm = String(Math.floor(secs / 60)).padStart(2, '0');
-    const ss = String(secs % 60).padStart(2, '0');
-    return `${mm}:${ss}`;
+  const formatTime = (s) => {
+    const m = Math.floor(s / 60);
+    const rs = s % 60;
+    return `${m.toString().padStart(2, '0')}:${rs.toString().padStart(2, '0')}`;
   };
 
-  return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: '24px', width: '100%' }}>
-      
-      {/* LEFT PORTION: ACTIVE LOGGER OR ROUTINE CHOOSER (8-COLUMNS) */}
-      <div style={{ gridColumn: 'span 8', display: 'flex', flexDirection: 'column', gap: '24px' }}>
-        
-        {!activeSession ? (
-          /* Start Workout Library */
-          <div className="glass-panel" style={{ padding: '30px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
-            <div>
-              <h2 style={{ fontSize: '1.8rem' }} className="text-gradient">Start a Workout</h2>
-              <p style={{ color: 'var(--text-secondary)' }}>Launch an active log with a preset routine or a custom builder.</p>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-              {PRESETS.map((preset, idx) => (
-                <div key={idx} className="glass-panel glass-panel-hover" style={{ padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: '15px' }}>
-                  <div>
-                    <h3 style={{ color: 'var(--color-orange)', fontSize: '1.15rem' }}>{preset.name}</h3>
-                    <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginTop: '6px' }}>
-                      {preset.exercises.map(ex => ex.name).join(', ')}
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => startSession(preset)}
-                    className="btn btn-primary"
-                    style={{ padding: '10px 16px', fontSize: '0.9rem', alignSelf: 'flex-start' }}
-                  >
-                    Load Routine
-                  </button>
-                </div>
-              ))}
-            </div>
-
-            <div style={{ borderTop: '1px solid var(--glass-card-border)', paddingTop: '20px', display: 'flex', justifyContent: 'center' }}>
-              <button
-                onClick={() => startSession(null)}
-                className="glass-panel"
-                style={{
-                  padding: '12px 24px',
-                  color: 'white',
-                  fontWeight: '600',
-                  background: 'rgba(255,255,255,0.03)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px'
-                }}
-              >
-                <Plus size={18} />
-                Build Custom Workout
-              </button>
-            </div>
-          </div>
-        ) : (
-          /* Active Workout Session Panel */
-          <div className="glass-panel" style={{ padding: '30px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
-            
-            {/* Header controls & Digital stopwatch */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--glass-card-border)', paddingBottom: '20px', flexWrap: 'wrap', gap: '15px' }}>
-              <div>
-                <input
-                  type="text"
-                  className="glass-input"
-                  value={routineName}
-                  onChange={(e) => setRoutineName(e.target.value)}
-                  style={{ fontSize: '1.4rem', fontWeight: '700', padding: '6px 12px', width: '250px' }}
-                />
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-muted)', marginTop: '6px', fontSize: '0.9rem' }}>
-                  <Clock size={14} />
-                  <span>Duration Tracker</span>
-                </div>
-              </div>
-
-              {/* Timer Box */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                <span style={{ fontSize: '2.5rem', fontFamily: 'monospace', fontWeight: '700', color: 'var(--color-orange)' }}>
-                  {formatTime(time)}
-                </span>
-                
-                <div style={{ display: 'flex', gap: '8px' }}>
-                  {timerRunning ? (
-                    <button onClick={handlePauseTimer} className="glass-panel" style={{ padding: '10px', color: '#fbbf24' }}>
-                      <Pause size={18} />
-                    </button>
-                  ) : (
-                    <button onClick={handleStartTimer} className="glass-panel" style={{ padding: '10px', color: '#34d399' }}>
-                      <Play size={18} />
-                    </button>
-                  )}
-                  <button onClick={finishWorkout} className="btn btn-primary" style={{ padding: '10px 20px', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: '700' }}>
-                    <Square size={14} fill="white" />
-                    Finish
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Exercises List editor */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              {activeExercises.map((exercise, exIdx) => (
-                <div key={exIdx} className="glass-panel" style={{ padding: '20px', background: 'rgba(255,255,255,0.01)' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-                    <input
-                      type="text"
-                      className="glass-input"
-                      value={exercise.name}
-                      onChange={(e) => updateExerciseName(exIdx, e.target.value)}
-                      style={{ fontWeight: '600', width: '60%' }}
-                    />
-                    <button onClick={() => removeExercise(exIdx)} style={{ background: 'transparent', color: '#f87171' }}>
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
-
-                  {/* Set Headings */}
-                  <div style={{ display: 'grid', gridTemplateColumns: '60px 1fr 1fr 40px', gap: '12px', color: 'var(--text-secondary)', fontSize: '0.85rem', marginBottom: '8px', paddingLeft: '8px' }}>
-                    <span>SET</span>
-                    <span>REPS</span>
-                    <span>WEIGHT (kg)</span>
-                    <span></span>
-                  </div>
-
-                  {/* Sets log values */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    {exercise.sets.map((set, setIdx) => (
-                      <div key={setIdx} style={{ display: 'grid', gridTemplateColumns: '60px 1fr 1fr 40px', gap: '12px', alignItems: 'center' }}>
-                        <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', fontWeight: '600', paddingLeft: '8px' }}>
-                          {setIdx + 1}
-                        </span>
-                        <input
-                          type="number"
-                          className="glass-input"
-                          value={set.reps}
-                          onChange={(e) => updateSetMetric(exIdx, setIdx, 'reps', e.target.value)}
-                          style={{ padding: '6px 12px' }}
-                        />
-                        <input
-                          type="number"
-                          className="glass-input"
-                          value={set.weightKg}
-                          onChange={(e) => updateSetMetric(exIdx, setIdx, 'weightKg', e.target.value)}
-                          style={{ padding: '6px 12px' }}
-                        />
-                        <button onClick={() => removeSet(exIdx, setIdx)} style={{ background: 'transparent', color: '#f87171', border: 'none' }}>
-                          <Trash2 size={14} />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-
-                  <button
-                    onClick={() => addSet(exIdx)}
-                    className="glass-panel"
-                    style={{
-                      padding: '8px 16px',
-                      color: 'var(--text-secondary)',
-                      fontSize: '0.85rem',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '6px',
-                      marginTop: '12px',
-                      background: 'rgba(255,255,255,0.02)'
-                    }}
-                  >
-                    <Plus size={14} />
-                    Add Set
-                  </button>
-                </div>
-              ))}
-            </div>
-
-            <button
-              onClick={addExercise}
-              className="glass-panel"
-              style={{
-                padding: '12px',
-                color: 'white',
-                background: 'rgba(255,255,255,0.02)',
-                fontWeight: '600',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px'
-              }}
-            >
-              <Plus size={18} />
-              Add Exercise Row
-            </button>
-          </div>
-        )}
-      </div>
-
-      {/* RIGHT PORTION: HISTORY SUMMARY FEED (4-COLUMNS) */}
-      <div style={{ gridColumn: 'span 4', display: 'flex', flexDirection: 'column', gap: '24px' }}>
-        <div className="glass-panel" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px', minHeight: '400px' }}>
+  if (initialViewHistory) {
+    return (
+      <div className="history-page" style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+          <button onClick={onBack} className="btn btn-ghost btn-icon">
+            <ArrowLeft size={24} />
+          </button>
           <div>
-            <h3 style={{ fontSize: '1.25rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Dumbbell size={18} style={{ color: 'var(--color-orange)' }} />
-              Workout History
-            </h3>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginTop: '2px' }}>Your physical metrics logs feed.</p>
+            <h1 className="text-gradient" style={{ fontSize: '2.4rem', fontWeight: '800' }}>History</h1>
           </div>
+        </div>
 
-          {loading ? (
-            <span style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Loading session history...</span>
-          ) : history.length === 0 ? (
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flex: 1, padding: '20px', textAlign: 'center', color: 'var(--text-muted)' }}>
-              <Dumbbell size={36} style={{ marginBottom: '12px', opacity: 0.3 }} />
-              <span>No completed workouts logged yet. Load a routine to start your log!</span>
-            </div>
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', overflowY: 'auto', maxHeight: '420px', paddingRight: '4px' }}>
-              {history.map((workout, idx) => (
-                <div key={idx} className="glass-panel" style={{ padding: '16px', border: '1px solid rgba(255,255,255,0.04)', background: 'rgba(255,255,255,0.01)' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                    <h4 style={{ fontSize: '0.95rem', fontWeight: '700', color: 'var(--color-orange)' }}>
-                      {workout.routineName}
-                    </h4>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <Calendar size={12} />
-                      {new Date(workout.loggedAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
-                    </span>
+        <div className="glass-panel" style={{ padding: '32px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            {history.length === 0 ? (
+              <div style={{ padding: '80px', textAlign: 'center', opacity: 0.3 }}>
+                <Dumbbell size={64} style={{ margin: '0 auto 20px' }} />
+                <p>No activity recorded yet.</p>
+              </div>
+            ) : (
+              history.map((w, idx) => (
+                <div key={idx} className="glass-panel-hover" style={{ padding: '24px', background: 'var(--card-overlay)', borderRadius: '24px', border: '1px solid var(--glass-card-border)', display: 'flex', flexWrap: 'wrap', gap: '24px', alignItems: 'center' }}>
+                  <div style={{ padding: '16px', background: 'rgba(253, 90, 32, 0.1)', borderRadius: '18px', color: 'var(--color-orange)' }}>
+                    <Dumbbell size={32} />
                   </div>
-
-                  <div style={{ display: 'flex', gap: '12px', marginTop: '10px', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <Clock size={12} />
-                      {workout.durationMinutes}m
-                    </span>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <Flame size={12} />
-                      {workout.caloriesBurned} kcal
-                    </span>
-                  </div>
-
-                  {workout.exercisesCompleted && workout.exercisesCompleted.length > 0 && (
-                    <div style={{ marginTop: '8px', borderTop: '1px solid rgba(255,255,255,0.03)', paddingTop: '6px' }}>
-                      <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: '600' }}>EXERCISES:</span>
-                      <ul style={{ paddingLeft: '14px', marginTop: '4px', fontSize: '0.75rem', color: 'var(--text-secondary)', listStyleType: 'circle' }}>
-                        {workout.exercisesCompleted.map((ex, i) => (
-                          <li key={i}>
-                            {ex.name} ({ex.sets.length} sets)
-                          </li>
-                        ))}
-                      </ul>
+                  <div style={{ flex: 1, minWidth: '200px' }}>
+                    <h4 style={{ fontSize: '1.4rem', fontWeight: '800', color: 'var(--text-primary)' }}>{w.routineName}</h4>
+                    <div style={{ display: 'flex', gap: '16px', marginTop: '6px', color: 'var(--text-secondary)', fontWeight: '600' }}>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><Calendar size={16} /> {new Date(w.loggedAt).toLocaleDateString()}</span>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><Clock size={16} /> {w.durationMinutes}m</span>
                     </div>
-                  )}
+                  </div>
+                  <div style={{ textAlign: 'right' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'flex-end' }}>
+                       <Flame size={20} color="var(--color-orange)" />
+                       <span style={{ fontSize: '1.8rem', fontWeight: '900', color: 'var(--text-primary)' }}>{w.caloriesBurned}</span>
+                    </div>
+                    <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)', fontWeight: '700' }}>KCAL</span>
+                  </div>
                 </div>
-              ))}
-            </div>
-          )}
+              ))
+            )}
+          </div>
         </div>
       </div>
+    );
+  }
+
+  return (
+    <div className="workout-page" style={{ width: '100%' }}>
+      {!activeSession ? (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div>
+              <h1 className="text-gradient" style={{ fontSize: '2.8rem', fontWeight: '800' }}>Aura Training</h1>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem', marginTop: '4px' }}>Choose a routine to begin</p>
+            </div>
+            <button 
+              onClick={onViewHistory}
+              className="btn btn-orange"
+            >
+              History
+            </button>
+          </div>
+
+          <div className="preset-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '28px' }}>
+            {PRESETS.map((p, i) => (
+              <div key={i} className="glass-panel glass-panel-hover" style={{ padding: '48px 36px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', position: 'relative', overflow: 'hidden', minHeight: '320px' }}>
+                {inProgressId === p.id && (
+                  <div style={{ position: 'absolute', top: '15px', right: '15px', background: 'var(--color-orange)', color: 'white', padding: '4px 12px', borderRadius: '100px', fontSize: '0.7rem', fontWeight: '800', letterSpacing: '0.05em' }}>IN PROGRESS</div>
+                )}
+                <div style={{ width: '110px', height: '110px', borderRadius: '28px', background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '28px', boxShadow: '0 10px 20px rgba(0,0,0,0.05)' }}>
+                  <img src={p.icon} alt={p.name} style={{ width: '60px' }} />
+                </div>
+                <h3 style={{ fontSize: '1.8rem', fontWeight: '800', marginBottom: '10px', color: 'var(--text-primary)' }}>{p.name}</h3>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '1.2rem', fontWeight: '700' }}>
+                  {inProgressId === p.id ? formatTime(timeLeft) : `${p.durationMin} MIN`}
+                </p>
+                <button onClick={() => startSession(p)} className="btn btn-primary" style={{ width: '100%', marginTop: '28px' }}>
+                  {inProgressId === p.id ? 'RESUME' : 'START'}
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <button 
+              onClick={() => { setActiveSession(false); setTimerRunning(false); }} 
+              className="btn btn-ghost"
+            >
+              <ArrowLeft size={24} /> Back to Routines
+            </button>
+          </div>
+
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
+            <div className="glass-panel" style={{ padding: '60px 40px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '40px', maxWidth: '550px', width: '100%', textAlign: 'center' }}>
+             <div className="active-icon-anim" style={{ width: '180px', height: '180px', borderRadius: '50px', background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '4px solid var(--color-orange)', boxShadow: '0 30px 60px rgba(253, 90, 32, 0.3)' }}>
+                <img src={activeIcon} alt="" style={{ width: '90px' }} />
+             </div>
+             
+             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+               <h2 style={{ fontSize: '2.8rem', fontWeight: '900' }} className="text-gradient">{routineName}</h2>
+               <div style={{ fontSize: '7rem', fontFamily: 'monospace', fontWeight: '900', color: 'var(--text-primary)', letterSpacing: '4px', lineHeight: 1 }}>{formatTime(timeLeft)}</div>
+             </div>
+
+             <div style={{ display: 'flex', gap: '24px', width: '100%' }}>
+                <button onClick={() => setTimerRunning(!timerRunning)} className="btn btn-ghost" style={{ flex: 1, padding: '24px' }}>
+                  {timerRunning ? <Pause size={32} /> : <Play size={32} />}
+                  {timerRunning ? 'PAUSE' : 'RESUME'}
+                </button>
+                <button onClick={finishWorkout} className="btn btn-primary" style={{ flex: 1, padding: '24px' }}>FINISH</button>
+             </div>
+          </div>
+        </div>
+      </div>
+      )}
+
     </div>
   );
 };

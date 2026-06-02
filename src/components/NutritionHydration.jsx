@@ -1,35 +1,91 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { api } from '../utils/api';
-import { Coffee, Utensils, Droplet, Plus, Trash2 } from 'lucide-react';
+import { INDIAN_FOOD_DATABASE } from '../utils/foodDatabase';
+import { Utensils, Droplet, Plus, Trash2, Search, Beef, Wheat, Pizza, ArrowLeft, Calendar } from 'lucide-react';
 
-const NutritionHydration = ({ user, onLogsUpdated }) => {
+const NutritionHydration = ({ user, onLogsUpdated, onViewHistory, initialViewHistory = false, onBack }) => {
   const [foods, setFoods] = useState([]);
   const [waterTotal, setWaterTotal] = useState(0);
-  const [loading, setLoading] = useState(false);
+  
+  // History states
+  const [historyDate, setHistoryDate] = useState(new Date().toISOString().split('T')[0]);
+  const [historyFoods, setHistoryFoods] = useState([]);
+  const [historyWaterTotal, setHistoryWaterTotal] = useState(0);
 
-  // Form states for Logging Food
-  const [mealType, setMealType] = useState('Breakfast');
+  // Form states
   const [foodItem, setFoodItem] = useState('');
   const [calories, setCalories] = useState('');
   const [protein, setProtein] = useState('');
   const [carbs, setCarbs] = useState('');
   const [fat, setFat] = useState('');
+  const [quantity, setQuantity] = useState(1);
+
+  // Search states
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const suggestionRef = useRef(null);
+
+  const fetchHistory = useCallback(async () => {
+    try {
+      const data = await api.getNutritionHistory(historyDate);
+      if (data && data.success) {
+        setHistoryFoods(data.foods || []);
+        const totalWater = (data.waterLogs || []).reduce((s, l) => s + l.amountMl, 0);
+        setHistoryWaterTotal(totalWater);
+      }
+    } catch (error) {
+      console.error('History fetch error:', error);
+    }
+  }, [historyDate]);
+
+  const fetchLogs = useCallback(async () => {
+    try {
+      const data = await api.getTodayNutrition();
+      if (data && data.success && data.nutrition) {
+        setFoods(data.nutrition.foods || []);
+        setWaterTotal(data.nutrition.waterTotalMl || 0);
+      }
+    } catch (error) {
+      console.error('Today logs fetch error:', error);
+    }
+  }, []);
 
   useEffect(() => {
     fetchLogs();
-  }, []);
+    const handleClickOutside = (e) => {
+      if (suggestionRef.current && !suggestionRef.current.contains(e.target)) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [fetchLogs]);
 
-  const fetchLogs = async () => {
-    setLoading(true);
-    try {
-      const data = await api.getTodayNutrition();
-      setFoods(data.nutrition.foods || []);
-      setWaterTotal(data.nutrition.waterTotalMl || 0);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
+  useEffect(() => {
+    if (initialViewHistory) {
+      fetchHistory();
     }
+  }, [fetchHistory, initialViewHistory]);
+
+  const handleFoodInputChange = (e) => {
+    const val = e.target.value;
+    setFoodItem(val);
+    if (val.trim().length > 1) {
+      const filtered = (INDIAN_FOOD_DATABASE || []).filter(f => f.name.toLowerCase().includes(val.toLowerCase()));
+      setSuggestions(filtered.slice(0, 10)); // Limit suggestions
+      setShowSuggestions(true);
+    } else {
+      setShowSuggestions(false);
+    }
+  };
+
+  const selectSuggestion = (food) => {
+    setFoodItem(food.name);
+    setCalories(food.calories);
+    setProtein(food.protein);
+    setCarbs(food.carbs);
+    setFat(food.fat);
+    setShowSuggestions(false);
   };
 
   const handleLogFood = async (e) => {
@@ -37,322 +93,270 @@ const NutritionHydration = ({ user, onLogsUpdated }) => {
     if (!foodItem || !calories) return;
 
     try {
+      const q = Number(quantity) || 1;
       await api.logFood({
-        mealType,
-        foodItem,
-        calories: Number(calories),
-        protein: Number(protein) || 0,
-        carbs: Number(carbs) || 0,
-        fat: Number(fat) || 0,
+        foodItem: q > 1 ? `${foodItem} (x${q})` : foodItem,
+        calories: Number(calories) * q,
+        protein: (Number(protein) || 0) * q,
+        carbs: (Number(carbs) || 0) * q,
+        fat: (Number(fat) || 0) * q,
       });
 
-      // Clear Form
-      setFoodItem('');
-      setCalories('');
-      setProtein('');
-      setCarbs('');
-      setFat('');
-
+      setFoodItem(''); setCalories(''); setProtein(''); setCarbs(''); setFat(''); setQuantity(1);
       fetchLogs();
-      onLogsUpdated();
-    } catch (err) {
-      alert('Failed to log food: ' + err.message);
+      if (onLogsUpdated) onLogsUpdated();
+    } catch (error) {
+      console.error('Logging food failed:', error);
+      alert('Logging food failed: ' + error.message);
     }
   };
 
-  const handleLogWater = async (amountMl) => {
-    // Play short aquatic bubble click note with Web Audio
+  const handleDeleteFood = async (id) => {
+    if (!window.confirm('Remove this food log?')) return;
     try {
-      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(800, audioCtx.currentTime); 
-      osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.15); // Ascending slide
-      gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
-      osc.start(audioCtx.currentTime);
-      osc.stop(audioCtx.currentTime + 0.15);
-    } catch(e) {}
-
-    try {
-      const data = await api.logWater(amountMl);
-      setWaterTotal(data.newWaterTotalMl);
-      onLogsUpdated();
-    } catch (err) {
-      alert('Failed to log water: ' + err.message);
+      await api.deleteFood(id);
+      fetchLogs();
+      if (onLogsUpdated) onLogsUpdated();
+    } catch (error) {
+      console.error('Delete failed:', error);
+      alert('Delete failed');
     }
   };
 
-  // Compile today's totals
-  const totalCalories = foods.reduce((sum, f) => sum + f.calories, 0);
-  const totalProtein = foods.reduce((sum, f) => sum + f.protein, 0);
-  const totalCarbs = foods.reduce((sum, f) => sum + f.carbs, 0);
-  const totalFat = foods.reduce((sum, f) => sum + f.fat, 0);
+  const handleLogWater = async (amt) => {
+    try {
+      const data = await api.logWater(amt);
+      if (data && data.success) {
+        setWaterTotal(data.newWaterTotalMl);
+        if (onLogsUpdated) onLogsUpdated();
+      }
+    } catch (err) {
+      console.error('Water log failed:', err);
+      alert('Water log failed');
+    }
+  };
 
-  // Compute fluid fill percentage
-  const waterGoal = user.dailyGoals.waterMl || 2500;
-  const hydrationPct = Math.min(100, Math.max(0, (waterTotal / waterGoal) * 100));
+  const currentFoods = initialViewHistory ? historyFoods : foods;
+  const currentWater = initialViewHistory ? historyWaterTotal : waterTotal;
+  const totalCals = (currentFoods || []).reduce((s, f) => s + f.calories, 0);
 
-  // Visual offsets for wave height inside glass
-  const glassHeight = 180;
-  const fillHeight = (hydrationPct / 100) * glassHeight;
-  const waveTranslateY = glassHeight - fillHeight;
+  // Robust daily goal fallbacks
+  const dailyCals = (user && user.dailyGoals && user.dailyGoals.calories) ? user.dailyGoals.calories : 2000;
+  const dailyWater = (user && user.dailyGoals && user.dailyGoals.waterMl) ? user.dailyGoals.waterMl : 2500;
 
-  return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: '24px', width: '100%' }}>
-      
-      {/* LEFT PORTION: FOOD LOGGER & MACRO COUNTS (7-COLUMNS) */}
-      <div style={{ gridColumn: 'span 7', display: 'flex', flexDirection: 'column', gap: '24px' }}>
-        
-        {/* Macro breakdown summary card */}
-        <div className="glass-panel" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          <div>
-            <h3 style={{ fontSize: '1.25rem' }}>Daily Macro Breakdown</h3>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>Tracking against target: {user.dailyGoals.calories} kcal</p>
+  const hydrationPct = Math.min(100, Math.max(0, (currentWater / dailyWater) * 100));
+  const waveTranslateY = 240 - (hydrationPct / 100) * 240;
+
+  if (initialViewHistory) {
+    return (
+      <div className="history-page" style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+          <button onClick={onBack} className="btn btn-ghost btn-icon">
+            <ArrowLeft size={24} />
+          </button>
+          <h1 className="text-gradient" style={{ fontSize: '2.4rem', fontWeight: '800' }}>History</h1>
+        </div>
+
+        <div className="glass-panel" style={{ padding: '32px', display: 'flex', flexWrap: 'wrap', gap: '24px', alignItems: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <Calendar size={24} style={{ color: 'var(--color-orange)' }} />
+            <input 
+              type="date" 
+              className="glass-input" 
+              value={historyDate} 
+              onChange={e => setHistoryDate(e.target.value)} 
+              style={{ fontSize: '1.1rem', padding: '12px 20px' }}
+            />
           </div>
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-            <div style={{ flex: 1 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', fontSize: '0.9rem' }}>
-                <span>Calories Consumed</span>
-                <span style={{ fontWeight: '600' }}>{totalCalories} / {user.dailyGoals.calories} kcal</span>
-              </div>
-              <div style={{ width: '100%', height: '10px', background: 'rgba(255,255,255,0.04)', borderRadius: '5px', overflow: 'hidden' }}>
-                <div style={{
-                  width: `${Math.min(100, (totalCalories / user.dailyGoals.calories) * 100)}%`,
-                  height: '100%',
-                  background: 'linear-gradient(95deg, var(--color-orange), hsl(340, 90%, 50%))',
-                  borderRadius: '5px',
-                  transition: 'width 0.6s ease'
-                }} />
-              </div>
-            </div>
-          </div>
-
-          {/* Individual Macro metrics */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', borderTop: '1px solid var(--glass-card-border)', paddingTop: '16px' }}>
-            <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-                <span>Protein</span>
-                <span>{totalProtein}g</span>
-              </div>
-              <div style={{ width: '100%', height: '6px', background: 'rgba(255,255,255,0.04)', borderRadius: '3px', marginTop: '6px', overflow: 'hidden' }}>
-                <div style={{ width: `${Math.min(100, (totalProtein / 130) * 100)}%`, height: '100%', background: '#3b82f6', borderRadius: '3px' }} />
-              </div>
-              <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Target: ~130g</span>
-            </div>
-
-            <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-                <span>Carbs</span>
-                <span>{totalCarbs}g</span>
-              </div>
-              <div style={{ width: '100%', height: '6px', background: 'rgba(255,255,255,0.04)', borderRadius: '3px', marginTop: '6px', overflow: 'hidden' }}>
-                <div style={{ width: `${Math.min(100, (totalCarbs / 250) * 100)}%`, height: '100%', background: 'var(--color-orange)', borderRadius: '3px' }} />
-              </div>
-              <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Target: ~250g</span>
-            </div>
-
-            <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-                <span>Fat</span>
-                <span>{totalFat}g</span>
-              </div>
-              <div style={{ width: '100%', height: '6px', background: 'rgba(255,255,255,0.04)', borderRadius: '3px', marginTop: '6px', overflow: 'hidden' }}>
-                <div style={{ width: `${Math.min(100, (totalFat / 70) * 100)}%`, height: '100%', background: 'var(--color-green)', borderRadius: '3px' }} />
-              </div>
-              <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Target: ~70g</span>
-            </div>
+          <div style={{ flex: 1 }} />
+          <div style={{ textAlign: 'right' }}>
+            <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)', fontWeight: '700' }}>DAILY TOTAL</span>
+            <h3 style={{ fontSize: '2rem', fontWeight: '900', color: 'var(--text-primary)' }}>{totalCals} <span style={{ fontSize: '1rem', color: 'var(--text-secondary)', fontWeight: '500' }}>kcal</span></h3>
           </div>
         </div>
 
-        {/* Food logging form */}
-        <div className="glass-panel" style={{ padding: '24px' }}>
-          <h3 style={{ fontSize: '1.25rem', marginBottom: '16px' }}>Log New Food</h3>
-          <form onSubmit={handleLogFood} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Meal Type</label>
-                <select
-                  className="glass-input"
-                  value={mealType}
-                  onChange={(e) => setMealType(e.target.value)}
-                  style={{ background: '#111827' }}
-                >
-                  <option>Breakfast</option>
-                  <option>Lunch</option>
-                  <option>Dinner</option>
-                  <option>Snack</option>
-                </select>
+        <div className="glass-panel" style={{ padding: '32px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            {currentFoods.length === 0 ? (
+              <div style={{ padding: '80px', textAlign: 'center', opacity: 0.3 }}>
+                <Utensils size={64} style={{ margin: '0 auto 20px' }} />
+                <p style={{ fontSize: '1.2rem' }}>No data for this date.</p>
               </div>
+            ) : (
+              currentFoods.map(f => (
+                <div key={f._id} style={{ display: 'flex', justifyContent: 'space-between', padding: '24px', background: 'var(--card-overlay)', borderRadius: '20px', border: '1px solid var(--glass-card-border)' }}>
+                  <div>
+                    <h4 style={{ fontSize: '1.3rem', fontWeight: '800', color: 'var(--text-primary)' }}>{f.foodItem}</h4>
+                    <div style={{ display: 'flex', gap: '20px', marginTop: '8px', color: 'var(--text-secondary)', fontWeight: '600' }}>
+                      <span>P: {f.protein}g</span> <span>C: {f.carbs}g</span> <span>F: {f.fat}g</span>
+                    </div>
+                  </div>
+                  <div style={{ textAlign: 'right' }}>
+                    <div style={{ fontSize: '1.6rem', fontWeight: '900', color: 'var(--color-orange)' }}>{f.calories}</div>
+                    <div style={{ fontSize: '0.85rem', fontWeight: '700', opacity: 0.6 }}>KCAL</div>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Food Item Name</label>
-                <input
-                  type="text"
-                  className="glass-input"
-                  placeholder="Egg White / Oatmeal"
-                  value={foodItem}
-                  onChange={(e) => setFoodItem(e.target.value)}
-                  required
-                />
-              </div>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Calories</label>
-                <input
-                  type="number"
-                  className="glass-input"
-                  placeholder="kcal"
-                  value={calories}
-                  onChange={(e) => setCalories(e.target.value)}
-                  required
-                />
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Protein</label>
-                <input
-                  type="number"
-                  className="glass-input"
-                  placeholder="g"
-                  value={protein}
-                  onChange={(e) => setProtein(e.target.value)}
-                />
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Carbs</label>
-                <input
-                  type="number"
-                  className="glass-input"
-                  placeholder="g"
-                  value={carbs}
-                  onChange={(e) => setCarbs(e.target.value)}
-                />
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Fat</label>
-                <input
-                  type="number"
-                  className="glass-input"
-                  placeholder="g"
-                  value={fat}
-                  onChange={(e) => setFat(e.target.value)}
-                />
-              </div>
-            </div>
-
-            <button type="submit" className="btn btn-primary" style={{ padding: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', fontWeight: '700' }}>
-              <Plus size={16} />
-              Log Food Entry
+  return (
+    <div className="nutrition-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: '24px', width: '100%' }}>
+      
+      <div className="tracker-primary" style={{ gridColumn: 'span 7', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+        <div className="glass-panel" style={{ padding: '32px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
+            <h2 style={{ fontSize: '2rem', fontWeight: '800', color: 'var(--text-primary)' }}>Nutrition</h2>
+            <button 
+              onClick={onViewHistory}
+              className="btn btn-cyan"
+            >
+              History
             </button>
-          </form>
+          </div>
+
+          <div style={{ padding: '32px', background: 'var(--card-overlay)', borderRadius: '28px', border: '1px solid var(--glass-card-border)', marginBottom: '32px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '20px' }}>
+              <div>
+                <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)', fontWeight: '800', textTransform: 'uppercase' }}>Daily Progression</span>
+                <h3 style={{ fontSize: '3rem', fontWeight: '900', marginTop: '4px', color: 'var(--text-primary)' }}>{totalCals} <span style={{ fontSize: '1.4rem', color: 'var(--text-secondary)', fontWeight: '500' }}>/ {dailyCals} kcal</span></h3>
+              </div>
+              <span style={{ fontSize: '1.6rem', fontWeight: '900', color: 'var(--color-orange)' }}>{Math.round((totalCals / dailyCals) * 100)}%</span>
+            </div>
+            <div style={{ height: '14px', background: 'var(--icon-bg)', borderRadius: '7px', overflow: 'hidden' }}>
+              <div style={{ width: `${Math.min(100, (totalCals / dailyCals) * 100)}%`, height: '100%', background: 'linear-gradient(90deg, var(--color-orange), #f97316)', borderRadius: '7px' }} />
+            </div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px' }}>
+            {[
+              { label: 'Protein', val: foods.reduce((s, f) => s + f.protein, 0), target: 150, color: '#3b82f6', icon: Beef },
+              { label: 'Carbs', val: foods.reduce((s, f) => s + f.carbs, 0), target: 250, color: 'var(--color-orange)', icon: Wheat },
+              { label: 'Fats', val: foods.reduce((s, f) => s + f.fat, 0), target: 70, color: 'var(--color-green)', icon: Pizza }
+            ].map(m => (
+              <div key={m.label} style={{ padding: '24px', background: 'var(--card-overlay)', borderRadius: '24px', border: '1px solid var(--glass-card-border)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
+                   <m.icon size={18} style={{ color: m.color }} />
+                   <span style={{ fontWeight: '800', fontSize: '0.95rem', color: 'var(--text-secondary)' }}>{m.label}</span>
+                </div>
+                <div style={{ marginBottom: '10px' }}>
+                  <span style={{ fontSize: '1.5rem', fontWeight: '900', color: 'var(--text-primary)' }}>{Math.round(m.val)}g</span>
+                  <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginLeft: '4px' }}>/ {m.target}g</span>
+                </div>
+                <div style={{ height: '5px', background: 'var(--icon-bg)', borderRadius: '3px', overflow: 'hidden' }}>
+                  <div style={{ width: `${Math.min(100, (m.val / m.target) * 100)}%`, height: '100%', background: m.color, borderRadius: '3px' }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="glass-panel" style={{ padding: '32px', flex: 1 }}>
+          <h3 style={{ fontSize: '1.6rem', fontWeight: '800', marginBottom: '24px', color: 'var(--text-primary)' }}>Today's Entries</h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            {foods.length === 0 ? (
+              <p style={{ opacity: 0.3, textAlign: 'center', padding: '40px' }}>No logs yet</p>
+            ) : (
+              foods.map(f => (
+                <div key={f._id} style={{ display: 'flex', alignItems: 'center', gap: 20, padding: '20px 24px', background: 'var(--card-overlay)', borderRadius: '20px', border: '1px solid var(--glass-card-border)' }}>
+                  <div style={{ flex: 1 }}>
+                    <h4 style={{ fontSize: '1.2rem', fontWeight: '800', color: 'var(--text-primary)' }}>{f.foodItem}</h4>
+                    <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginTop: '4px', fontWeight: '600' }}>P: {f.protein}g • C: {f.carbs}g • F: {f.fat}g</div>
+                  </div>
+                  <div style={{ textAlign: 'right', marginRight: '16px' }}>
+                    <div style={{ fontSize: '1.5rem', fontWeight: '900', color: 'var(--text-primary)' }}>{f.calories}</div>
+                    <div style={{ fontSize: '0.75rem', fontWeight: '800', opacity: 0.5 }}>KCAL</div>
+                  </div>
+                  <button onClick={() => handleDeleteFood(f._id)} className="btn btn-ghost btn-icon" style={{ color: '#f87171' }}>
+                    <Trash2 size={20} />
+                  </button>
+                </div>
+              ))
+            )}
+          </div>
         </div>
       </div>
 
-      {/* RIGHT PORTION: WAVE GLASS HYDRATION MONITOR (5-COLUMNS) */}
-      <div style={{ gridColumn: 'span 5', display: 'flex', flexDirection: 'column', gap: '24px' }}>
-        
-        {/* Animated fluid filler card */}
-        <div className="glass-panel" style={{ padding: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px', minHeight: '400px' }}>
-          <div style={{ textAlign: 'center', width: '100%' }}>
-            <h3 style={{ fontSize: '1.25rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-              <Droplet size={18} style={{ color: 'var(--color-cyan)' }} />
-              Hydration Chamber
-            </h3>
-            <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Daily target: {waterGoal} mL</span>
-          </div>
-
-          {/* Interactive SVG Water Glass outline */}
-          <div style={{
-            position: 'relative',
-            width: '120px',
-            height: `${glassHeight}px`,
-            border: '4px solid rgba(255,255,255,0.15)',
-            borderTop: 'none',
-            borderRadius: '0 0 24px 24px',
-            overflow: 'hidden',
-            background: 'rgba(255,255,255,0.01)',
-            boxShadow: '0 8px 32px rgba(6, 182, 212, 0.05)'
-          }}>
-            {/* The rising liquid SVG wave inside glass bounds */}
-            <div style={{
-              position: 'absolute',
-              bottom: 0,
-              left: 0,
-              width: '100%',
-              height: '100%',
-              transform: `translateY(${waveTranslateY}px)`,
-              transition: 'transform 1s cubic-bezier(0.16, 1, 0.3, 1)',
-              pointerEvents: 'none'
-            }}>
-              <svg width="240" height="200" viewBox="0 0 240 200" style={{ position: 'absolute', left: 0, bottom: 0 }}>
-                {/* Flowing liquid path */}
-                <path
-                  d="M 0 15 Q 30 5 60 15 T 120 15 T 180 15 T 240 15 L 240 200 L 0 200 Z"
-                  fill="var(--color-cyan)"
-                  className="fluid-wave"
-                  style={{ opacity: 0.7 }}
-                />
-                <path
-                  d="M 0 20 Q 35 12 70 20 T 140 20 T 210 20 L 240 200 L 0 200 Z"
-                  fill="hsl(188, 95%, 42%)"
-                  className="fluid-wave"
-                  style={{ opacity: 0.85, animationDelay: '-1.5s', animationDuration: '4s' }}
-                />
-              </svg>
+      <div className="tracker-secondary" style={{ gridColumn: 'span 5', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+        <div className="glass-panel" style={{ padding: '32px' }}>
+          <h3 style={{ fontSize: '1.6rem', fontWeight: '800', marginBottom: '32px', display: 'flex', alignItems: 'center', gap: '16px', color: 'var(--text-primary)' }}>
+            <Plus size={28} style={{ color: 'var(--color-orange)' }} /> Log Meal
+          </h3>
+          <form onSubmit={handleLogFood} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            <div style={{ position: 'relative' }} ref={suggestionRef}>
+              <label style={{ fontSize: '1rem', fontWeight: '700', color: 'var(--text-secondary)', display: 'block', marginBottom: '10px' }}>Food Name</label>
+              <div style={{ position: 'relative' }}>
+                <Search size={20} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', opacity: 0.5 }} />
+                <input type="text" className="glass-input" value={foodItem} onChange={handleFoodInputChange} placeholder="Search..." style={{ width: '100%', paddingLeft: '52px' }} required />
+              </div>
+              {showSuggestions && suggestions.length > 0 && (
+                <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, background: 'var(--bg-primary)', border: '1px solid var(--glass-card-border)', borderRadius: '16px', marginTop: '12px', zIndex: 100, maxHeight: '280px', overflowY: 'auto', padding: '12px', boxShadow: '0 20px 50px rgba(0,0,0,0.5)' }}>
+                  {suggestions.map((s, i) => (
+                    <div key={i} onClick={() => selectSuggestion(s)} style={{ padding: '12px', borderRadius: '12px', cursor: 'pointer', marginBottom: '4px', background: 'var(--icon-bg)' }}>
+                      <div style={{ fontWeight: '700', color: 'var(--text-primary)' }}>{s.name}</div>
+                      <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{s.calories} kcal • P:{s.protein} C:{s.carbs} F:{s.fat}</div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
-            {/* Glowing Percentage display */}
-            <div style={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              fontWeight: '800',
-              fontSize: '1.4rem',
-              color: hydrationPct > 45 ? 'white' : 'var(--color-cyan)',
-              textShadow: '0 2px 4px rgba(0,0,0,0.5)',
-              pointerEvents: 'none',
-              transition: 'color 0.5s ease'
-            }}>
-              {Math.round(hydrationPct)}%
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <label style={{ fontSize: '0.9rem', fontWeight: '700', color: 'var(--text-secondary)' }}>Quantity</label>
+                  <input type="number" className="glass-input" value={quantity} onChange={e => setQuantity(e.target.value)} min="1" />
+               </div>
+               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <label style={{ fontSize: '0.9rem', fontWeight: '700', color: 'var(--text-secondary)' }}>Calories</label>
+                  <input type="number" className="glass-input" value={calories} onChange={e => setCalories(e.target.value)} required />
+               </div>
             </div>
-          </div>
 
-          <div style={{ textAlign: 'center' }}>
-            <h2 style={{ fontSize: '1.8rem', color: 'var(--color-cyan)' }}>{waterTotal} <span style={{ fontSize: '1rem', color: 'var(--text-secondary)' }}>mL</span></h2>
-            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Logged fluid intake</span>
-          </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <label style={{ fontSize: '0.8rem', fontWeight: '800', opacity: 0.7, color: 'var(--text-secondary)' }}>Protein</label>
+                <input type="number" className="glass-input" value={protein} onChange={e => setProtein(e.target.value)} />
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <label style={{ fontSize: '0.8rem', fontWeight: '800', opacity: 0.7, color: 'var(--text-secondary)' }}>Carbs</label>
+                <input type="number" className="glass-input" value={carbs} onChange={e => setCarbs(e.target.value)} />
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <label style={{ fontSize: '0.8rem', fontWeight: '800', opacity: 0.7, color: 'var(--text-secondary)' }}>Fat</label>
+                <input type="number" className="glass-input" value={fat} onChange={e => setFat(e.target.value)} />
+              </div>
+            </div>
 
-          {/* Fast Increment Button Grid */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', width: '100%', marginTop: 'auto' }}>
-            <button
-              onClick={() => handleLogWater(250)}
-              className="glass-panel"
-              style={{ padding: '10px', fontSize: '0.8rem', color: 'white', background: 'rgba(255,255,255,0.02)', fontWeight: '600' }}
-            >
-              +250ml
-            </button>
-            <button
-              onClick={() => handleLogWater(500)}
-              className="glass-panel"
-              style={{ padding: '10px', fontSize: '0.8rem', color: 'white', background: 'rgba(255,255,255,0.02)', fontWeight: '600' }}
-            >
-              +500ml
-            </button>
-            <button
-              onClick={() => handleLogWater(750)}
-              className="glass-panel"
-              style={{ padding: '10px', fontSize: '0.8rem', color: 'white', background: 'rgba(255,255,255,0.02)', fontWeight: '600' }}
-            >
-              +750ml
-            </button>
-          </div>
+            <button type="submit" className="btn btn-primary" style={{ marginTop: '12px' }}>LOG MEAL</button>
+          </form>
+        </div>
+
+        <div className="glass-panel" style={{ padding: '40px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '40px' }}>
+           <div style={{ textAlign: 'center' }}>
+             <h3 style={{ fontSize: '2rem', fontWeight: '900', color: 'var(--color-cyan)', display: 'flex', alignItems: 'center', gap: '15px', justifyContent: 'center' }}>
+               <Droplet size={32} /> Hydration
+             </h3>
+             <p style={{ marginTop: '8px', fontSize: '1.1rem', color: 'var(--text-secondary)' }}>Goal: {dailyWater} mL</p>
+           </div>
+
+           <div style={{ position: 'relative', width: '180px', height: '240px', border: '4px solid var(--glass-card-border)', borderRadius: '0 0 60px 60px', overflow: 'hidden', background: 'var(--icon-bg)', boxShadow: '0 20px 40px rgba(0,0,0,0.1)' }}>
+              <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '100%', transform: `translateY(${waveTranslateY}px)`, transition: 'transform 1s cubic-bezier(0.16, 1, 0.3, 1)' }}>
+                <svg width="450" height="300" viewBox="0 0 450 300" style={{ position: 'absolute', left: 0, bottom: 0 }}>
+                  <path className="water-wave" d="M 0 40 Q 56.25 25 112.5 40 T 225 40 T 337.5 40 T 450 40 L 450 300 L 0 300 Z" fill="var(--color-cyan)" style={{ opacity: 0.6 }} />
+                </svg>
+              </div>
+              <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', fontWeight: '900', fontSize: '3.6rem', color: 'var(--text-primary)', textShadow: '0 0 20px rgba(0,0,0,0.1)' }}>{Math.round(hydrationPct)}%</div>
+           </div>
+
+           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', width: '100%' }}>
+             {[250, 500, 750].map(amt => (
+               <button key={amt} onClick={() => handleLogWater(amt)} className="btn btn-cyan">+{amt}</button>
+             ))}
+           </div>
         </div>
       </div>
     </div>

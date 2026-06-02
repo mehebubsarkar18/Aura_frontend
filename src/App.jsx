@@ -1,20 +1,26 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { api } from './utils/api';
 import './App.css';
+import LandingPage from './components/LandingPage';
 import LoginRegister from './components/LoginRegister';
+import ProfileSetup from './components/ProfileSetup';
 import Dashboard from './components/Dashboard';
 import WorkoutTracker from './components/WorkoutTracker';
 import NutritionHydration from './components/NutritionHydration';
 import WellnessMonitor from './components/WellnessMonitor';
-import { LayoutDashboard, Dumbbell, Droplet, Heart, LogOut, User as UserIcon } from 'lucide-react';
+import Settings from './components/Settings';
+import { LayoutDashboard, Dumbbell, Droplet, Heart, User as UserIcon, Settings as SettingsIcon } from 'lucide-react';
 
 function App() {
   const [user, setUser] = useState(null);
   const [activeTab, setActiveTab] = useState('dashboard');
-  const [todaySummary, setTodaySummary] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [authView, setAuthView] = useState('landing');
 
-  // Check auth and load initial aggregates
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', 'dark');
+  }, []);
+
   useEffect(() => {
     const initAuth = async () => {
       const token = localStorage.getItem('token');
@@ -22,280 +28,135 @@ function App() {
         try {
           const profileData = await api.getMe();
           setUser(profileData.user);
-          
-          // Fetch daily aggregates
-          const summaryData = await api.getTodaySummary();
-          setTodaySummary(summaryData.summary);
-        } catch (err) {
-          console.error('Session expired or connection failed:', err);
+          // Keep authView as 'landing' to show prelogin page first
+        } catch (error) {
+          console.error('Auth initialization failed', error);
           api.logout();
         }
       }
       setLoading(false);
     };
-
     initAuth();
   }, []);
 
   const refreshSummary = async () => {
+    // This is now handled by components internally if needed, 
+    // but kept here for profile updates or simple refreshes if shared state exists.
     if (!user) return;
     try {
-      const data = await api.getTodaySummary();
-      setTodaySummary(data.summary);
-    } catch (err) {
-      console.error('Failed to sync aggregates:', err);
+      const profileData = await api.getMe();
+      setUser(profileData.user);
+    } catch (error) {
+      console.error('Refresh failed', error);
     }
   };
 
   const handleAuthSuccess = (authenticatedUser) => {
+    localStorage.removeItem('aura_workout_session');
     setUser(authenticatedUser);
-    refreshSummary();
+    setAuthView(null);
   };
 
   const handleLogout = () => {
     api.logout();
+    localStorage.removeItem('aura_workout_session');
     setUser(null);
-    setTodaySummary(null);
     setActiveTab('dashboard');
+    setAuthView('landing');
   };
 
   if (loading) {
     return (
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: '100vh',
-        background: 'var(--bg-primary)',
-        color: 'var(--text-secondary)'
-      }}>
-        <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          <div style={{
-            width: '40px',
-            height: '40px',
-            border: '3px solid rgba(253, 90, 32, 0.15)',
-            borderTopColor: 'var(--color-orange)',
-            borderRadius: '50%',
-            animation: 'spin 1s linear infinite',
-            margin: '0 auto'
-          }} />
-          <span style={{ fontWeight: '500', fontSize: '1.05rem' }}>Synchronizing Aura Connect...</span>
-          <style>{`
-            @keyframes spin {
-              0% { transform: rotate(0deg); }
-              100% { transform: rotate(360deg); }
-            }
-          `}</style>
-        </div>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: 'var(--bg-primary)' }}>
+        <div style={{ width: '40px', height: '40px', border: '3px solid rgba(253, 90, 32, 0.15)', borderTopColor: 'var(--color-orange)', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+        <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
       </div>
     );
   }
 
-  // Auth Guard
-  if (!user) {
+  if (authView === 'landing') {
     return (
-      <>
-        {/* Floating Glowing Background Orbs */}
-        <div className="glow-orb orb-1"></div>
-        <div className="glow-orb orb-2"></div>
-        <div className="glow-orb orb-3"></div>
-        <LoginRegister onAuthSuccess={handleAuthSuccess} />
-      </>
+      <LandingPage 
+        user={user}
+        onGetStarted={() => setAuthView('register')} 
+        onLogin={() => setAuthView('login')} 
+      />
     );
   }
 
+  if (!user) {
+    return <LoginRegister onAuthSuccess={handleAuthSuccess} onBack={() => setAuthView('landing')} initialIsLogin={authView === 'login'} />;
+  }
+  
+  if (!user.onboardingCompleted) return <ProfileSetup onSetupComplete={(u) => { setUser(u); }} />;
+
   return (
     <div className="app-container">
-      {/* Floating Glowing Background Orbs */}
-      <div className="glow-orb orb-1"></div>
-      <div className="glow-orb orb-2"></div>
-      <div className="glow-orb orb-3"></div>
-
-      {/* SIDEBAR NAVIGATION (LEFT COL) */}
-      <aside className="glass-panel" style={{
-        width: '280px',
-        margin: '24px 0 24px 24px',
-        padding: '30px 20px',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-        borderRadius: '24px',
-        flexShrink: 0,
-        height: 'calc(100vh - 48px)',
-        position: 'sticky',
-        top: '24px'
-      }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
-          {/* Logo / Branding */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', paddingLeft: '8px' }}>
-            <div style={{
-              background: 'linear-gradient(135deg, var(--color-orange), hsl(340, 90%, 50%))',
-              width: '36px',
-              height: '36px',
-              borderRadius: '10px',
-              boxShadow: '0 4px 12px rgba(253, 90, 32, 0.25)'
-            }} />
-            <h2 style={{ fontSize: '1.45rem', fontWeight: '800', letterSpacing: '-0.03em' }} className="text-gradient">
-              AuraFit
-            </h2>
-          </div>
-
-          {/* Active Navigation Menu */}
-          <nav style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            <button
-              onClick={() => setActiveTab('dashboard')}
-              className="glass-panel"
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '14px',
-                padding: '14px 18px',
-                width: '100%',
-                background: activeTab === 'dashboard' ? 'rgba(255, 255, 255, 0.05)' : 'transparent',
-                borderColor: activeTab === 'dashboard' ? 'var(--color-orange)' : 'transparent',
-                color: activeTab === 'dashboard' ? 'var(--color-orange)' : 'var(--text-secondary)',
-                fontWeight: activeTab === 'dashboard' ? '600' : '500',
-                fontSize: '0.95rem',
-                textAlign: 'left'
-              }}
-            >
-              <LayoutDashboard size={20} />
-              <span>Dashboard</span>
-            </button>
-
-            <button
-              onClick={() => setActiveTab('workouts')}
-              className="glass-panel"
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '14px',
-                padding: '14px 18px',
-                width: '100%',
-                background: activeTab === 'workouts' ? 'rgba(255, 255, 255, 0.05)' : 'transparent',
-                borderColor: activeTab === 'workouts' ? 'var(--color-orange)' : 'transparent',
-                color: activeTab === 'workouts' ? 'var(--color-orange)' : 'var(--text-secondary)',
-                fontWeight: activeTab === 'workouts' ? '600' : '500',
-                fontSize: '0.95rem',
-                textAlign: 'left'
-              }}
-            >
-              <Dumbbell size={20} />
-              <span>Workouts</span>
-            </button>
-
-            <button
-              onClick={() => setActiveTab('nutrition')}
-              className="glass-panel"
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '14px',
-                padding: '14px 18px',
-                width: '100%',
-                background: activeTab === 'nutrition' ? 'rgba(255, 255, 255, 0.05)' : 'transparent',
-                borderColor: activeTab === 'nutrition' ? 'var(--color-orange)' : 'transparent',
-                color: activeTab === 'nutrition' ? 'var(--color-orange)' : 'var(--text-secondary)',
-                fontWeight: activeTab === 'nutrition' ? '600' : '500',
-                fontSize: '0.95rem',
-                textAlign: 'left'
-              }}
-            >
-              <Droplet size={20} />
-              <span>Nutrition</span>
-            </button>
-
-            <button
-              onClick={() => setActiveTab('wellness')}
-              className="glass-panel"
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '14px',
-                padding: '14px 18px',
-                width: '100%',
-                background: activeTab === 'wellness' ? 'rgba(255, 255, 255, 0.05)' : 'transparent',
-                borderColor: activeTab === 'wellness' ? 'var(--color-orange)' : 'transparent',
-                color: activeTab === 'wellness' ? 'var(--color-orange)' : 'var(--text-secondary)',
-                fontWeight: activeTab === 'wellness' ? '600' : '500',
-                fontSize: '0.95rem',
-                textAlign: 'left'
-              }}
-            >
-              <Heart size={20} />
-              <span>Wellness</span>
-            </button>
-          </nav>
-        </div>
-
-        {/* Profile / Logout Section at bottom */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          <div style={{
+      <header className="mobile-header">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div style={{ 
+            background: 'linear-gradient(135deg, var(--color-orange), hsl(340, 90%, 50%))', 
+            width: '28px', 
+            height: '28px', 
+            borderRadius: '7px',
             display: 'flex',
             alignItems: 'center',
-            gap: '12px',
-            borderTop: '1px solid var(--glass-card-border)',
-            paddingTop: '20px',
-            paddingLeft: '8px'
+            justifyContent: 'center'
           }}>
-            <div style={{
-              background: 'rgba(255, 255, 255, 0.05)',
-              border: '1px solid var(--glass-card-border)',
-              padding: '8px',
-              borderRadius: '50%',
-              color: 'var(--text-secondary)'
-            }}>
-              <UserIcon size={18} />
-            </div>
-            <div style={{ overflow: 'hidden' }}>
-              <h4 style={{ fontSize: '0.9rem', fontWeight: '600', textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden' }}>{user.fullName}</h4>
-              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden', display: 'block' }}>{user.email}</span>
-            </div>
+            <Dumbbell size={16} color="white" strokeWidth={2.5} />
           </div>
+          <h2 style={{ fontSize: '1.1rem', fontWeight: '800' }} className="text-gradient">AuraFit</h2>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <UserIcon size={18} color="var(--text-secondary)" />
+        </div>
+      </header>
 
-          <button
-            onClick={handleLogout}
-            className="glass-panel"
-            style={{
-              padding: '12px 16px',
-              color: '#f87171',
-              fontWeight: '600',
-              fontSize: '0.9rem',
+      <aside className="glass-panel app-sidebar">
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+          <div className="brand-lockup" style={{ display: 'flex', alignItems: 'center', gap: '10px', paddingLeft: '4px', marginBottom: '40px' }}>
+            <div style={{ 
+              background: 'linear-gradient(135deg, var(--color-orange), hsl(340, 90%, 50%))', 
+              width: '32px', 
+              height: '32px', 
+              borderRadius: '9px',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center',
-              gap: '8px',
-              background: 'rgba(239, 68, 68, 0.03)',
-              border: '1px solid rgba(239, 68, 68, 0.08)'
-            }}
-          >
-            <LogOut size={16} />
-            <span>Sign Out</span>
-          </button>
+              justifyContent: 'center'
+            }}>
+              <Dumbbell size={18} color="white" strokeWidth={2.5} />
+            </div>
+            <h2 className="text-gradient" style={{ fontSize: '1.5rem' }}>AuraFit</h2>
+          </div>
+          <nav className="app-nav" style={{ flex: 1, marginTop: 0 }}>
+            {[
+              { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+              { id: 'workouts', icon: Dumbbell, label: 'Workouts' },
+              { id: 'nutrition', icon: Droplet, label: 'Nutrition' },
+              { id: 'wellness', icon: Heart, label: 'Wellness' },
+              { id: 'settings', icon: SettingsIcon, label: 'Settings' }
+            ].map(({ id, icon: Icon, label }) => (
+              <button key={id} onClick={() => setActiveTab(id)} className={`nav-button ${activeTab === id ? 'active' : ''}`}>
+                <Icon size={20} /> <span>{label}</span>
+              </button>
+            ))}
+          </nav>
         </div>
       </aside>
 
-      {/* VIEWPORT CONTROLLER (RIGHT COL) */}
-      <main className="main-content" style={{ padding: '40px', overflowY: 'auto', flex: 1, minHeight: '100vh' }}>
-        {activeTab === 'dashboard' && (
-          <Dashboard
-            user={user}
-            todaySummary={todaySummary}
-            onGoalsUpdated={(updatedUser) => {
-              setUser(updatedUser);
-              refreshSummary();
-            }}
-          />
-        )}
-        {activeTab === 'workouts' && (
-          <WorkoutTracker onWorkoutLogged={refreshSummary} />
-        )}
-        {activeTab === 'nutrition' && (
-          <NutritionHydration user={user} onLogsUpdated={refreshSummary} />
-        )}
-        {activeTab === 'wellness' && (
-          <WellnessMonitor onWellnessLogged={refreshSummary} />
-        )}
+      <main className="main-content">
+        {activeTab === 'dashboard' && <Dashboard user={user} />}
+        
+        {activeTab === 'workouts' && <WorkoutTracker onWorkoutLogged={refreshSummary} onViewHistory={() => setActiveTab('workout-history')} />}
+        {activeTab === 'workout-history' && <WorkoutTracker initialViewHistory={true} onBack={() => setActiveTab('workouts')} />}
+        
+        {activeTab === 'nutrition' && <NutritionHydration user={user} onLogsUpdated={refreshSummary} onViewHistory={() => setActiveTab('nutrition-history')} />}
+        {activeTab === 'nutrition-history' && <NutritionHydration user={user} initialViewHistory={true} onBack={() => setActiveTab('nutrition')} />}
+        
+        {activeTab === 'wellness' && <WellnessMonitor onWellnessLogged={refreshSummary} onViewHistory={() => setActiveTab('wellness-history')} />}
+        {activeTab === 'wellness-history' && <WellnessMonitor initialViewHistory={true} onBack={() => setActiveTab('wellness')} />}
+        
+        {activeTab === 'settings' && <Settings user={user} onGoalsUpdated={(u) => { setUser(u); refreshSummary(); }} onLogout={handleLogout} />}
       </main>
     </div>
   );

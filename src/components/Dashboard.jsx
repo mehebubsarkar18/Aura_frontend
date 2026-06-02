@@ -1,354 +1,479 @@
-import React, { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { api } from '../utils/api';
-import { Flame, Droplet, Footprints, Moon, Edit3, Save, TrendingUp } from 'lucide-react';
+import { Flame, Droplet, Clock, Moon, Scale, PieChart, Loader2, Heart, Calendar } from 'lucide-react';
 
-const ProgressRing = ({ percentage, color, icon: Icon, title, value, goal, unit }) => {
-  const radius = 60;
-  const stroke = 10;
+const ProgressRing = ({ percentage, color, icon: Icon, title, value, unit }) => {
+  const radius = 45;
+  const stroke = 6;
   const normalizedRadius = radius - stroke * 2;
   const circumference = normalizedRadius * 2 * Math.PI;
-  const safePercentage = Math.min(100, Math.max(0, percentage));
+  const safePercentage = Math.min(100, Math.max(0, percentage || 0));
   const strokeDashoffset = circumference - (safePercentage / 100) * circumference;
 
   return (
-    <div className="glass-panel glass-panel-hover" style={{
-      padding: '24px',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      textAlign: 'center',
-      flex: 1
-    }}>
-      <div style={{ position: 'relative', width: radius * 2, height: radius * 2, marginBottom: '16px' }}>
-        {/* Background Circle */}
-        <svg height={radius * 2} width={radius * 2} style={{ transform: 'rotate(-90deg)' }}>
-          <circle
-            stroke="rgba(255,255,255,0.06)"
-            fill="transparent"
-            strokeWidth={stroke}
-            r={normalizedRadius}
-            cx={radius}
-            cy={radius}
-          />
-          {/* Progress Circle */}
-          <circle
-            stroke={color}
-            fill="transparent"
-            strokeWidth={stroke}
-            strokeDasharray={circumference + ' ' + circumference}
-            style={{ strokeDashoffset, transition: 'stroke-dashoffset 0.8s ease-in-out' }}
-            strokeLinecap="round"
-            r={normalizedRadius}
-            cx={radius}
-            cy={radius}
-          />
+    <div className="glass-panel glass-panel-hover" style={{ padding: '20px', display: 'flex', alignItems: 'center', gap: '20px', flex: 1, minWidth: '240px' }}>
+      <div style={{ position: 'relative', width: radius * 2, height: radius * 2 }}>
+        <svg height="100%" width="100%" viewBox={`0 0 ${radius * 2} ${radius * 2}`} style={{ transform: 'rotate(-90deg)' }}>
+          <circle stroke="var(--card-overlay-hover)" fill="transparent" strokeWidth={stroke} r={normalizedRadius} cx={radius} cy={radius} />
+          <circle stroke={color} fill="transparent" strokeWidth={stroke} strokeDasharray={circumference + ' ' + circumference} style={{ strokeDashoffset, transition: 'stroke-dashoffset 0.8s ease-in-out' }} strokeLinecap="round" r={normalizedRadius} cx={radius} cy={radius} />
         </svg>
-        <div style={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          color: color,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}>
-          <Icon size={28} />
-        </div>
+        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', color: color }}><Icon size={20} /></div>
       </div>
-      <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: '500' }}>
-        {title}
-      </span>
-      <h3 style={{ fontSize: '1.6rem', marginTop: '4px', fontWeight: '700' }}>
-        {value} <span style={{ fontSize: '0.9rem', fontWeight: '400', color: 'var(--text-secondary)' }}>{unit}</span>
-      </h3>
-      <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '2px' }}>
-        Goal: {goal} {unit} ({Math.round(safePercentage)}%)
-      </span>
+      <div>
+        <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{title}</span>
+        <h3 style={{ fontSize: '1.5rem', fontWeight: '800', marginTop: '4px' }}>{value} <span style={{ fontSize: '0.9rem', fontWeight: '500', color: 'var(--text-secondary)' }}>{unit}</span></h3>
+      </div>
     </div>
   );
 };
 
-const Dashboard = ({ user, todaySummary, onGoalsUpdated }) => {
-  const [editingGoals, setEditingGoals] = useState(false);
-  const [caloriesGoal, setCaloriesGoal] = useState(user.dailyGoals.calories);
-  const [stepsGoal, setStepsGoal] = useState(user.dailyGoals.steps);
-  const [waterGoal, setWaterGoal] = useState(user.dailyGoals.waterMl);
-  const [sleepGoal, setSleepGoal] = useState(user.dailyGoals.sleepMinutes);
-  const [saving, setSaving] = useState(false);
+const MacroChart = ({ protein = 0, carbs = 0, fat = 0, targetCals = 2000, consumedCals = 0 }) => {
+  const total = (protein * 4 + carbs * 4 + fat * 9) || 1;
+  const pPct = (protein * 4 / total) * 100;
+  const cPct = (carbs * 4 / total) * 100;
+  const fPct = (fat * 9 / total) * 100;
 
-  const {
-    caloriesConsumed = 0,
-    caloriesBurned = 0,
-    waterConsumedMl = 0,
-    stepsWalked = 0,
-    sleepMinutes = 0,
-    activeMinutes = 0,
-    mindfulnessMinutes = 0,
-  } = todaySummary || {};
+  return (
+    <div className="glass-panel premium-graph-card" style={{ padding: '48px', display: 'flex', flexDirection: 'column', gap: '40px' }}>
+      <div className="graph-header">
+        <h3 style={{ fontSize: '1.8rem', fontWeight: '800' }}>Macronutrients</h3>
+        <div style={{ background: 'var(--icon-bg)', padding: '10px', borderRadius: '12px' }}>
+          <PieChart size={28} style={{ color: 'var(--color-orange)' }} />
+        </div>
+      </div>
+      <div className="graph-container-inner" style={{ display: 'flex', gap: '60px', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
+        <div style={{ position: 'relative', width: '240px', height: '240px' }}>
+          <svg viewBox="0 0 36 36" style={{ transform: 'rotate(-90deg)', width: '100%', height: '100%' }}>
+            <circle cx="18" cy="18" r="15.9" fill="transparent" stroke="var(--card-overlay)" strokeWidth="4" />
+            <circle cx="18" cy="18" r="15.9" fill="transparent" stroke="var(--color-violet)" strokeWidth="4" strokeDasharray={`${pPct} 100`} />
+            <circle cx="18" cy="18" r="15.9" fill="transparent" stroke="var(--color-cyan)" strokeWidth="4" strokeDasharray={`${cPct} 100`} strokeDashoffset={`-${pPct}`} />
+            <circle cx="18" cy="18" r="15.9" fill="transparent" stroke="var(--color-green)" strokeWidth="4" strokeDasharray={`${fPct} 100`} strokeDashoffset={`-${pPct + cPct}`} />
+          </svg>
+          <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
+            <span style={{ fontSize: '2.2rem', fontWeight: '950' }}>{Math.round((consumedCals / (targetCals || 2000)) * 100)}%</span>
+          </div>
+        </div>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '24px', minWidth: '250px' }}>
+          {[{ label: 'Protein', val: protein, color: 'var(--color-violet)' }, { label: 'Carbs', val: carbs, color: 'var(--color-cyan)' }, { label: 'Fats', val: fat, color: 'var(--color-green)' }].map(m => (
+            <div key={m.label}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '1.1rem' }}>
+                <span style={{ fontWeight: '700', color: 'var(--text-secondary)' }}>{m.label}</span>
+                <span style={{ fontWeight: '900' }}>{Math.round(m.val)}g</span>
+              </div>
+              <div style={{ height: '10px', background: 'var(--card-overlay)', borderRadius: '5px', overflow: 'hidden' }}>
+                <div style={{ width: `${(m.val * 4 / total) * 100}%`, height: '100%', background: m.color, borderRadius: '5px' }} />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
 
-  // Percentages relative to goals
-  const caloriesPercentage = (caloriesConsumed / user.dailyGoals.calories) * 100;
-  const stepsPercentage = (stepsWalked / user.dailyGoals.steps) * 100;
-  const waterPercentage = (waterConsumedMl / user.dailyGoals.waterMl) * 100;
-  const sleepPercentage = (sleepMinutes / user.dailyGoals.sleepMinutes) * 100;
+const GoalAchievementView = ({ history = [], goals, todaySummary }) => {
+  const [showHistory, setShowHistory] = useState(false);
 
-  const handleSaveGoals = async () => {
-    setSaving(true);
+  const calculateAvg = (data) => {
+    if (!data || Object.keys(data).length === 0) return 0;
+    const p1 = Math.min(100, ((data.caloriesConsumed || 0) / (goals?.calories || 2000)) * 100);
+    const p2 = Math.min(100, ((data.caloriesBurned || 0) / (goals?.caloriesBurned || 500)) * 100);
+    const p3 = Math.min(100, ((data.waterConsumedMl || data.waterMl || 0) / (goals?.waterMl || 2500)) * 100);
+    const p4 = Math.min(100, ((data.sleepMinutes || 0) / (goals?.sleepMinutes || 480)) * 100);
+    const p5 = Math.min(100, ((data.activeMinutes || 0) / (goals?.activeMinutes || 45)) * 100);
+    
+    // If no data has been logged at all, return 0
+    if (p1 === 0 && p2 === 0 && p3 === 0 && p4 === 0 && p5 === 0) return 0;
+    
+    return Math.round((p1 + p2 + p3 + p4 + p5) / 5);
+  };
+
+  const todayAvg = calculateAvg(todaySummary || {});
+  const weeklyData = history.map(d => ({ day: d.day, val: calculateAvg(d) }));
+
+  return (
+    <div className="glass-panel premium-graph-card" style={{ padding: '40px', display: 'flex', flexDirection: 'column', gap: '32px', height: '100%' }}>
+      <div className="graph-header">
+        <h3 style={{ fontSize: '1.6rem', fontWeight: '800' }}>{showHistory ? 'Weekly Discipline' : 'Daily Aura Score'}</h3>
+        <button onClick={() => setShowHistory(!showHistory)} className="btn btn-orange">
+          {showHistory ? 'TODAY' : 'HISTORY'}
+        </button>
+      </div>
+      <div className="graph-container-inner" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        {!showHistory ? (
+            <div style={{ position: 'relative', width: '280px', height: '280px' }}>
+            <svg viewBox="0 0 100 100" style={{ width: '100%', height: '100%', transform: 'rotate(-90deg)' }}>
+              <circle cx="50" cy="50" r="45" fill="none" stroke="var(--card-overlay)" strokeWidth="8" />
+              <circle cx="50" cy="50" r="45" fill="none" stroke="var(--color-orange)" strokeWidth="8" strokeDasharray="282.7" strokeDashoffset={282.7 - (282.7 * todayAvg) / 100} strokeLinecap="round" />
+            </svg>
+            <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
+              <div style={{ fontSize: '4rem', fontWeight: '950', color: 'var(--text-primary)' }}>{todayAvg}%</div>
+            </div>
+          </div>
+        ) : (
+            <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', height: '220px' }}>
+            {weeklyData.map((d, i) => (
+              <div key={i} className="chart-bar-wrapper">
+                <div style={{ width: '100%', background: `linear-gradient(to top, var(--color-violet), var(--color-violet-light))`, borderRadius: '6px', height: `${d.val}%`, minWidth: '30px' }} className="bar-premium" />
+                <span className="chart-day-label">{d.day}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+const WeightModule = ({ data, user, loggingWeight, newWeight, setNewWeight, handleWeightUpdate }) => {
+  const [showHistory, setShowHistory] = useState(false);
+  
+  if (!data || data.length === 0) return <div className="glass-panel premium-graph-card" style={{ padding: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>No weight data yet</div>;
+
+  const maxWeight = Math.max(...data.map(d => d.val)) + 2;
+  const minWeight = Math.min(...data.map(d => d.val)) - 2;
+  const range = maxWeight - minWeight || 1;
+  const height = 320; 
+  const width = 420;
+  
+  const topInset = 20;
+  const bottomInset = 40; // space for day labels
+  const effectiveHeight = height - topInset - bottomInset;
+  const pointsArray = data.map((d, i) => {
+    const x = data.length > 1 ? (i / (data.length - 1)) * width : width / 2;
+    const normalized = (d.val - minWeight) / range;
+    const y = topInset + (1 - normalized) * effectiveHeight;
+    return { x, y };
+  });
+  const points = pointsArray.map(p => `${p.x},${p.y}`).join(' ');
+
+  return (
+    <div className="glass-panel premium-graph-card" style={{ padding: '40px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%' }}>
+      <div className="graph-header">
+        <h3 style={{ fontSize: '1.6rem', fontWeight: '800' }}>{showHistory ? 'Weight History' : 'Current Weight'}</h3>
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          <button onClick={() => setShowHistory(!showHistory)} className="btn btn-orange">
+            {showHistory ? 'TODAY' : 'HISTORY'}
+          </button>
+          <div style={{ background: 'rgba(253, 90, 32, 0.1)', padding: '10px', borderRadius: '12px' }}>
+            <Scale size={22} style={{ color: 'var(--color-orange)' }} />
+          </div>
+        </div>
+      </div>
+
+      {!showHistory ? (
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '20px' }}>
+          <div style={{ textAlign: 'center' }}>
+            <div className="text-gradient" style={{ fontSize: '5rem', fontWeight: '950', lineHeight: 1 }}>{data[data.length-1]?.val || user?.weight}</div>
+            <div style={{ fontSize: '1.2rem', fontWeight: '700', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: '5px' }}>Kilograms</div>
+          </div>
+          
+          <form onSubmit={handleWeightUpdate} style={{ display: 'flex', gap: '16px', width: '100%', maxWidth: '300px', position: 'relative', zIndex: 1 }}>
+             <input type="number" step="0.1" className="glass-input" value={newWeight} onChange={e => setNewWeight(e.target.value)} placeholder="New log" style={{ flex: 1, padding: '12px 18px', fontSize: '1.1rem' }} />
+             <button type="submit" disabled={loggingWeight} className="btn btn-primary">LOG</button>
+          </form>
+        </div>
+      ) : (
+        <div className="graph-container-inner" style={{ height: '360px', width: '100%', marginTop: '50px' }}>
+          <svg viewBox={`0 0 ${width} ${height}`} style={{ width: '100%', height: '100%', overflow: 'visible' }}>
+            <defs>
+              <linearGradient id="weightGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="var(--color-violet)" stopOpacity="0.34" />
+                <stop offset="100%" stopColor="var(--color-violet)" stopOpacity="0" />
+              </linearGradient>
+            </defs>
+            
+            {/* Grid Lines */}
+            {[0, 0.25, 0.5, 0.75, 1].map(v => (
+              <line key={v} x1="0" y1={height * v} x2={width} y2={height * v} stroke="rgba(0,0,0,0.04)" strokeWidth="1" />
+            ))}
+
+            {/* Area Fill */}
+            {data.length > 1 && (
+              <polygon
+                fill="url(#weightGradient)"
+                points={`0,${height} ${points} ${width},${height}`}
+                style={{ transition: 'all 0.5s ease' }}
+              />
+            )}
+
+            {data.length > 1 ? (
+              <polyline
+                fill="none"
+                stroke="var(--color-violet)"
+                strokeWidth="4"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                points={points}
+                style={{ filter: 'drop-shadow(0 0 12px rgba(156,162,255,0.45))' }}
+              />
+            ) : null}
+            
+            {data.map((d, i) => {
+              const { x, y } = pointsArray[i];
+              return (
+                <g key={i} className="chart-bar-wrapper">
+                  <circle 
+                    cx={x} cy={y} r="6" 
+                    fill="var(--bg-primary)" 
+                    stroke="var(--color-violet)" 
+                    strokeWidth="3" 
+                    style={{ transition: 'all 0.3s ease', cursor: 'pointer' }}
+                  />
+                  <text x={x} y={y - 20} textAnchor="middle" fontSize="14" fill="var(--text-primary)" fontWeight="950" className="graph-label-value" style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.25))' }}>{d.val}</text>
+                  <text x={x} y={height + 20} textAnchor="middle" fontSize="15" fill="var(--text-secondary)" fontWeight="900">{d.day}</text>
+                </g>
+              );
+            })}
+          </svg>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const WorkoutTimeGraph = ({ history, todayValue, goal = 45 }) => {
+  const [showHistory, setShowHistory] = useState(false);
+  const maxMin = Math.max(...history.map(h => h.activeMinutes), todayValue) || 60;
+  
+  return (
+    <div className="glass-panel premium-graph-card" style={{ padding: '40px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%' }}>
+      <div className="graph-header">
+        <h3 style={{ fontSize: '1.6rem', fontWeight: '800' }}>{showHistory ? 'Workout History' : 'Today Activity'}</h3>
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          <button onClick={() => setShowHistory(!showHistory)} className="btn btn-green">
+            {showHistory ? 'TODAY' : 'HISTORY'}
+          </button>
+          <div className="graph-card-header-icon workout-icon-bg">
+            <Clock size={22} style={{ color: 'var(--color-green)' }} />
+          </div>
+        </div>
+      </div>
+
+      {!showHistory ? (
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
+          <div className="text-gradient" style={{ fontSize: '5rem', fontWeight: '950', lineHeight: 1 }}>{todayValue || 0}</div>
+          <div style={{ fontSize: '1.1rem', fontWeight: '700', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Minutes Today</div>
+          {todayValue > 0 ? (
+            <div style={{ marginTop: '20px', padding: '8px 20px', background: 'rgba(74, 222, 128, 0.1)', borderRadius: '100px', color: 'var(--color-green)', fontWeight: '800', fontSize: '0.9rem' }}>
+              Goal: {goal}m
+            </div>
+          ) : (
+            <div style={{ marginTop: '20px', color: 'var(--text-muted)', fontWeight: '600', fontSize: '0.9rem' }}>No workouts logged today</div>
+          )}
+        </div>
+      ) : (
+        <div className="graph-container-inner" style={{ height: '360px', display: 'flex', justifyContent: 'space-between', gap: '15px', marginTop: '70px' }}>
+          {history.map((d, i) => (
+            <div key={i} className="chart-bar-wrapper">
+              <div style={{ flex: 1, position: 'relative', display: 'flex', alignItems: 'flex-end', width: '100%' }}>
+                <div 
+                  className="chart-bar bar-premium bar-workout" 
+                  style={{ 
+                    height: `${(d.activeMinutes / maxMin) * 100}%`,
+                    width: '100%'
+                  }}
+                >
+                   {d.activeMinutes > 0 ? <div className="bar-value-label workout-text">{d.activeMinutes}</div> : null}
+                </div>
+              </div>
+              <span className="chart-day-label" style={{ textAlign: 'center', display: 'block' }}>{d.day}</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+const WellnessScoreGraph = ({ history, todaySummary }) => {
+  const [showHistory, setShowHistory] = useState(false);
+  
+  const getMoodScore = (emoji) => {
+    if (!emoji) return 0;
+    const map = { '😄': 5, '😊': 4, '😐': 3, '😔': 2, '😠': 1 };
+    return map[emoji] || 0;
+  };
+
+  const calculateScore = (sleep, mood) => {
+    // Prevent old backend default '😐' from causing a false 6/10 score
+    if (!sleep && (!mood || mood === '😐')) return 0;
+    
+    const sleepPoints = sleep ? Math.min(5, (sleep / 480) * 5) : 0;
+    const moodPoints = getMoodScore(mood);
+    if (sleepPoints === 0 && moodPoints === 0) return 0;
+    
+    // Average of present metrics
+    const metrics = [];
+    if (sleep) metrics.push(sleepPoints);
+    if (mood) metrics.push(moodPoints);
+    
+    const avg = metrics.reduce((a, b) => a + b, 0) / metrics.length;
+    return Math.round(avg * 2 * 10) / 10; // Scale to 10
+  };
+
+  const wellnessData = history.map(h => ({
+    day: h.day,
+    score: calculateScore(h.sleepMinutes, h.moodEmoji)
+  }));
+
+  const todayScore = calculateScore(todaySummary?.sleepMinutes, todaySummary?.moodEmoji);
+
+  return (
+    <div className="glass-panel premium-graph-card" style={{ padding: '40px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%' }}>
+      <div className="graph-header">
+        <h3 style={{ fontSize: '1.6rem', fontWeight: '800' }}>{showHistory ? 'Wellness History' : 'Daily Wellness'}</h3>
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          <button onClick={() => setShowHistory(!showHistory)} className="btn btn-violet">
+            {showHistory ? 'TODAY' : 'HISTORY'}
+          </button>
+          <div className="graph-card-header-icon wellness-icon-bg">
+            <Heart size={22} style={{ color: 'var(--color-violet)' }} />
+          </div>
+        </div>
+      </div>
+
+      {!showHistory ? (
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '10px', minHeight: '350px' }}>
+          <div className="text-gradient" style={{ fontSize: '5rem', fontWeight: '950', lineHeight: 1, color: 'var(--color-violet)' }}>{todayScore || 0}</div>
+          <div style={{ fontSize: '1.1rem', fontWeight: '700', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Wellness Index</div>
+          {todayScore > 0 ? (
+            <div style={{ marginTop: '20px', display: 'flex', gap: '15px' }}>
+              <div style={{ padding: '8px 16px', background: 'rgba(168, 85, 247, 0.1)', borderRadius: '12px', color: 'var(--color-violet)', fontSize: '0.85rem', fontWeight: '700' }}>
+                Sleep: {Math.round((todaySummary?.sleepMinutes || 0) / 60 * 10) / 10}h
+              </div>
+              <div style={{ padding: '8px 16px', background: 'rgba(168, 85, 247, 0.1)', borderRadius: '12px', color: 'var(--color-violet)', fontSize: '1.1rem' }}>
+                {todaySummary?.moodEmoji || '😐'}
+              </div>
+            </div>
+          ) : (
+            <div style={{ marginTop: '20px', color: 'var(--text-muted)', fontWeight: '600', fontSize: '0.9rem' }}>No data logged today</div>
+          )}
+        </div>
+      ) : (
+        <div className="graph-container-inner" style={{ height: '360px', display: 'flex', justifyContent: 'space-between', gap: '15px', marginTop: '70px' }}>
+          {wellnessData.map((d, i) => (
+            <div key={i} className="chart-bar-wrapper">
+              <div style={{ flex: 1, position: 'relative', display: 'flex', alignItems: 'flex-end', width: '100%' }}>
+                <div 
+                  className="chart-bar bar-premium bar-wellness" 
+                  style={{ 
+                    height: `${(d.score / 10) * 100}%`,
+                    width: '100%'
+                  }}
+                >
+                   {d.score > 0 ? <div className="bar-value-label wellness-text">{d.score}</div> : null}
+                </div>
+              </div>
+              <span className="chart-day-label" style={{ textAlign: 'center', display: 'block' }}>{d.day}</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+const Dashboard = ({ user }) => {
+  const [selectedDate] = useState(new Date().toISOString().split('T')[0]);
+  const [summary, setSummary] = useState(null);
+  const [weightHistory, setWeightHistory] = useState(
+    user?.weight ? [{ day: 'Start', val: user.weight }] : []
+  );
+  const [rawHistory, setRawHistory] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [newWeight, setNewWeight] = useState('');
+  const [loggingWeight, setLoggingWeight] = useState(false);
+
+  const fetchData = useCallback(async (date) => {
+    setLoading(true);
     try {
-      const data = await api.updateGoals({
-        calories: Number(caloriesGoal),
-        steps: Number(stepsGoal),
-        waterMl: Number(waterGoal),
-        sleepMinutes: Number(sleepGoal),
-      });
-      onGoalsUpdated(data.user);
-      setEditingGoals(false);
-    } catch (err) {
-      alert('Failed to save goals: ' + err.message);
+      const [wRes, hRes, sRes] = await Promise.all([
+        api.getWeightHistory(), 
+        api.getDashboardHistory(),
+        api.getTodaySummary(date)
+        ]);
+
+        let wData = (wRes.data || []).map((d, idx) => ({ 
+        day: idx === 0 && (wRes.data || []).length > 1 ? 'Start' : new Date(d.loggedAt).toLocaleDateString([], { month: 'short', day: 'numeric' }), 
+        val: d.weight 
+        }));
+
+        if (wData.length === 0 && user.weight) {
+        wData = [{ day: 'Start', val: user.weight }];
+        } else if (wData.length === 1 && user.weight && wData[0].val !== user.weight) {
+        // If we only have one log and it's different from starting weight, show both to create a line
+        wData = [{ day: 'Start', val: user.weight }, { day: 'Today', val: wData[0].val }];
+        }
+
+        setWeightHistory(wData);
+      if (hRes && hRes.success) setRawHistory(hRes.history || []);
+      if (sRes && sRes.success) setSummary(sRes.summary);
+    } catch (error) {
+      console.error('Dashboard fetch failed', error);
     } finally {
-      setSaving(false);
+      setLoading(false);
+    }
+  }, [user.weight]);
+
+  useEffect(() => {
+    fetchData(selectedDate);
+  }, [selectedDate, fetchData]);
+
+  const handleWeightUpdate = async (e) => {
+    e.preventDefault();
+    if (!newWeight) return;
+    setLoggingWeight(true);
+    try {
+      await api.logWeight({ weight: Number(newWeight) });
+      setNewWeight('');
+      fetchData(selectedDate);
+    } catch (error) {
+      console.error('Weight update failed', error);
+      alert('Update failed');
+    } finally {
+      setLoggingWeight(false);
     }
   };
 
-  // Mock static historical comparison columns for SVG Bar chart
-  const weekStats = [
-    { day: 'Mon', active: 30 },
-    { day: 'Tue', active: 45 },
-    { day: 'Wed', active: 20 },
-    { day: 'Thu', active: 60 },
-    { day: 'Fri', active: 40 },
-    { day: 'Sat', active: 75 },
-    { day: 'Sun', active: activeMinutes },
-  ];
+  if (loading && !summary) return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '60vh' }}><Loader2 size={40} className="animate-spin" color="var(--color-orange)" /></div>;
+
+  const { caloriesConsumed = 0, caloriesBurned = 0, waterConsumedMl = 0, sleepMinutes = 0, activeMinutes = 0, protein = 0, carbs = 0, fat = 0 } = summary || {};
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '30px', width: '100%' }}>
-      {/* Header Info */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '15px' }}>
+    <div className="dashboard-page" style={{ display: 'flex', flexDirection: 'column', gap: '48px', width: '100%' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '20px' }}>
         <div>
-          <h1 style={{ fontSize: '2.5rem', fontWeight: '800' }} className="text-gradient">
-            Aura Dashboard
-          </h1>
-          <p style={{ color: 'var(--text-secondary)' }}>
-            Welcome back, {user.fullName}! Here is your wellness summary for today.
+          <h1 className="text-gradient page-title" style={{ fontSize: '3.2rem', fontWeight: '800' }}>Performance Metrics</h1>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '1.2rem', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Calendar size={20} /> {new Date(selectedDate).toLocaleDateString([], { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
           </p>
         </div>
-
-        {/* Goals Action Toggle */}
-        <button
-          onClick={() => setEditingGoals(!editingGoals)}
-          className="glass-panel"
-          style={{
-            padding: '12px 20px',
-            color: 'var(--text-primary)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            fontWeight: '600',
-            fontSize: '0.95rem'
-          }}
-        >
-          {editingGoals ? <Save size={16} /> : <Edit3 size={16} />}
-          {editingGoals ? 'Discard Edits' : 'Edit Daily Goals'}
-        </button>
+      </div>
+      
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '32px' }}>
+        <WeightModule 
+          data={weightHistory} 
+          user={user} 
+          loggingWeight={loggingWeight} 
+          newWeight={newWeight} 
+          setNewWeight={setNewWeight} 
+          handleWeightUpdate={handleWeightUpdate} 
+        />
+        <WorkoutTimeGraph history={rawHistory} todayValue={activeMinutes} goal={user?.dailyGoals?.activeMinutes} />
+        <WellnessScoreGraph history={rawHistory} todaySummary={summary} />
       </div>
 
-      {/* Expandable Goals Editor */}
-      {editingGoals && (
-        <div className="glass-panel" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          <h3 style={{ fontSize: '1.2rem', color: 'var(--color-orange)' }}>Set New Targets</h3>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              <label style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Calories (kcal)</label>
-              <input
-                type="number"
-                className="glass-input"
-                value={caloriesGoal}
-                onChange={(e) => setCaloriesGoal(e.target.value)}
-              />
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              <label style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Steps</label>
-              <input
-                type="number"
-                className="glass-input"
-                value={stepsGoal}
-                onChange={(e) => setStepsGoal(e.target.value)}
-              />
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              <label style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Water Intake (mL)</label>
-              <input
-                type="number"
-                className="glass-input"
-                value={waterGoal}
-                onChange={(e) => setWaterGoal(e.target.value)}
-              />
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              <label style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Sleep (minutes)</label>
-              <input
-                type="number"
-                className="glass-input"
-                value={sleepGoal}
-                onChange={(e) => setSleepGoal(e.target.value)}
-              />
-            </div>
-          </div>
-          <button
-            onClick={handleSaveGoals}
-            disabled={saving}
-            className="btn btn-primary"
-            style={{ padding: '12px 24px', alignSelf: 'flex-end', display: 'flex', gap: '8px', alignItems: 'center' }}
-          >
-            <Save size={16} />
-            {saving ? 'Saving...' : 'Save Goals'}
-          </button>
-        </div>
-      )}
-
-      {/* Circular Progress Rings Dashboard Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '20px' }}>
-        <ProgressRing
-          percentage={caloriesPercentage}
-          color="var(--color-orange)"
-          icon={Flame}
-          title="Calorie Intake"
-          value={caloriesConsumed}
-          goal={user.dailyGoals.calories}
-          unit="kcal"
-        />
-        <ProgressRing
-          percentage={stepsPercentage}
-          color="var(--color-cyan)"
-          icon={Footprints}
-          title="Active Steps"
-          value={stepsWalked}
-          goal={user.dailyGoals.steps}
-          unit="steps"
-        />
-        <ProgressRing
-          percentage={waterPercentage}
-          color="var(--color-cyan)"
-          icon={Droplet}
-          title="Hydration"
-          value={waterConsumedMl}
-          goal={user.dailyGoals.waterMl}
-          unit="mL"
-        />
-        <ProgressRing
-          percentage={sleepPercentage}
-          color="var(--color-violet)"
-          icon={Moon}
-          title="Sleep Log"
-          value={Math.round((sleepMinutes / 60) * 10) / 10}
-          goal={Math.round((user.dailyGoals.sleepMinutes / 60) * 10) / 10}
-          unit="hrs"
-        />
+      <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: '32px' }}>
+        <MacroChart protein={protein} carbs={carbs} fat={fat} targetCals={user?.dailyGoals?.calories} consumedCals={caloriesConsumed} />
+        <GoalAchievementView history={rawHistory} goals={user?.dailyGoals} todaySummary={summary} />
       </div>
 
-      {/* Charts & Metric Overview Split */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
-        {/* Left Side: Weekly Active minutes bar chart */}
-        <div className="glass-panel" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <TrendingUp size={22} style={{ color: 'var(--color-orange)' }} />
-            <h3 style={{ fontSize: '1.25rem' }}>Weekly Consistency</h3>
-          </div>
-          <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Daily active minutes (workouts logged) over the last 7 days.</p>
-          
-          <div style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'flex-end',
-            height: '180px',
-            padding: '10px 0',
-            marginTop: '10px',
-            borderBottom: '1px solid var(--glass-card-border)'
-          }}>
-            {weekStats.map((item, idx) => {
-              const maxVal = Math.max(...weekStats.map(w => w.active), 60);
-              const heightPct = (item.active / maxVal) * 100;
-              return (
-                <div key={idx} style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  gap: '8px',
-                  flex: 1
-                }}>
-                  <div style={{ fontSize: '0.75rem', fontWeight: '600', color: 'var(--text-secondary)' }}>
-                    {item.active}m
-                  </div>
-                  {/* Bar column */}
-                  <div style={{
-                    width: '28px',
-                    height: `${heightPct}%`,
-                    background: item.active > 0 ? 'linear-gradient(to top, var(--color-orange), hsl(340, 90%, 50%))' : 'rgba(255,255,255,0.04)',
-                    borderRadius: '6px 6px 0 0',
-                    transition: 'height 0.6s ease',
-                    boxShadow: item.active > 0 ? '0 0 10px rgba(253, 90, 32, 0.15)' : 'none'
-                  }} />
-                  <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: '500' }}>
-                    {item.day}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Right Side: Additional Metric Cards */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          <div className="glass-panel" style={{ padding: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div>
-              <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Active Minutes Today</span>
-              <h2 style={{ fontSize: '2rem', marginTop: '4px' }}>{activeMinutes} <span style={{ fontSize: '1rem', color: 'var(--text-muted)', fontWeight: '400' }}>min</span></h2>
-            </div>
-            <div style={{
-              background: 'rgba(253, 90, 32, 0.12)',
-              padding: '12px',
-              borderRadius: '16px',
-              color: 'var(--color-orange)'
-            }}>
-              <Flame size={24} />
-            </div>
-          </div>
-
-          <div className="glass-panel" style={{ padding: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div>
-              <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Calorie Burn Balance</span>
-              <h2 style={{ fontSize: '2rem', marginTop: '4px' }}>
-                {caloriesConsumed - caloriesBurned} <span style={{ fontSize: '1rem', color: 'var(--text-muted)', fontWeight: '400' }}>net kcal</span>
-              </h2>
-            </div>
-            <div style={{
-              background: 'rgba(6, 182, 212, 0.12)',
-              padding: '12px',
-              borderRadius: '16px',
-              color: 'var(--color-cyan)'
-            }}>
-              <TrendingUp size={24} />
-            </div>
-          </div>
-
-          <div className="glass-panel" style={{ padding: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div>
-              <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Mindfulness Duration</span>
-              <h2 style={{ fontSize: '2rem', marginTop: '4px' }}>{mindfulnessMinutes} <span style={{ fontSize: '1rem', color: 'var(--text-muted)', fontWeight: '400' }}>min</span></h2>
-            </div>
-            <div style={{
-              background: 'rgba(168, 85, 247, 0.12)',
-              padding: '12px',
-              borderRadius: '16px',
-              color: 'var(--color-violet)'
-            }}>
-              <Moon size={24} />
-            </div>
-          </div>
-        </div>
+      <div className="progress-grid" style={{ display: 'flex', flexWrap: 'wrap', gap: '24px' }}>
+        <ProgressRing percentage={(caloriesConsumed / (user?.dailyGoals?.calories || 2000)) * 100} color="#3b82f6" icon={Flame} title="Energy In" value={caloriesConsumed} unit="kcal" />
+        <ProgressRing percentage={(caloriesBurned / (user?.dailyGoals?.caloriesBurned || 500)) * 100} color="var(--color-orange)" icon={Flame} title="Energy Out" value={caloriesBurned} unit="kcal" />
+        <ProgressRing percentage={(waterConsumedMl / (user?.dailyGoals?.waterMl || 2500)) * 100} color="var(--color-cyan)" icon={Droplet} title="Hydration" value={waterConsumedMl} unit="mL" />
+        <ProgressRing percentage={(sleepMinutes / (user?.dailyGoals?.sleepMinutes || 480)) * 100} color="var(--color-violet)" icon={Moon} title="Recovery" value={Math.round(sleepMinutes/60*10)/10} unit="hrs" />
       </div>
     </div>
   );

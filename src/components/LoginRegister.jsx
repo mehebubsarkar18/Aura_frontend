@@ -1,28 +1,34 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { api } from '../utils/api';
-import { Lock, Mail, User, ShieldAlert } from 'lucide-react';
+import { Lock, Mail, User, ShieldAlert, ArrowLeft, Dumbbell } from 'lucide-react';
 
-const LoginRegister = ({ onAuthSuccess }) => {
-  const [isLogin, setIsLogin] = useState(true);
+const LoginRegister = ({ onAuthSuccess, onBack, initialIsLogin = true }) => {
+  const [isLogin, setIsLogin] = useState(initialIsLogin);
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setSuccessMessage('');
     setLoading(true);
 
     try {
-      let data;
       if (isLogin) {
-        data = await api.login(email, password);
+        const data = await api.login(email, password);
+        onAuthSuccess(data.user);
       } else {
-        data = await api.register(fullName, email, password);
+        await api.register(fullName, email, password);
+        // On signup success, clear fields and switch to login
+        setIsLogin(true);
+        setFullName('');
+        setPassword('');
+        setSuccessMessage('Account created successfully! Please sign in with your credentials.');
       }
-      onAuthSuccess(data.user);
     } catch (err) {
       setError(err.message || 'Authentication failed. Please try again.');
     } finally {
@@ -31,88 +37,138 @@ const LoginRegister = ({ onAuthSuccess }) => {
   };
 
   return (
-    <div style={{
+    <div className="auth-screen" style={{
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
       minHeight: '100vh',
       width: '100%',
-      padding: '20px',
-      position: 'relative'
+      padding: '24px',
+      position: 'relative',
+      background: 'var(--bg-primary)'
     }}>
-      <div className="glass-panel" style={{
-        padding: '40px',
-        maxWidth: '450px',
+      <div className="glass-panel auth-card" style={{
+        padding: '48px 40px',
+        maxWidth: '480px',
         width: '100%',
         position: 'relative',
-        zIndex: 1
+        zIndex: 1,
+        borderRadius: '32px'
       }}>
-        <div style={{ textAlign: 'center', marginBottom: '30px' }}>
-          <h2 style={{ fontSize: '2.2rem', marginBottom: '8px' }} className="text-gradient">
-            {isLogin ? 'Welcome to AuraFit' : 'Begin Your Journey'}
+        {/* Back Button */}
+        <button 
+          onClick={onBack}
+          className="btn btn-ghost btn-icon"
+          style={{
+            position: 'absolute',
+            top: '24px',
+            left: '24px',
+            zIndex: 10
+          }}
+          title="Back to Home"
+        >
+          <ArrowLeft size={24} />
+        </button>
+
+        <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+          <div style={{
+            background: 'linear-gradient(135deg, var(--color-orange), hsl(340, 90%, 50%))',
+            width: '44px',
+            height: '44px',
+            borderRadius: '12px',
+            margin: '0 auto 16px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '0 6px 20px rgba(253, 90, 32, 0.3)'
+          }}>
+            <Dumbbell size={24} color="white" strokeWidth={2.5} />
+          </div>
+          <h2 className="text-gradient auth-title" style={{ fontSize: '2rem', fontWeight: '800', letterSpacing: '-0.04em', marginBottom: '10px' }}>
+            {isLogin ? 'Welcome Back' : 'Get Started'}
           </h2>
-          <p style={{ color: 'var(--text-secondary)' }}>
-            {isLogin ? 'Enter your details to track your vitals' : 'Create a profile to unlock premium analytics'}
+          <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', lineHeight: '1.5' }}>
+            {isLogin ? 'Enter your credentials to continue your journey' : 'Create your AuraFit account to start tracking'}
           </p>
         </div>
+
+        {successMessage && (
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            background: 'rgba(34, 197, 94, 0.08)',
+            border: '1px solid rgba(34, 197, 94, 0.2)',
+            borderRadius: '14px',
+            padding: '14px 20px',
+            marginBottom: '32px',
+            color: '#4ade80',
+            fontSize: '0.9rem',
+            fontWeight: '500'
+          }}>
+            <Dumbbell size={18} style={{ flexShrink: 0 }} />
+            <span>{successMessage}</span>
+          </div>
+        )}
 
         {error && (
           <div style={{
             display: 'flex',
             alignItems: 'center',
             gap: '12px',
-            background: 'rgba(239, 68, 68, 0.15)',
-            border: '1px solid rgba(239, 68, 68, 0.3)',
-            borderRadius: '12px',
-            padding: '12px 16px',
-            marginBottom: '24px',
+            background: 'rgba(239, 68, 68, 0.08)',
+            border: '1px solid rgba(239, 68, 68, 0.2)',
+            borderRadius: '14px',
+            padding: '14px 20px',
+            marginBottom: '32px',
             color: '#f87171',
-            fontSize: '0.95rem'
+            fontSize: '0.9rem',
+            fontWeight: '500'
           }}>
-            <ShieldAlert size={20} style={{ flexShrink: 0 }} />
+            <ShieldAlert size={18} style={{ flexShrink: 0 }} />
             <span>{error}</span>
           </div>
         )}
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
           {!isLogin && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <label style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', fontWeight: '500' }}>Full Name</label>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <label style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', fontWeight: '600', paddingLeft: '4px' }}>Full Name</label>
               <div style={{ position: 'relative' }}>
-                <User size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                <User size={18} style={{ position: 'absolute', left: '18px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
                 <input
                   type="text"
                   className="glass-input"
-                  placeholder="John Doe"
+                  placeholder="e.g. Alex Johnson"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   required={!isLogin}
-                  style={{ width: '100%', paddingLeft: '48px' }}
+                  style={{ width: '100%', paddingLeft: '52px', minHeight: '54px' }}
                 />
               </div>
             </div>
           )}
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <label style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', fontWeight: '500' }}>Email Address</label>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <label style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', fontWeight: '600', paddingLeft: '4px' }}>Email Address</label>
             <div style={{ position: 'relative' }}>
-              <Mail size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+              <Mail size={18} style={{ position: 'absolute', left: '18px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
               <input
                 type="email"
                 className="glass-input"
-                placeholder="john@example.com"
+                placeholder="name@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                style={{ width: '100%', paddingLeft: '48px' }}
+                style={{ width: '100%', paddingLeft: '52px', minHeight: '54px' }}
               />
             </div>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <label style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', fontWeight: '500' }}>Password</label>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <label style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', fontWeight: '600', paddingLeft: '4px' }}>Password</label>
             <div style={{ position: 'relative' }}>
-              <Lock size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+              <Lock size={18} style={{ position: 'absolute', left: '18px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
               <input
                 type="password"
                 className="glass-input"
@@ -120,7 +176,7 @@ const LoginRegister = ({ onAuthSuccess }) => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                style={{ width: '100%', paddingLeft: '48px' }}
+                style={{ width: '100%', paddingLeft: '52px', minHeight: '54px' }}
               />
             </div>
           </div>
@@ -130,20 +186,22 @@ const LoginRegister = ({ onAuthSuccess }) => {
             className="btn btn-primary"
             disabled={loading}
             style={{
-              padding: '14px',
-              fontSize: '1rem',
-              marginTop: '10px',
+              padding: '16px',
+              fontSize: '1.1rem',
+              marginTop: '12px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontWeight: '600'
+              fontWeight: '800',
+              borderRadius: '16px',
+              boxShadow: '0 8px 24px rgba(253, 90, 32, 0.25)'
             }}
           >
-            {loading ? 'Authenticating...' : isLogin ? 'Sign In' : 'Create Account'}
+            {loading ? 'AUTHENTICATING...' : isLogin ? 'SIGN IN' : 'CREATE ACCOUNT'}
           </button>
         </form>
 
-        <div style={{ textAlign: 'center', marginTop: '24px' }}>
+        <div style={{ textAlign: 'center', marginTop: '32px' }}>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>
             {isLogin ? "Don't have an account? " : "Already have an account? "}
             <span
@@ -154,8 +212,8 @@ const LoginRegister = ({ onAuthSuccess }) => {
               style={{
                 color: 'var(--color-orange)',
                 cursor: 'pointer',
-                fontWeight: '600',
-                textDecoration: 'underline'
+                fontWeight: '700',
+                marginLeft: '4px'
               }}
             >
               {isLogin ? 'Sign Up' : 'Log In'}
