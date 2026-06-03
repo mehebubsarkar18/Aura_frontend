@@ -84,7 +84,7 @@
 
 /* Floating Bottom Navbar - Mobile Only */
 .bottom-nav {
-  display: none;
+  display: none !important;
 }
 
 /* Premium Loading Animation */
@@ -205,7 +205,79 @@
 .graph-item-macros   { grid-column: span 7; order: 4; }
 .graph-item-aura     { grid-column: span 5; order: 5; }
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
+  .app-container { flex-direction: column !important; }
+  
+  .app-sidebar { 
+    display: none !important; 
+    width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .mobile-header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 12px 18px !important;
+    background: var(--sidebar-bg) !important;
+    backdrop-filter: blur(20px) !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 2000 !important;
+    border-bottom: 1px solid var(--glass-card-border) !important;
+    width: 100% !important;
+  }
+
+  .bottom-nav {
+    display: flex !important;
+    position: fixed !important;
+    bottom: 24px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 90% !important;
+    max-width: 400px !important;
+    height: 70px !important;
+    background: rgba(13, 17, 23, 0.95) !important;
+    backdrop-filter: blur(25px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: 35px !important;
+    justify-content: space-around !important;
+    align-items: center !important;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.8) !important;
+    z-index: 2000 !important;
+    padding: 0 10px !important;
+  }
+
+  .nav-item {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+  }
+
+  .nav-item.active {
+    background: var(--color-orange);
+    color: white;
+    box-shadow: 0 0 20px rgba(253, 90, 32, 0.4);
+    transform: translateY(-10px) scale(1.2);
+  }
+
+  .main-content {
+    padding: 20px 16px 120px !important; 
+    height: auto !important;
+    overflow-y: visible !important;
+  }
+
+  .page-title { font-size: 1.8rem !important; }
+
   .dashboard-graphs-container {
     display: flex !important;
     flex-direction: column !important;
@@ -219,31 +291,13 @@
   .graph-item-wellness { order: 4; width: 100% !important; grid-column: span 12 !important; }
   .graph-item-weight   { order: 5; width: 100% !important; grid-column: span 12 !important; }
 
-  .dashboard-metrics-grid, .dashboard-middle-grid {
-    display: none !important; /* Cleanup old classes */
-  }
-
-  /* Progress grid refinement - 2 in a row for better visibility */
+  /* Progress grid refinement */
   .progress-grid {
     display: grid !important;
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 12px !important;
     margin-top: 10px !important;
     width: 100% !important;
-  }
-
-  .progress-grid > * {
-    padding: 14px 10px !important;
-    min-width: 0 !important;
-  }
-
-  .progress-grid h3 { 
-    font-size: 1.1rem !important; 
-    margin-top: 4px !important;
-  }
-
-  .progress-grid span {
-    font-size: 0.75rem !important;
   }
 
   /* Workout presets - 2 in a row */
@@ -253,32 +307,6 @@
     gap: 12px !important;
   }
 
-  /* Settings - smaller buttons */
-  .settings-page .btn {
-    padding: 8px 16px !important;
-    font-size: 0.9rem !important;
-    min-height: 40px !important;
-  }
-
-  /* Wellness width fix */
-  .wellness-container, .wellness-grid, .wellness-left {
-    width: 100% !important;
-    max-width: 100% !important;
-    grid-column: span 1 !important;
-    margin: 0 !important;
-  }
-
-  /* Global mobile button scaling */
-  .btn {
-    padding: 6px 12px !important;
-    font-size: 0.75rem !important;
-    min-height: 32px !important;
-  }
-
-  .btn-primary, .btn-orange, .btn-violet, .btn-green {
-    padding: 6px 14px !important;
-  }
-
   /* Specific buttons named by user */
   .login-btn, .signup-btn, .settings-page .btn, .workout-page .btn, .wellness-container .btn, .nutrition-grid .btn, .auth-submit-btn, .landing-nav-btn {
     font-size: 0.65rem !important;
@@ -286,11 +314,7 @@
     min-height: 28px !important;
   }
 
-  .auth-toggle-text {
-    font-size: 0.75rem !important;
-  }
-
-  .auth-toggle-link {
+  .auth-toggle-text, .auth-toggle-link {
     font-size: 0.75rem !important;
   }
 
@@ -304,31 +328,14 @@
     padding: 3px 8px !important;
   }
   
-  .btn-history-green {
-    background: rgba(74, 222, 128, 0.15) !important;
-    color: var(--color-green) !important;
-    border: 1px solid rgba(74, 222, 128, 0.3) !important;
-  }
+  .btn-history-green { background: rgba(74, 222, 128, 0.15) !important; color: var(--color-green) !important; border: 1px solid rgba(74, 222, 128, 0.3) !important; }
+  .btn-history-violet { background: rgba(168, 85, 247, 0.15) !important; color: var(--color-violet) !important; border: 1px solid rgba(168, 85, 247, 0.3) !important; }
+  .btn-history-cyan { background: rgba(34, 211, 238, 0.15) !important; color: var(--color-cyan) !important; border: 1px solid rgba(34, 211, 238, 0.3) !important; }
 
-  .btn-history-violet {
-    background: rgba(168, 85, 247, 0.15) !important;
-    color: var(--color-violet) !important;
-    border: 1px solid rgba(168, 85, 247, 0.3) !important;
-  }
-
-  .btn-history-cyan {
-    background: rgba(34, 211, 238, 0.15) !important;
-    color: var(--color-cyan) !important;
-    border: 1px solid rgba(34, 211, 238, 0.3) !important;
-  }
-
-  /* Hide icons on mobile for specific graphs */
-  .mobile-hide-icon {
-    display: none !important;
-  }
+  .mobile-hide-icon { display: none !important; }
 }
 
-/* Narrow button utility for both PC and Mobile */
+/* Narrow button utility */
 .btn-narrow {
   width: 100% !important;
   max-width: 160px !important;
@@ -337,7 +344,7 @@
   margin-right: auto !important;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   .btn-narrow {
     max-width: 130px !important;
     font-size: 0.65rem !important;
@@ -345,22 +352,14 @@
   }
 }
 
-/* History buttons colorful on Desktop too but more subtle */
-.btn-history-orange, .btn-history-green, .btn-history-violet, .btn-history-cyan {
-  transition: all 0.2s ease;
-}
+/* History buttons hover effects */
+.btn-history-orange, .btn-history-green, .btn-history-violet, .btn-history-cyan { transition: all 0.2s ease; }
 .btn-history-orange:hover { background: rgba(253, 90, 32, 0.1); }
 .btn-history-green:hover { background: rgba(74, 222, 128, 0.1); }
 .btn-history-violet:hover { background: rgba(168, 85, 247, 0.1); }
 .btn-history-cyan:hover { background: rgba(34, 211, 238, 0.1); }
 
-
-@media (max-width: 480px) {
-  .progress-grid { grid-template-columns: repeat(2, 1fr) !important; }
-  .preset-grid { grid-template-columns: repeat(2, 1fr) !important; }
-}
-
-/* Dashboard Chart Styles */
+/* Chart Styles */
 .chart-bar-wrapper {
   display: flex;
   flex-direction: column;
@@ -380,7 +379,6 @@
   border-radius: 6px 6px 0 0;
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   cursor: pointer;
-  background: var(--color-orange);
 }
 
 .premium-graph-card {
@@ -397,12 +395,9 @@
   cursor: pointer;
 }
 
-.bar-premium:hover {
-  filter: brightness(1.3);
-  transform: scaleX(1.05);
-}
+.bar-premium:hover { filter: brightness(1.3); transform: scaleX(1.05); }
 
-/* Final Global Refinements */
+/* Global Refinements */
 :root { --transition-smooth: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
 body { font-size: 1rem; -webkit-font-smoothing: antialiased; }
 .glass-panel { transition: var(--transition-smooth); }
