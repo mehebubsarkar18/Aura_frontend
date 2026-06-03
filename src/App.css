@@ -248,75 +248,94 @@
   50% { opacity: 1; }
 }
 
-/* Graph Switcher Mobile Styles */
+/* Graph Switcher Mobile Styles - Hidden as carousel is being replaced by stacking */
 .graph-switcher-nav {
   display: none;
-  gap: 8px;
-  justify-content: center;
-  margin-top: 12px;
-}
-
-.graph-dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: var(--card-overlay);
-  border: 1px solid var(--glass-card-border);
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.graph-dot.active {
-  background: var(--color-orange);
-  transform: scale(1.2);
-  box-shadow: 0 0 10px rgba(253, 90, 32, 0.4);
 }
 
 @media (max-width: 768px) {
   .dashboard-metrics-grid, .dashboard-middle-grid {
-    display: block !important;
-  }
-
-  .graph-switcher-nav {
     display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
   }
 
-  /* Progress grid refinement */
+  /* Ensure all graph cards have equal height on mobile */
+  .premium-graph-card {
+    min-height: 320px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+  }
+
+  .graph-container-inner {
+    height: 180px !important; /* Uniform height for graph contents */
+    display: flex !important;
+    align-items: flex-end !important;
+    justify-content: center !important;
+  }
+
+  /* Progress grid refinement - 4 in a row very compact */
   .progress-grid {
     display: grid !important;
     grid-template-columns: repeat(4, 1fr) !important;
     gap: 6px !important;
-    margin-top: 20px !important;
+    margin-top: 16px !important;
+    width: 100% !important;
   }
 
   .progress-grid > * {
-    padding: 6px 2px !important;
+    padding: 10px 4px !important;
     border-radius: 12px !important;
+    min-width: 0 !important;
+    flex: none !important;
   }
 
   .progress-grid h3 {
     font-size: 0.7rem !important;
+    font-weight: 900 !important;
+    margin-top: 4px !important;
+  }
+
+  .progress-grid span {
+    font-size: 0.45rem !important;
+    font-weight: 700 !important;
+  }
+
+  .progress-grid svg {
+    width: 14px !important;
+    height: 14px !important;
   }
 
   /* Tab Bar Refinement */
   .app-sidebar {
-    height: 72px !important; /* Made bigger */
+    height: 76px !important;
+    background: rgba(13, 17, 23, 0.8) !important;
+    backdrop-filter: blur(25px) !important;
+    padding: 0 12px !important;
+  }
+
+  .app-nav {
+    gap: 8px !important; /* Proper gap between tabs */
   }
 
   .nav-button {
-    padding: 8px !important; /* More padding */
-    margin: 0 4px !important; /* Gap between tabs */
-    border-radius: 14px !important;
+    padding: 8px 4px !important;
+    border-radius: 16px !important;
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  }
+
+  .nav-button.active {
+    background: rgba(253, 90, 32, 0.1) !important;
+    border-color: rgba(253, 90, 32, 0.3) !important;
   }
 
   .nav-button span {
-    font-size: 0.65rem !important;
-    margin-top: 4px !important;
-  }
-
-  .nav-button svg {
-    width: 20px !important;
-    height: 20px !important;
+    font-size: 0.58rem !important;
+    margin-top: 3px !important;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
   }
 }
 

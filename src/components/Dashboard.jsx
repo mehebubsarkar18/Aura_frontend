@@ -473,35 +473,15 @@ const Dashboard = ({ user }) => {
         </div>
       </div>
       
-      {/* Desktop Layout - Shows all graphs */}
-      <div className="desktop-only">
-        <style>{`@media (max-width: 768px) { .desktop-only { display: none; } }`}</style>
-        <div className="dashboard-metrics-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px', marginBottom: '24px' }}>
-          {renderGraph(0)}
-          {renderGraph(1)}
-          {renderGraph(2)}
-        </div>
-        <div className="dashboard-middle-grid" style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: '24px' }}>
-          {renderGraph(3)}
-          {renderGraph(4)}
-        </div>
+      <div className="dashboard-metrics-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px' }}>
+        {renderGraph(0)}
+        {renderGraph(1)}
+        {renderGraph(2)}
       </div>
 
-      {/* Mobile Layout - Carousel */}
-      <div className="mobile-only">
-        <style>{`@media (min-width: 769px) { .mobile-only { display: none; } }`}</style>
-        <div className="mobile-graph-container">
-          {renderGraph(activeGraphIndex)}
-          <div className="graph-switcher-nav">
-            {[0, 1, 2, 3, 4].map(i => (
-              <div 
-                key={i} 
-                className={`graph-dot ${activeGraphIndex === i ? 'active' : ''}`}
-                onClick={() => setActiveGraphIndex(i)}
-              />
-            ))}
-          </div>
-        </div>
+      <div className="dashboard-middle-grid" style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: '24px' }}>
+        {renderGraph(3)}
+        {renderGraph(4)}
       </div>
 
       <div className="progress-grid" style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
