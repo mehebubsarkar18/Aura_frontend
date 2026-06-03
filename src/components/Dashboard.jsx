@@ -384,6 +384,9 @@ const Dashboard = ({ user }) => {
   const [loading, setLoading] = useState(true);
   const [newWeight, setNewWeight] = useState('');
   const [loggingWeight, setLoggingWeight] = useState(false);
+  
+  // Mobile graph switcher state
+  const [activeGraphIndex, setActiveGraphIndex] = useState(0);
 
   const fetchData = useCallback(async (date) => {
     setLoading(true);
@@ -402,7 +405,6 @@ const Dashboard = ({ user }) => {
         if (wData.length === 0 && user.weight) {
         wData = [{ day: 'Start', val: user.weight }];
         } else if (wData.length === 1 && user.weight && wData[0].val !== user.weight) {
-        // If we only have one log and it's different from starting weight, show both to create a line
         wData = [{ day: 'Start', val: user.weight }, { day: 'Today', val: wData[0].val }];
         }
 
@@ -412,7 +414,8 @@ const Dashboard = ({ user }) => {
     } catch (error) {
       console.error('Dashboard fetch failed', error);
     } finally {
-      setLoading(false);
+      // Adding a small delay for the animation to feel smoother
+      setTimeout(() => setLoading(false), 800);
     }
   }, [user.weight]);
 
@@ -436,9 +439,28 @@ const Dashboard = ({ user }) => {
     }
   };
 
-  if (loading && !summary) return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '60vh' }}><Loader2 size={32} className="animate-spin" color="var(--color-orange)" /></div>;
+  if (loading) return (
+    <div className="loading-screen">
+      <div className="aura-pulse">
+        <div></div>
+        <div></div>
+      </div>
+      <div className="loading-text">SYNCING YOUR AURA</div>
+    </div>
+  );
 
   const { caloriesConsumed = 0, caloriesBurned = 0, waterConsumedMl = 0, sleepMinutes = 0, activeMinutes = 0, protein = 0, carbs = 0, fat = 0 } = summary || {};
+
+  const renderGraph = (index) => {
+    switch(index) {
+      case 0: return <WeightModule data={weightHistory} user={user} loggingWeight={loggingWeight} newWeight={newWeight} setNewWeight={setNewWeight} handleWeightUpdate={handleWeightUpdate} />;
+      case 1: return <WorkoutTimeGraph history={rawHistory} todayValue={activeMinutes} goal={user?.dailyGoals?.activeMinutes} />;
+      case 2: return <WellnessScoreGraph history={rawHistory} todaySummary={summary} />;
+      case 3: return <MacroChart protein={protein} carbs={carbs} fat={fat} targetCals={user?.dailyGoals?.calories} consumedCals={caloriesConsumed} />;
+      case 4: return <GoalAchievementView history={rawHistory} goals={user?.dailyGoals} todaySummary={summary} />;
+      default: return null;
+    }
+  };
 
   return (
     <div className="dashboard-page" style={{ display: 'flex', flexDirection: 'column', gap: '32px', width: '100%' }}>
@@ -451,22 +473,35 @@ const Dashboard = ({ user }) => {
         </div>
       </div>
       
-      <div className="dashboard-metrics-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px' }}>
-        <WeightModule 
-          data={weightHistory} 
-          user={user} 
-          loggingWeight={loggingWeight} 
-          newWeight={newWeight} 
-          setNewWeight={setNewWeight} 
-          handleWeightUpdate={handleWeightUpdate} 
-        />
-        <WorkoutTimeGraph history={rawHistory} todayValue={activeMinutes} goal={user?.dailyGoals?.activeMinutes} />
-        <WellnessScoreGraph history={rawHistory} todaySummary={summary} />
+      {/* Desktop Layout - Shows all graphs */}
+      <div className="desktop-only">
+        <style>{`@media (max-width: 768px) { .desktop-only { display: none; } }`}</style>
+        <div className="dashboard-metrics-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px', marginBottom: '24px' }}>
+          {renderGraph(0)}
+          {renderGraph(1)}
+          {renderGraph(2)}
+        </div>
+        <div className="dashboard-middle-grid" style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: '24px' }}>
+          {renderGraph(3)}
+          {renderGraph(4)}
+        </div>
       </div>
 
-      <div className="dashboard-middle-grid" style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: '24px' }}>
-        <MacroChart protein={protein} carbs={carbs} fat={fat} targetCals={user?.dailyGoals?.calories} consumedCals={caloriesConsumed} />
-        <GoalAchievementView history={rawHistory} goals={user?.dailyGoals} todaySummary={summary} />
+      {/* Mobile Layout - Carousel */}
+      <div className="mobile-only">
+        <style>{`@media (min-width: 769px) { .mobile-only { display: none; } }`}</style>
+        <div className="mobile-graph-container">
+          {renderGraph(activeGraphIndex)}
+          <div className="graph-switcher-nav">
+            {[0, 1, 2, 3, 4].map(i => (
+              <div 
+                key={i} 
+                className={`graph-dot ${activeGraphIndex === i ? 'active' : ''}`}
+                onClick={() => setActiveGraphIndex(i)}
+              />
+            ))}
+          </div>
+        </div>
       </div>
 
       <div className="progress-grid" style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
