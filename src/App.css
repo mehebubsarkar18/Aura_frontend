@@ -200,9 +200,28 @@
     gap: 20px;
   }
 
+  /* Dashboard mobile grid fix - 2 columns for smaller cards */
+  .dashboard-metrics-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+  }
+
   .progress-grid {
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 16px !important;
+  }
+
+  /* Food search suggestion mobile fix */
+  .food-search-container {
+    position: relative;
+  }
+  
+  .food-suggestions-dropdown {
+    width: 100% !important;
+    left: 0 !important;
+    right: 0 !important;
+    box-sizing: border-box;
   }
 }
 

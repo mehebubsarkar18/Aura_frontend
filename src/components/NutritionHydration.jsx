@@ -70,9 +70,41 @@ const NutritionHydration = ({ user, onLogsUpdated, onViewHistory, initialViewHis
   const handleFoodInputChange = (e) => {
     const val = e.target.value;
     setFoodItem(val);
-    if (val.trim().length > 1) {
-      const filtered = (INDIAN_FOOD_DATABASE || []).filter(f => f.name.toLowerCase().includes(val.toLowerCase()));
-      setSuggestions(filtered.slice(0, 10)); // Limit suggestions
+    
+    if (val.trim().length > 0) {
+      const query = val.toLowerCase().trim();
+      const terms = query.split(/\s+/);
+      
+      const filtered = (INDIAN_FOOD_DATABASE || [])
+        .map(food => {
+          const name = food.name.toLowerCase();
+          let score = 0;
+          
+          // Exact match get highest priority
+          if (name === query) score += 100;
+          
+          // Starts with get high priority
+          if (name.startsWith(query)) score += 60;
+          
+          // Word starts with
+          const words = name.split(/\s+/);
+          if (words.some(word => word.startsWith(query))) score += 40;
+
+          // Multi-term matching (all terms must be present)
+          const allTermsMatch = terms.every(term => name.includes(term));
+          if (allTermsMatch) score += 30;
+
+          // Partial matches
+          const matchCount = terms.filter(term => name.includes(term)).length;
+          score += matchCount * 5;
+
+          return { ...food, score };
+        })
+        .filter(food => food.score > 5) // Minimum score threshold
+        .sort((a, b) => b.score - a.score || a.name.localeCompare(b.name))
+        .slice(0, 10);
+
+      setSuggestions(filtered);
       setShowSuggestions(true);
     } else {
       setShowSuggestions(false);
@@ -288,18 +320,49 @@ const NutritionHydration = ({ user, onLogsUpdated, onViewHistory, initialViewHis
             <Plus size={20} style={{ color: 'var(--color-orange)' }} /> Log Meal
           </h3>
           <form onSubmit={handleLogFood} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-            <div style={{ position: 'relative' }} ref={suggestionRef}>
+            <div className="food-search-container" style={{ position: 'relative' }} ref={suggestionRef}>
               <label style={{ fontSize: '0.85rem', fontWeight: '700', color: 'var(--text-secondary)', display: 'block', marginBottom: '6px' }}>Food Name</label>
               <div style={{ position: 'relative' }}>
                 <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.5 }} />
                 <input type="text" className="glass-input" value={foodItem} onChange={handleFoodInputChange} placeholder="Search..." style={{ width: '100%', paddingLeft: '38px', padding: '8px 12px', fontSize: '0.95rem' }} required />
               </div>
               {showSuggestions && suggestions.length > 0 && (
-                <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, background: 'var(--bg-primary)', border: '1px solid var(--glass-card-border)', borderRadius: '10px', marginTop: '6px', zIndex: 100, maxHeight: '200px', overflowY: 'auto', padding: '8px', boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}>
+                <div className="glass-panel food-suggestions-dropdown" style={{ position: 'absolute', top: '100%', left: 0, right: 0, marginTop: '8px', zIndex: 100, maxHeight: '280px', overflowY: 'auto', padding: '10px', boxShadow: '0 12px 40px rgba(0,0,0,0.6)', border: '1px solid var(--glass-card-border)' }}>
                   {suggestions.map((s, i) => (
-                    <div key={i} onClick={() => selectSuggestion(s)} style={{ padding: '8px', borderRadius: '8px', cursor: 'pointer', marginBottom: '3px', background: 'var(--icon-bg)', fontSize: '0.85rem' }}>
-                      <div style={{ fontWeight: '700', color: 'var(--text-primary)' }}>{s.name}</div>
-                      <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>{s.calories} kcal • P:{s.protein} C:{s.carbs} F:{s.fat}</div>
+                    <div 
+                      key={i} 
+                      onClick={() => selectSuggestion(s)} 
+                      className="suggestion-item"
+                      style={{ 
+                        padding: '12px', 
+                        borderRadius: '12px', 
+                        cursor: 'pointer', 
+                        marginBottom: '6px', 
+                        background: 'var(--card-overlay)', 
+                        transition: 'all 0.2s ease',
+                        border: '1px solid transparent'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = 'var(--icon-bg)';
+                        e.currentTarget.style.borderColor = 'rgba(253, 90, 32, 0.3)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = 'var(--card-overlay)';
+                        e.currentTarget.style.borderColor = 'transparent';
+                      }}
+                    >
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                        <div style={{ fontWeight: '800', color: 'var(--text-primary)', fontSize: '0.95rem' }}>{s.name}</div>
+                        <div style={{ fontSize: '0.75rem', fontWeight: '800', color: 'var(--color-orange)' }}>{s.calories} kcal</div>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div style={{ display: 'flex', gap: '8px', fontSize: '0.7rem', fontWeight: '600', color: 'var(--text-secondary)' }}>
+                          <span style={{ color: '#3b82f6' }}>P: {s.protein}g</span>
+                          <span style={{ color: 'var(--color-orange)' }}>C: {s.carbs}g</span>
+                          <span style={{ color: 'var(--color-green)' }}>F: {s.fat}g</span>
+                        </div>
+                        {s.unit && <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontStyle: 'italic' }}>per {s.unit}</div>}
+                      </div>
                     </div>
                   ))}
                 </div>
