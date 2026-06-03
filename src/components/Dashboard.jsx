@@ -35,11 +35,8 @@ const MacroChart = ({ protein = 0, carbs = 0, fat = 0, targetCals = 2000, consum
 
   return (
     <div className="glass-panel premium-graph-card" style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
-      <div className="graph-header">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
         <h3 style={{ fontSize: '1.2rem', fontWeight: '800' }}>Macronutrients</h3>
-        <div style={{ background: 'var(--icon-bg)', padding: '6px', borderRadius: '8px' }}>
-          <PieChart size={18} style={{ color: 'var(--color-orange)' }} />
-        </div>
       </div>
       <div className="graph-container-inner" style={{ display: 'flex', gap: '24px', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
         <div style={{ position: 'relative', width: '140px', height: '140px' }}>
