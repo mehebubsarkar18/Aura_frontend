@@ -118,6 +118,20 @@ function App() {
 
       <aside className="glass-panel app-sidebar">
         <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+          <div className="brand-lockup" style={{ display: 'flex', alignItems: 'center', gap: '10px', paddingLeft: '4px', marginBottom: '40px' }}>
+            <div style={{ 
+              background: 'linear-gradient(135deg, var(--color-orange), hsl(340, 90%, 50%))', 
+              width: '32px', 
+              height: '32px', 
+              borderRadius: '9px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              <Dumbbell size={18} color="white" strokeWidth={2.5} />
+            </div>
+            <h2 className="text-gradient" style={{ fontSize: '1.5rem' }}>AuraFit</h2>
+          </div>
           <nav className="app-nav" style={{ flex: 1, marginTop: 0 }}>
             {[
               { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard' },
@@ -148,7 +162,7 @@ function App() {
             onClick={() => setActiveTab(id)} 
             className={`nav-item ${activeTab === id ? 'active' : ''}`}
           >
-            <Icon size={26} strokeWidth={3} />
+            <Icon size={28} strokeWidth={3.5} />
           </button>
         ))}
       </nav>
