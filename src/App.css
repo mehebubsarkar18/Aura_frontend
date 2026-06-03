@@ -202,8 +202,8 @@
 .graph-item-weight   { grid-column: span 4; order: 1; }
 .graph-item-workout  { grid-column: span 4; order: 2; }
 .graph-item-wellness { grid-column: span 4; order: 3; }
-.graph-item-macros   { grid-column: span 7; order: 4; }
-.graph-item-aura     { grid-column: span 5; order: 5; }
+.graph-item-macros   { grid-column: span 6; order: 4; }
+.graph-item-aura     { grid-column: span 6; order: 5; }
 
 @media (max-width: 900px) {
   .app-container { flex-direction: column !important; }
@@ -379,6 +379,18 @@
   border-radius: 6px 6px 0 0;
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   cursor: pointer;
+}
+
+.bar-workout { background: var(--color-green) !important; }
+.bar-wellness { background: var(--color-violet) !important; }
+
+.bar-value-label {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-weight: 900;
+  text-align: center;
+  white-space: nowrap;
 }
 
 .premium-graph-card {
