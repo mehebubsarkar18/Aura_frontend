@@ -148,6 +148,25 @@ function App() {
         </div>
       </aside>
 
+      {/* Floating Bottom Nav for Mobile */}
+      <nav className="bottom-nav">
+        {[
+          { id: 'dashboard', icon: LayoutDashboard },
+          { id: 'workouts', icon: Dumbbell },
+          { id: 'nutrition', icon: Droplet },
+          { id: 'wellness', icon: Heart },
+          { id: 'settings', icon: SettingsIcon }
+        ].map(({ id, icon: Icon }) => (
+          <button 
+            key={id} 
+            onClick={() => setActiveTab(id)} 
+            className={`nav-item ${activeTab === id ? 'active' : ''}`}
+          >
+            <Icon size={22} strokeWidth={2.5} />
+          </button>
+        ))}
+      </nav>
+
       <main className="main-content">
         {activeTab === 'dashboard' && <Dashboard user={user} />}
         
