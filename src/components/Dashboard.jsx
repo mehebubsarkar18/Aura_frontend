@@ -488,3 +488,5 @@ const Dashboard = ({ user }) => {
     </div>
   );
 };
+
+export default Dashboard;
