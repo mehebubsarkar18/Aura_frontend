@@ -303,8 +303,8 @@ const WorkoutTracker = ({ onWorkoutLogged, onViewHistory, initialViewHistory = f
                 <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', fontWeight: '700' }}>
                   {inProgressId === p.id ? formatTime(timeLeft) : `${p.durationMin} MIN`}
                 </p>
-                <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '16px' }}>
-                  <button onClick={() => startSession(p)} className="btn btn-primary" style={{ width: '100%', padding: '10px' }}>
+                <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '16px', alignItems: 'center' }}>
+                  <button onClick={() => startSession(p)} className="btn btn-primary" style={{ width: '100%', maxWidth: '160px', padding: '10px' }}>
                     {inProgressId === p.id ? 'RESUME' : 'START'}
                   </button>
                   <button 
@@ -312,10 +312,13 @@ const WorkoutTracker = ({ onWorkoutLogged, onViewHistory, initialViewHistory = f
                     className="btn btn-ghost" 
                     style={{ 
                       width: '100%', 
+                      maxWidth: '160px',
                       padding: '8px', 
                       fontSize: '0.75rem', 
-                      border: '1px solid var(--glass-card-border)',
-                      background: 'rgba(255,255,255,0.02)'
+                      border: '1px solid rgba(253, 90, 32, 0.3)',
+                      background: 'rgba(253, 90, 32, 0.1)',
+                      color: 'var(--color-orange)',
+                      fontWeight: '800'
                     }}
                   >
                     Benefits of This
