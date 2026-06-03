@@ -453,12 +453,26 @@ const WellnessScoreGraph = ({ history, todaySummary }) => {
 
 const Dashboard = ({ user }) => {
   const [selectedDate] = useState(new Date().toISOString().split('T')[0]);
-  const [summary, setSummary] = useState(null);
-  const [weightHistory, setWeightHistory] = useState(
-    user?.weight ? [{ day: 'Start', val: user.weight }] : []
-  );
-  const [rawHistory, setRawHistory] = useState([]);
-  const [loading, setLoading] = useState(true);
+  
+  // Synchronous initial data from cache for ultra-fast loading
+  const initialSummary = api.getCached(`dashboard_summary_${selectedDate || 'today'}`);
+  const initialRawHistory = api.getCached('dashboard_history') || [];
+  const initialWeightData = api.getCached('weight_history');
+  
+  const getInitialWeightHistory = () => {
+    if (initialWeightData) {
+      return (initialWeightData.data || []).map((d, idx) => ({ 
+        day: idx === 0 && (initialWeightData.data || []).length > 1 ? 'Start' : new Date(d.loggedAt).toLocaleDateString([], { month: 'short', day: 'numeric' }), 
+        val: d.weight 
+      }));
+    }
+    return user?.weight ? [{ day: 'Start', val: user.weight }] : [];
+  };
+
+  const [summary, setSummary] = useState(initialSummary);
+  const [weightHistory, setWeightHistory] = useState(getInitialWeightHistory());
+  const [rawHistory, setRawHistory] = useState(initialRawHistory);
+  const [loading, setLoading] = useState(!initialSummary); // Don't show loader if we have cached summary
   const [newWeight, setNewWeight] = useState('');
   const [loggingWeight, setLoggingWeight] = useState(false);
   
@@ -482,22 +496,6 @@ const Dashboard = ({ user }) => {
       if (hRes && hRes.success) setRawHistory(hRes.history || []);
       if (sRes && sRes.success) setSummary(sRes.summary);
     };
-
-    // Try to get from cache first for instant load
-    try {
-      const [wCached, hCached, sCached] = await Promise.all([
-        api.getWeightHistory(true),
-        api.getDashboardHistory(true),
-        api.getTodaySummary(date, true)
-      ]);
-      
-      if (wCached && hCached && sCached) {
-        processData(wCached, hCached, sCached);
-        setLoading(false);
-      }
-    } catch (e) {
-      console.warn('Cache load failed', e);
-    }
 
     // Always fetch fresh data in background
     try {

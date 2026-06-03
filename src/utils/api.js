@@ -58,6 +58,7 @@ const clearCache = (pattern) => {
 };
 
 export const api = {
+  getCached: getCache,
   // Auth endpoints
   login: async (email, password) => {
     const res = await fetch(`${API_BASE_URL}/auth/login`, {
@@ -87,12 +88,19 @@ export const api = {
     return data;
   },
 
-  getMe: async () => {
+  getMe: async (useCache = true) => {
+    const cacheKey = 'user_me';
+    if (useCache) {
+      const cached = getCache(cacheKey);
+      if (cached) return cached;
+    }
     const res = await fetch(`${API_BASE_URL}/auth/me`, {
       method: 'GET',
       headers: getHeaders(),
     });
-    return await handleResponse(res);
+    const data = await handleResponse(res);
+    setCache(cacheKey, data);
+    return data;
   },
 
   completeOnboarding: async (profileData) => {
@@ -101,7 +109,9 @@ export const api = {
       headers: getHeaders(),
       body: JSON.stringify(profileData),
     });
-    return await handleResponse(res);
+    const data = await handleResponse(res);
+    clearCache('user_me');
+    return data;
   },
 
   updateGoals: async (goals) => {
@@ -110,8 +120,10 @@ export const api = {
       headers: getHeaders(),
       body: JSON.stringify(goals),
     });
+    const data = await handleResponse(res);
     clearCache('dashboard'); // Specific cache invalidation
-    return await handleResponse(res);
+    clearCache('user_me');
+    return data;
   },
 
   changePassword: async (passwordData) => {

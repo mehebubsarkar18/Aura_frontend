@@ -12,9 +12,12 @@ import Settings from './components/Settings';
 import { LayoutDashboard, Dumbbell, Droplet, Heart, User as UserIcon, Settings as SettingsIcon } from 'lucide-react';
 
 function App() {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    const cached = api.getCached('user_me');
+    return cached ? cached.user : null;
+  });
   const [activeTab, setActiveTab] = useState('dashboard');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!user && !!localStorage.getItem('token'));
   const [authView, setAuthView] = useState('landing');
 
   useEffect(() => {
@@ -26,18 +29,18 @@ function App() {
       const token = localStorage.getItem('token');
       if (token) {
         try {
-          const profileData = await api.getMe();
+          // Fetch fresh profile in background
+          const profileData = await api.getMe(false);
           setUser(profileData.user);
-          // Keep authView as 'landing' to show prelogin page first
         } catch (error) {
           console.error('Auth initialization failed', error);
-          api.logout();
+          if (!user) api.logout(); // Only logout if we don't even have cached user
         }
       }
       setLoading(false);
     };
     initAuth();
-  }, []);
+  }, [user]);
 
   const refreshSummary = async () => {
     // This is now handled by components internally if needed, 
