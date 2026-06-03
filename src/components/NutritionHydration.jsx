@@ -406,11 +406,13 @@ const NutritionHydration = ({ user, onLogsUpdated, onViewHistory, initialViewHis
              <p style={{ marginTop: '2px', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Goal: {dailyWater} mL</p>
            </div>
 
-           <div className="aura-fill-container">
-              <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: `${hydrationPct}%`, transition: 'height 1.2s cubic-bezier(0.16, 1, 0.3, 1)', background: 'linear-gradient(180deg, var(--color-cyan), #0891b2)', boxShadow: '0 -4px 15px rgba(6, 182, 212, 0.4)' }}>
-                <div className="aura-fill-glow" />
+           <div className="drop-pulse-container">
+              <div className="drop-outer-ring" />
+              <div className="drop-progress-ring" style={{ transform: `rotate(${(hydrationPct / 100) * 360}deg)` }} />
+              <div className="drop-center-icon">
+                <Droplet size={48} fill="currentColor" opacity={0.2 + (hydrationPct / 125)} />
               </div>
-              <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', fontWeight: '900', fontSize: '1.8rem', color: 'var(--text-primary)', textShadow: '0 0 12px rgba(0,0,0,0.1)' }}>{Math.round(hydrationPct)}%</div>
+              <div style={{ position: 'absolute', fontWeight: '900', fontSize: '1.2rem', color: 'var(--text-primary)', marginTop: '40px' }}>{Math.round(hydrationPct)}%</div>
            </div>
 
            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', width: '100%' }}>

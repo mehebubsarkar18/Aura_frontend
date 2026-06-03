@@ -67,9 +67,13 @@ function App() {
 
   if (loading) {
     return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: 'var(--bg-primary)' }}>
-        <div style={{ width: '40px', height: '40px', border: '3px solid rgba(253, 90, 32, 0.15)', borderTopColor: 'var(--color-orange)', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
-        <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
+      <div className="app-loading-container" style={{ background: 'var(--bg-primary)', height: '100vh' }}>
+        <div className="aura-pulse">
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+        <div className="loading-text">LOADING YOUR AURA</div>
       </div>
     );
   }

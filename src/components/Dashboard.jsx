@@ -440,8 +440,9 @@ const Dashboard = ({ user }) => {
   };
 
   if (loading) return (
-    <div className="loading-screen">
+    <div className="loading-screen" style={{ height: '70vh' }}>
       <div className="aura-pulse">
+        <div></div>
         <div></div>
         <div></div>
       </div>
