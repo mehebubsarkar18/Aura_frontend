@@ -212,12 +212,12 @@
     gap: 20px !important;
   }
   
-  /* Reset orders for mobile to follow JSX order (Macros -> Aura -> Workout -> Wellness -> Weight) */
-  .graph-item-macros   { order: 1; width: 100%; }
-  .graph-item-aura     { order: 2; width: 100%; }
-  .graph-item-workout  { order: 3; width: 100%; }
-  .graph-item-wellness { order: 4; width: 100%; }
-  .graph-item-weight   { order: 5; width: 100%; }
+  /* Reset orders and grid columns for mobile to follow JSX order */
+  .graph-item-macros   { order: 1; width: 100% !important; grid-column: span 12 !important; }
+  .graph-item-aura     { order: 2; width: 100% !important; grid-column: span 12 !important; }
+  .graph-item-workout  { order: 3; width: 100% !important; grid-column: span 12 !important; }
+  .graph-item-wellness { order: 4; width: 100% !important; grid-column: span 12 !important; }
+  .graph-item-weight   { order: 5; width: 100% !important; grid-column: span 12 !important; }
 
   .dashboard-metrics-grid, .dashboard-middle-grid {
     display: none !important; /* Cleanup old classes */
