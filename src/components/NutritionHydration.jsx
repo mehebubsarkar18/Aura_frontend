@@ -406,13 +406,17 @@ const NutritionHydration = ({ user, onLogsUpdated, onViewHistory, initialViewHis
              <p style={{ marginTop: '2px', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Goal: {dailyWater} mL</p>
            </div>
 
-           <div className="drop-pulse-container">
-              <div className="drop-outer-ring" />
-              <div className="drop-progress-ring" style={{ transform: `rotate(${(hydrationPct / 100) * 360}deg)` }} />
-              <div className="drop-center-icon">
-                <Droplet size={48} fill="currentColor" opacity={0.2 + (hydrationPct / 125)} />
+           <div className="hydration-glass-container">
+              <div className="hydration-glass">
+                <div className="hydration-water" style={{ height: `${hydrationPct}%` }}>
+                  <div className="hydration-water-wave" />
+                </div>
               </div>
-              <div style={{ position: 'absolute', fontWeight: '900', fontSize: '1.2rem', color: 'var(--text-primary)', marginTop: '40px' }}>{Math.round(hydrationPct)}%</div>
+              <div className="glass-base-decoration" />
+              <div className="loading-text" style={{ fontSize: '1.4rem', color: 'var(--color-cyan)', marginTop: '10px' }}>
+                {hydrationPct >= 100 ? 'Hydrated!' : hydrationPct > 85 ? 'Almost Full' : 'Filling up...'}
+              </div>
+              <div style={{ fontSize: '2rem', fontWeight: '900', color: 'var(--text-primary)' }}>{Math.round(hydrationPct)}%</div>
            </div>
 
            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', width: '100%' }}>
