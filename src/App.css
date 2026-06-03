@@ -200,21 +200,64 @@
     gap: 20px;
   }
 
-  /* Dashboard mobile grid fix - 2 columns for smaller cards */
+  /* Dashboard mobile grid fix - 2-2-1 layout */
   .dashboard-metrics-grid {
     display: grid !important;
     grid-template-columns: repeat(2, 1fr) !important;
-    gap: 12px !important;
+    gap: 8px !important;
+  }
+
+  .dashboard-metrics-grid > *:last-child {
+    grid-column: span 2 !important;
+  }
+
+  .dashboard-middle-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  .dashboard-middle-grid > *:last-child {
+    grid-column: span 2 !important;
   }
 
   .progress-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 16px !important;
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 6px !important;
+    padding: 0 !important;
+    width: 100% !important;
+  }
+
+  .progress-grid > * {
+    min-width: 0 !important;
+    padding: 8px 4px !important;
+    flex-direction: column !important;
+    text-align: center !important;
+    gap: 4px !important;
+  }
+
+  .progress-grid svg {
+    width: 12px !important;
+    height: 12px !important;
+  }
+
+  .progress-grid h3 {
+    font-size: 0.75rem !important;
+    margin-top: 2px !important;
+  }
+
+  .progress-grid span {
+    font-size: 0.5rem !important;
   }
 
   /* Food search suggestion mobile fix */
   .food-search-container {
     position: relative;
+  }
+
+  .food-search-input {
+    padding-left: 12px !important; /* Removed icon padding */
   }
   
   .food-suggestions-dropdown {
@@ -222,6 +265,52 @@
     left: 0 !important;
     right: 0 !important;
     box-sizing: border-box;
+  }
+
+  /* Nav Bar Refinement */
+  .app-nav {
+    display: flex !important;
+    justify-content: space-around !important;
+    padding: 0 4px !important;
+    width: 100% !important;
+  }
+
+  .nav-button {
+    padding: 4px !important;
+    flex: 1 !important;
+  }
+
+  .nav-button span {
+    font-weight: 800 !important;
+    font-size: 0.6rem !important;
+    letter-spacing: -0.02em;
+    margin-top: 2px;
+  }
+
+  /* Component size reductions */
+  .btn {
+    padding: 5px 10px !important;
+    font-size: 0.75rem !important;
+    font-weight: 800 !important;
+  }
+
+  .page-title {
+    font-size: 1.5rem !important;
+  }
+
+  .glass-panel h3, .glass-panel h2 {
+    font-size: 1rem !important;
+  }
+
+  .text-gradient {
+    letter-spacing: -0.03em;
+  }
+
+  /* Wellness width fix */
+  .wellness-container, .wellness-grid, .wellness-left {
+    width: 100% !important;
+    max-width: 100% !important;
+    grid-column: span 1 !important;
   }
 }
 

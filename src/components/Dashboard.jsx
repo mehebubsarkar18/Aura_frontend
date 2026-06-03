@@ -464,7 +464,7 @@ const Dashboard = ({ user }) => {
         <WellnessScoreGraph history={rawHistory} todaySummary={summary} />
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: '24px' }}>
+      <div className="dashboard-middle-grid" style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: '24px' }}>
         <MacroChart protein={protein} carbs={carbs} fat={fat} targetCals={user?.dailyGoals?.calories} consumedCals={caloriesConsumed} />
         <GoalAchievementView history={rawHistory} goals={user?.dailyGoals} todaySummary={summary} />
       </div>

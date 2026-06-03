@@ -323,8 +323,7 @@ const NutritionHydration = ({ user, onLogsUpdated, onViewHistory, initialViewHis
             <div className="food-search-container" style={{ position: 'relative' }} ref={suggestionRef}>
               <label style={{ fontSize: '0.85rem', fontWeight: '700', color: 'var(--text-secondary)', display: 'block', marginBottom: '6px' }}>Food Name</label>
               <div style={{ position: 'relative' }}>
-                <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.5 }} />
-                <input type="text" className="glass-input" value={foodItem} onChange={handleFoodInputChange} placeholder="Search..." style={{ width: '100%', paddingLeft: '38px', padding: '8px 12px', fontSize: '0.95rem' }} required />
+                <input type="text" className="glass-input food-search-input" value={foodItem} onChange={handleFoodInputChange} placeholder="Search..." style={{ width: '100%', padding: '8px 12px', fontSize: '0.95rem' }} required />
               </div>
               {showSuggestions && suggestions.length > 0 && (
                 <div className="glass-panel food-suggestions-dropdown" style={{ position: 'absolute', top: '100%', left: 0, right: 0, marginTop: '8px', zIndex: 100, maxHeight: '280px', overflowY: 'auto', padding: '10px', boxShadow: '0 12px 40px rgba(0,0,0,0.6)', border: '1px solid var(--glass-card-border)' }}>
