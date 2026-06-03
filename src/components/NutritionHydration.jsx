@@ -408,7 +408,7 @@ const NutritionHydration = ({ user, onLogsUpdated, onViewHistory, initialViewHis
               </div>
             </div>
 
-            <button type="submit" className="btn btn-primary" style={{ marginTop: '4px', padding: '10px' }}>LOG MEAL</button>
+            <button type="submit" className="btn btn-primary btn-narrow" style={{ marginTop: '4px' }}>LOG MEAL</button>
           </form>
         </div>
 

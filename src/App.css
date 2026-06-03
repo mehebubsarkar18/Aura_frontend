@@ -389,6 +389,23 @@
   }
 }
 
+/* Narrow button utility for both PC and Mobile */
+.btn-narrow {
+  width: 100% !important;
+  max-width: 160px !important;
+  display: block !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+@media (max-width: 768px) {
+  .btn-narrow {
+    max-width: 130px !important;
+    font-size: 0.65rem !important;
+    padding: 4px 10px !important;
+  }
+}
+
 /* History buttons colorful on Desktop too but more subtle */
 .btn-history-orange, .btn-history-green, .btn-history-violet, .btn-history-cyan {
   transition: all 0.2s ease;

@@ -304,15 +304,13 @@ const WorkoutTracker = ({ onWorkoutLogged, onViewHistory, initialViewHistory = f
                   {inProgressId === p.id ? formatTime(timeLeft) : `${p.durationMin} MIN`}
                 </p>
                 <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '16px', alignItems: 'center' }}>
-                  <button onClick={() => startSession(p)} className="btn btn-primary" style={{ width: '100%', maxWidth: '160px', padding: '10px' }}>
+                  <button onClick={() => startSession(p)} className="btn btn-primary btn-narrow">
                     {inProgressId === p.id ? 'RESUME' : 'START'}
                   </button>
                   <button 
                     onClick={() => setSelectedBenefits(p)} 
-                    className="btn btn-ghost" 
+                    className="btn btn-ghost btn-narrow" 
                     style={{ 
-                      width: '100%', 
-                      maxWidth: '160px',
                       padding: '8px', 
                       fontSize: '0.75rem', 
                       border: '1px solid rgba(34, 211, 238, 0.3)',
