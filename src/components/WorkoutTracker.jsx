@@ -315,9 +315,9 @@ const WorkoutTracker = ({ onWorkoutLogged, onViewHistory, initialViewHistory = f
                       maxWidth: '160px',
                       padding: '8px', 
                       fontSize: '0.75rem', 
-                      border: '1px solid rgba(253, 90, 32, 0.3)',
-                      background: 'rgba(253, 90, 32, 0.1)',
-                      color: 'var(--color-orange)',
+                      border: '1px solid rgba(34, 211, 238, 0.3)',
+                      background: 'rgba(34, 211, 238, 0.1)',
+                      color: 'var(--color-cyan)',
                       fontWeight: '800'
                     }}
                   >
