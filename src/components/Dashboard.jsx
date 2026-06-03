@@ -34,9 +34,9 @@ const MacroChart = ({ protein = 0, carbs = 0, fat = 0, targetCals = 2000, consum
   const fPct = (fat * 9 / total) * 100;
 
   return (
-    <div className="glass-panel premium-graph-card" style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+    <div className="glass-panel premium-graph-card" style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '16px', height: '280px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-        <h3 style={{ fontSize: '1.1rem', fontWeight: '800' }}>Macronutrients</h3>
+        <h3 style={{ fontSize: '1.1rem', fontWeight: '800' }}>Micronutrients</h3>
       </div>
       <div className="graph-container-inner" style={{ display: 'flex', gap: '20px', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
         <div style={{ position: 'relative', width: '120px', height: '120px' }}>
@@ -260,23 +260,37 @@ const WorkoutTimeGraph = ({ history, todayValue, goal = 45 }) => {
           )}
         </div>
       ) : (
-        <div className="graph-container-inner" style={{ height: '180px', display: 'flex', justifyContent: 'space-between', gap: '6px', marginTop: '20px' }}>
-          {history.map((d, i) => (
-            <div key={i} className="chart-bar-wrapper">
-              <div style={{ flex: 1, position: 'relative', display: 'flex', alignItems: 'flex-end', width: '100%' }}>
-                <div 
-                  className="chart-bar bar-premium bar-workout" 
-                  style={{ 
-                    height: `${(d.activeMinutes / maxMin) * 100}%`,
-                    width: '100%'
-                  }}
-                >
-                   {d.activeMinutes > 0 ? <div className="bar-value-label workout-text" style={{ fontSize: '0.65rem', top: '-22px' }}>{d.activeMinutes}</div> : null}
+        <div className="graph-container-inner" style={{ height: '180px', display: 'flex', justifyContent: 'space-between', gap: '8px', marginTop: '25px', position: 'relative' }}>
+          {history.map((d, i) => {
+            const barHeight = d.activeMinutes > 0 ? Math.max(5, (d.activeMinutes / maxMin) * 85) : 0;
+            return (
+              <div key={i} className="chart-bar-wrapper">
+                <div style={{ flex: 1, position: 'relative', display: 'flex', alignItems: 'flex-end', width: '100%', background: 'rgba(255,255,255,0.03)', borderRadius: '6px' }}>
+                  <div 
+                    className="bar-value-label workout-text" 
+                    style={{ 
+                      fontSize: '0.7rem', 
+                      top: '-22px',
+                      opacity: d.activeMinutes > 0 ? 1 : 0.3
+                    }}
+                  >
+                    {d.activeMinutes}
+                  </div>
+                  <div 
+                    className="chart-bar bar-premium bar-workout" 
+                    style={{ 
+                      height: `${barHeight || 2}%`,
+                      width: '100%',
+                      minWidth: '16px',
+                      background: 'var(--color-green)',
+                      opacity: d.activeMinutes > 0 ? 1 : 0.1
+                    }}
+                  />
                 </div>
+                <span className="chart-day-label" style={{ textAlign: 'center', display: 'block', fontSize: '0.7rem', marginTop: '8px', fontWeight: '800' }}>{d.day}</span>
               </div>
-              <span className="chart-day-label" style={{ textAlign: 'center', display: 'block', fontSize: '0.7rem', marginTop: '8px' }}>{d.day}</span>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>
@@ -348,21 +362,31 @@ const WellnessScoreGraph = ({ history, todaySummary }) => {
           )}
         </div>
       ) : (
-        <div className="graph-container-inner" style={{ height: '180px', display: 'flex', justifyContent: 'space-between', gap: '6px', marginTop: '20px' }}>
+        <div className="graph-container-inner" style={{ height: '180px', display: 'flex', justifyContent: 'space-between', gap: '8px', marginTop: '20px' }}>
           {wellnessData.map((d, i) => (
             <div key={i} className="chart-bar-wrapper">
-              <div style={{ flex: 1, position: 'relative', display: 'flex', alignItems: 'flex-end', width: '100%' }}>
+              <div style={{ flex: 1, position: 'relative', display: 'flex', alignItems: 'flex-end', width: '100%', background: 'rgba(255,255,255,0.03)', borderRadius: '6px' }}>
+                <div 
+                  className="bar-value-label wellness-text" 
+                  style={{ 
+                    fontSize: '0.65rem', 
+                    top: '-22px',
+                    opacity: d.score > 0 ? 1 : 0.3
+                  }}
+                >
+                  {d.score}
+                </div>
                 <div 
                   className="chart-bar bar-premium bar-wellness" 
                   style={{ 
-                    height: `${(d.score / 10) * 100}%`,
-                    width: '100%'
+                    height: `${(d.score / 10) * 100 || 2}%`,
+                    width: '100%',
+                    background: 'var(--color-violet)',
+                    opacity: d.score > 0 ? 1 : 0.1
                   }}
-                >
-                   {d.score > 0 ? <div className="bar-value-label wellness-text" style={{ fontSize: '0.65rem', top: '-22px' }}>{d.score}</div> : null}
-                </div>
+                />
               </div>
-              <span className="chart-day-label" style={{ textAlign: 'center', display: 'block', fontSize: '0.7rem', marginTop: '8px' }}>{d.day}</span>
+              <span className="chart-day-label" style={{ textAlign: 'center', display: 'block', fontSize: '0.7rem', marginTop: '8px', fontWeight: '800' }}>{d.day}</span>
             </div>
           ))}
         </div>
