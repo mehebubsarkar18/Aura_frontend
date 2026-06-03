@@ -270,19 +270,55 @@
     margin-bottom: 20px;
   }
 
+  /* Progress grid refinement - 2 in a row for better visibility */
   .progress-grid {
     display: grid !important;
-    grid-template-columns: repeat(4, 1fr) !important;
-    gap: 6px !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
     margin-top: 10px !important;
     width: 100% !important;
   }
 
-  .progress-grid h3 { font-size: 0.75rem !important; }
+  .progress-grid > * {
+    padding: 14px 10px !important;
+    min-width: 0 !important;
+  }
+
+  .progress-grid h3 { 
+    font-size: 1.1rem !important; 
+    margin-top: 4px !important;
+  }
+
+  .progress-grid span {
+    font-size: 0.75rem !important;
+  }
+
+  /* Workout presets - 2 in a row */
+  .preset-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+  }
+
+  /* Settings - smaller buttons */
+  .settings-page .btn {
+    padding: 8px 16px !important;
+    font-size: 0.9rem !important;
+    min-height: 40px !important;
+  }
+
+  /* Wellness width fix */
+  .wellness-container, .wellness-grid, .wellness-left {
+    width: 100% !important;
+    max-width: 100% !important;
+    grid-column: span 1 !important;
+    margin: 0 !important;
+  }
 }
 
 @media (max-width: 480px) {
-  .progress-grid { grid-template-columns: repeat(4, 1fr) !important; }
+  .progress-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  .preset-grid { grid-template-columns: repeat(2, 1fr) !important; }
 }
 
 /* Dashboard Chart Styles */

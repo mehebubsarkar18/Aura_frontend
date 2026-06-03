@@ -11,8 +11,8 @@ const ProgressRing = ({ percentage, color, icon: Icon, title, value, unit }) => 
   const strokeDashoffset = circumference - (safePercentage / 100) * circumference;
 
   return (
-    <div className="glass-panel glass-panel-hover" style={{ padding: '12px', display: 'flex', alignItems: 'center', gap: '12px', flex: 1, minWidth: '200px' }}>
-      <div style={{ position: 'relative', width: radius * 2, height: radius * 2 }}>
+    <div className="glass-panel glass-panel-hover" style={{ padding: '12px', display: 'flex', alignItems: 'center', gap: '12px', flex: '1 1 150px' }}>
+      <div style={{ position: 'relative', width: radius * 2, height: radius * 2, flexShrink: 0 }}>
         <svg height="100%" width="100%" viewBox={`0 0 ${radius * 2} ${radius * 2}`} style={{ transform: 'rotate(-90deg)' }}>
           <circle stroke="var(--card-overlay-hover)" fill="transparent" strokeWidth={stroke} r={normalizedRadius} cx={radius} cy={radius} />
           <circle stroke={color} fill="transparent" strokeWidth={stroke} strokeDasharray={circumference + ' ' + circumference} style={{ strokeDashoffset, transition: 'stroke-dashoffset 0.8s ease-in-out' }} strokeLinecap="round" r={normalizedRadius} cx={radius} cy={radius} />

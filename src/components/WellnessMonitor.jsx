@@ -172,8 +172,6 @@ const WellnessMonitor = ({ onWellnessLogged, onViewHistory, initialViewHistory =
             </form>
           </div>
         </div>
-
-        <div style={{ gridColumn: 'span 5' }} />
       </div>
       {showHistoryOverlay && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', zIndex: 1200, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', paddingTop: 30, backdropFilter: 'blur(8px)' }}>
