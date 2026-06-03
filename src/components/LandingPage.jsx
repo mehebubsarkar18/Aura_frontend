@@ -40,17 +40,17 @@ const LandingPage = ({ onGetStarted, onLogin }) => {
           </div>
           <h2 className="text-gradient" style={{ fontSize: '1.3rem', fontWeight: '800', letterSpacing: '-0.02em' }}>AuraFit</h2>
         </div>
-        <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }} className="nav-buttons-mobile">
           <button 
             onClick={onLogin}
-            className="btn btn-ghost"
+            className="btn btn-ghost landing-nav-btn"
             style={{ fontSize: '0.9rem', padding: '8px 18px' }}
           >
             Login
           </button>
           <button 
             onClick={onGetStarted}
-            className="btn btn-primary"
+            className="btn btn-primary landing-nav-btn"
             style={{ 
               padding: '8px 22px',
               fontSize: '0.9rem'
@@ -72,6 +72,18 @@ const LandingPage = ({ onGetStarted, onLogin }) => {
         zIndex: 10
       }} className="hero-split">
         <style>{`
+          @media (max-width: 768px) {
+            .landing-nav-btn {
+              padding: 6px 14px !important;
+              font-size: 0.8rem !important;
+            }
+            .nav-buttons-mobile {
+              gap: 8px !important;
+            }
+            .hero-trial-btn {
+              display: none !important;
+            }
+          }
           @media (max-width: 1100px) {
             .hero-split {
               grid-template-columns: 1fr !important;
@@ -122,7 +134,7 @@ const LandingPage = ({ onGetStarted, onLogin }) => {
             Experience the future of personal training. AuraFit combines precision tracking with a stunning interface to help you achieve your peak physical state.
           </p>
 
-          <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }} className="hero-trial-btn">
             <button 
               onClick={onGetStarted}
               className="btn btn-primary"

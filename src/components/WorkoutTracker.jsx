@@ -11,13 +11,84 @@ import meditationIcon from '../assets/workout-icons/icons8-meditation-50.png';
 import gymnasticsIcon from '../assets/workout-icons/icons8-gymnastics-50.png';
 
 const PRESETS = [
-  { id: 0, name: 'Strength Training', icon: pushupsIcon, color: 'var(--color-orange)', durationMin: 10, calsPerMin: 12 },
-  { id: 1, name: 'HIIT Cardio', icon: gymnasticsIcon, color: '#f87171', durationMin: 7, calsPerMin: 15 },
-  { id: 2, name: 'Bodyweight Basics', icon: squatsIcon, color: 'var(--color-cyan)', durationMin: 5, calsPerMin: 8 },
-  { id: 3, name: 'Yoga & Flow', icon: yogaIcon, color: 'var(--color-green)', durationMin: 15, calsPerMin: 4 },
-  { id: 4, name: 'Pilates Core', icon: pilatesIcon, color: 'var(--color-violet)', durationMin: 10, calsPerMin: 7 },
-  { id: 5, name: 'Mindful Rest', icon: meditationIcon, color: '#94a3b8', durationMin: 3, calsPerMin: 2 }
+  { 
+    id: 0, 
+    name: 'Strength Training', 
+    icon: pushupsIcon, 
+    color: 'var(--color-orange)', 
+    durationMin: 10, 
+    calsPerMin: 12,
+    benefits: ['Builds muscle', 'Increases strength', 'Boosts metabolism']
+  },
+  { 
+    id: 1, 
+    name: 'HIIT Cardio', 
+    icon: gymnasticsIcon, 
+    color: '#f87171', 
+    durationMin: 7, 
+    calsPerMin: 15,
+    benefits: ['Burns calories', 'Improves endurance', 'Supports fat loss']
+  },
+  { 
+    id: 2, 
+    name: 'Bodyweight Basics', 
+    icon: squatsIcon, 
+    color: 'var(--color-cyan)', 
+    durationMin: 5, 
+    calsPerMin: 8,
+    benefits: ['Improves functional strength', 'Enhances balance', 'Better mobility']
+  },
+  { 
+    id: 3, 
+    name: 'Yoga & Flow', 
+    icon: yogaIcon, 
+    color: 'var(--color-green)', 
+    durationMin: 15, 
+    calsPerMin: 4,
+    benefits: ['Enhances flexibility', 'Improves posture', 'Promotes relaxation']
+  },
+  { 
+    id: 4, 
+    name: 'Pilates Core', 
+    icon: pilatesIcon, 
+    color: 'var(--color-violet)', 
+    durationMin: 10, 
+    calsPerMin: 7,
+    benefits: ['Strengthens core', 'Improves stability', 'Better posture']
+  },
+  { 
+    id: 5, 
+    name: 'Mindful Rest', 
+    icon: meditationIcon, 
+    color: '#94a3b8', 
+    durationMin: 3, 
+    calsPerMin: 2,
+    benefits: ['Reduces stress', 'Improves recovery', 'Sharpens mental focus']
+  }
 ];
+
+const BenefitsModal = ({ workout, onClose }) => {
+  if (!workout) return null;
+  return (
+    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', zIndex: 1200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', backdropFilter: 'blur(10px)' }} onClick={onClose}>
+      <div className="glass-panel" style={{ maxWidth: '400px', width: '100%', padding: '32px', textAlign: 'center', position: 'relative', border: '1px solid var(--glass-card-border)', boxShadow: '0 20px 50px rgba(0,0,0,0.5)' }} onClick={e => e.stopPropagation()}>
+        <div style={{ width: '80px', height: '80px', borderRadius: '20px', background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', boxShadow: '0 8px 16px rgba(0,0,0,0.1)' }}>
+          <img src={workout.icon} alt="" style={{ width: '40px' }} />
+        </div>
+        <h2 style={{ fontSize: '1.8rem', fontWeight: '900', marginBottom: '16px' }} className="text-gradient">{workout.name}</h2>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'flex-start', textAlign: 'left', background: 'rgba(255,255,255,0.03)', padding: '20px', borderRadius: '16px' }}>
+          {workout.benefits.map((b, i) => (
+            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '1rem', fontWeight: '600', color: 'var(--text-primary)' }}>
+              <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--color-orange)' }} />
+              {b}
+            </div>
+          ))}
+        </div>
+        <button onClick={onClose} className="btn btn-primary" style={{ width: '100%', marginTop: '24px', padding: '12px' }}>CLOSE</button>
+      </div>
+    </div>
+  );
+};
 
 const WorkoutTracker = ({ onWorkoutLogged, onViewHistory, initialViewHistory = false, onBack }) => {
   const [history, setHistory] = useState([]);
@@ -29,6 +100,7 @@ const WorkoutTracker = ({ onWorkoutLogged, onViewHistory, initialViewHistory = f
   const [totalDuration, setTotalDuration] = useState(0);
   const [calsPerMin, setCalsPerMin] = useState(5);
   const [inProgressId, setInProgressId] = useState(null);
+  const [selectedBenefits, setSelectedBenefits] = useState(null);
   
   const intervalRef = useRef(null);
 
@@ -231,9 +303,24 @@ const WorkoutTracker = ({ onWorkoutLogged, onViewHistory, initialViewHistory = f
                 <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', fontWeight: '700' }}>
                   {inProgressId === p.id ? formatTime(timeLeft) : `${p.durationMin} MIN`}
                 </p>
-                <button onClick={() => startSession(p)} className="btn btn-primary" style={{ width: '100%', marginTop: '16px', padding: '10px' }}>
-                  {inProgressId === p.id ? 'RESUME' : 'START'}
-                </button>
+                <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '16px' }}>
+                  <button onClick={() => startSession(p)} className="btn btn-primary" style={{ width: '100%', padding: '10px' }}>
+                    {inProgressId === p.id ? 'RESUME' : 'START'}
+                  </button>
+                  <button 
+                    onClick={() => setSelectedBenefits(p)} 
+                    className="btn btn-ghost" 
+                    style={{ 
+                      width: '100%', 
+                      padding: '8px', 
+                      fontSize: '0.75rem', 
+                      border: '1px solid var(--glass-card-border)',
+                      background: 'rgba(255,255,255,0.02)'
+                    }}
+                  >
+                    Benefits of This
+                  </button>
+                </div>
               </div>
             ))}
           </div>
@@ -272,6 +359,7 @@ const WorkoutTracker = ({ onWorkoutLogged, onViewHistory, initialViewHistory = f
         </div>
       </div>
       )}
+      <BenefitsModal workout={selectedBenefits} onClose={() => setSelectedBenefits(null)} />
     </div>
   );
 };
