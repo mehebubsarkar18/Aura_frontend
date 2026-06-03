@@ -406,11 +406,9 @@ const NutritionHydration = ({ user, onLogsUpdated, onViewHistory, initialViewHis
              <p style={{ marginTop: '2px', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Goal: {dailyWater} mL</p>
            </div>
 
-           <div style={{ position: 'relative', width: '100px', height: '140px', border: '3px solid var(--glass-card-border)', borderRadius: '0 0 28px 28px', overflow: 'hidden', background: 'var(--icon-bg)', boxShadow: '0 8px 16px rgba(0,0,0,0.1)' }}>
-              <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '100%', transform: `translateY(${140 - (hydrationPct / 100) * 140}px)`, transition: 'transform 1s cubic-bezier(0.16, 1, 0.3, 1)' }}>
-                <svg width="250" height="180" viewBox="0 0 250 180" style={{ position: 'absolute', left: 0, bottom: 0 }}>
-                  <path className="water-wave" d="M 0 25 Q 31.25 15 62.5 25 T 125 25 T 187.5 25 T 250 25 L 250 180 L 0 180 Z" fill="var(--color-cyan)" style={{ opacity: 0.6 }} />
-                </svg>
+           <div className="aura-fill-container">
+              <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: `${hydrationPct}%`, transition: 'height 1.2s cubic-bezier(0.16, 1, 0.3, 1)', background: 'linear-gradient(180deg, var(--color-cyan), #0891b2)', boxShadow: '0 -4px 15px rgba(6, 182, 212, 0.4)' }}>
+                <div className="aura-fill-glow" />
               </div>
               <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', fontWeight: '900', fontSize: '1.8rem', color: 'var(--text-primary)', textShadow: '0 0 12px rgba(0,0,0,0.1)' }}>{Math.round(hydrationPct)}%</div>
            </div>
