@@ -21,30 +21,30 @@ const LandingPage = ({ onGetStarted, onLogin }) => {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        padding: '30px 8%',
+        padding: '20px 8%',
         position: 'relative',
         zIndex: 100
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <div style={{ 
             background: 'linear-gradient(135deg, var(--color-orange), hsl(340, 90%, 50%))', 
-            width: '32px', 
-            height: '32px', 
-            borderRadius: '9px',
+            width: '28px', 
+            height: '28px', 
+            borderRadius: '8px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: '0 4px 12px rgba(253, 90, 32, 0.3)'
+            boxShadow: '0 4px 10px rgba(253, 90, 32, 0.3)'
           }}>
-            <Dumbbell size={18} color="white" strokeWidth={2.5} />
+            <Dumbbell size={16} color="white" strokeWidth={2.5} />
           </div>
-          <h2 className="text-gradient" style={{ fontSize: '1.6rem', fontWeight: '800', letterSpacing: '-0.02em' }}>AuraFit</h2>
+          <h2 className="text-gradient" style={{ fontSize: '1.3rem', fontWeight: '800', letterSpacing: '-0.02em' }}>AuraFit</h2>
         </div>
-        <div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
           <button 
             onClick={onLogin}
             className="btn btn-ghost"
-            style={{ fontSize: '1.1rem', padding: '14px 28px' }}
+            style={{ fontSize: '0.9rem', padding: '8px 18px' }}
           >
             Login
           </button>
@@ -52,8 +52,8 @@ const LandingPage = ({ onGetStarted, onLogin }) => {
             onClick={onGetStarted}
             className="btn btn-primary"
             style={{ 
-              padding: '14px 32px',
-              fontSize: '1.1rem'
+              padding: '8px 22px',
+              fontSize: '0.9rem'
             }}
           >
             Join Now
@@ -63,10 +63,10 @@ const LandingPage = ({ onGetStarted, onLogin }) => {
 
       {/* Hero Section */}
       <section style={{
-        padding: '60px 8% 120px',
+        padding: '40px 8% 80px',
         display: 'grid',
         gridTemplateColumns: 'minmax(0, 1.2fr) minmax(0, 1fr)',
-        gap: '60px',
+        gap: '40px',
         alignItems: 'center',
         position: 'relative',
         zIndex: 10
@@ -76,36 +76,36 @@ const LandingPage = ({ onGetStarted, onLogin }) => {
             .hero-split {
               grid-template-columns: 1fr !important;
               text-align: center !important;
-              padding-top: 20px !important;
+              padding-top: 15px !important;
             }
             .hero-content {
               align-items: center !important;
             }
             .visual-container {
               justify-content: center !important;
-              margin-top: 40px !important;
+              margin-top: 30px !important;
             }
           }
           @keyframes float-slow {
             0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
+            50% { transform: translateY(-15px); }
           }
           @keyframes float-medium {
             0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-15px); }
+            50% { transform: translateY(-10px); }
           }
           @keyframes float-fast {
             0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
+            50% { transform: translateY(-8px); }
           }
         `}</style>
 
         <div className="hero-content" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
           <h1 className="text-gradient" style={{ 
-            fontSize: 'clamp(3rem, 6vw, 4.5rem)', 
+            fontSize: 'clamp(2.2rem, 5vw, 3.2rem)', 
             fontWeight: '800', 
             lineHeight: '1.1',
-            marginBottom: '28px',
+            marginBottom: '20px',
             letterSpacing: '-0.04em'
           }}>
             Level Up Your <br />
@@ -113,32 +113,32 @@ const LandingPage = ({ onGetStarted, onLogin }) => {
           </h1>
           
           <p style={{ 
-            fontSize: 'clamp(1.1rem, 1.8vw, 1.3rem)', 
+            fontSize: 'clamp(1rem, 1.5vw, 1.15rem)', 
             color: 'var(--text-secondary)',
-            maxWidth: '550px',
-            marginBottom: '48px',
+            maxWidth: '500px',
+            marginBottom: '32px',
             lineHeight: '1.6'
           }}>
             Experience the future of personal training. AuraFit combines precision tracking with a stunning interface to help you achieve your peak physical state.
           </p>
 
-          <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
             <button 
               onClick={onGetStarted}
               className="btn btn-primary"
               style={{ 
-                padding: '20px 48px',
-                fontSize: '1.2rem',
-                borderRadius: '16px',
+                padding: '14px 32px',
+                fontSize: '1rem',
+                borderRadius: '14px',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '14px',
+                gap: '12px',
                 fontWeight: '800',
                 cursor: 'pointer',
                 pointerEvents: 'auto'
               }}
             >
-              Start Free Trial <ArrowRight size={24} />
+              Start Free Trial <ArrowRight size={20} />
             </button>
           </div>
         </div>
@@ -146,7 +146,7 @@ const LandingPage = ({ onGetStarted, onLogin }) => {
         {/* Dynamic Visual Content */}
         <div className="visual-container" style={{ 
           position: 'relative', 
-          height: '450px', 
+          height: '400px', 
           display: 'flex', 
           alignItems: 'center', 
           justifyContent: 'center' 
@@ -154,28 +154,28 @@ const LandingPage = ({ onGetStarted, onLogin }) => {
           {/* Main Dashboard Card */}
           <div className="glass-panel" style={{
             width: '100%',
-            maxWidth: '400px',
-            height: '320px',
-            padding: '24px',
+            maxWidth: '360px',
+            height: '280px',
+            padding: '20px',
             position: 'relative',
             zIndex: 2,
             background: 'linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)',
-            boxShadow: '0 30px 60px rgba(0,0,0,0.4)',
+            boxShadow: '0 25px 50px rgba(0,0,0,0.4)',
             border: '1px solid rgba(255,255,255,0.1)',
             animation: 'float-slow 6s ease-in-out infinite'
           }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px' }}>
-              <div style={{ height: '10px', width: '100px', background: 'rgba(255,255,255,0.1)', borderRadius: '10px' }} />
-              <div style={{ height: '20px', width: '20px', background: 'var(--color-orange)', borderRadius: '5px' }} />
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
+              <div style={{ height: '8px', width: '80px', background: 'rgba(255,255,255,0.1)', borderRadius: '8px' }} />
+              <div style={{ height: '16px', width: '16px', background: 'var(--color-orange)', borderRadius: '4px' }} />
             </div>
             
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', marginBottom: '28px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', marginBottom: '24px' }}>
               {[1, 2, 3].map(i => (
-                <div key={i} style={{ height: '70px', background: 'rgba(255,255,255,0.03)', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.05)' }} />
+                <div key={i} style={{ height: '60px', background: 'rgba(255,255,255,0.03)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)' }} />
               ))}
             </div>
 
-            <div style={{ height: '90px', width: '100%', background: 'linear-gradient(90deg, transparent, rgba(253, 90, 32, 0.1), transparent)', borderRadius: '10px', position: 'relative', overflow: 'hidden' }}>
+            <div style={{ height: '70px', width: '100%', background: 'linear-gradient(90deg, transparent, rgba(253, 90, 32, 0.1), transparent)', borderRadius: '8px', position: 'relative', overflow: 'hidden' }}>
               <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '40%', background: 'var(--color-orange)', opacity: 0.2, clipPath: 'polygon(0 50%, 20% 40%, 40% 60%, 60% 30%, 80% 50%, 100% 20%, 100% 100%, 0 100%)' }} />
             </div>
           </div>
@@ -184,23 +184,23 @@ const LandingPage = ({ onGetStarted, onLogin }) => {
           <div className="glass-panel" style={{
             position: 'absolute',
             top: '10%',
-            right: '-5%',
-            padding: '12px 16px',
+            right: '-2%',
+            padding: '10px 14px',
             zIndex: 3,
             display: 'flex',
             alignItems: 'center',
-            gap: '10px',
+            gap: '8px',
             animation: 'float-medium 5s ease-in-out infinite',
             background: 'rgba(13, 17, 23, 0.8)',
             border: '1px solid rgba(255, 255, 255, 0.1)',
-            borderRadius: '16px'
+            borderRadius: '14px'
           }}>
-            <div style={{ background: 'var(--color-green)', width: '28px', height: '28px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <TrendingUp size={14} color="white" />
+            <div style={{ background: 'var(--color-green)', width: '24px', height: '24px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <TrendingUp size={12} color="white" />
             </div>
             <div>
-              <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: '700' }}>DAILY CALS</div>
-              <div style={{ fontSize: '0.95rem', fontWeight: '800' }}>2,450 kcal</div>
+              <div style={{ fontSize: '0.6rem', color: 'var(--text-muted)', fontWeight: '700' }}>DAILY CALS</div>
+              <div style={{ fontSize: '0.85rem', fontWeight: '800' }}>2,450 kcal</div>
             </div>
           </div>
 
@@ -208,23 +208,23 @@ const LandingPage = ({ onGetStarted, onLogin }) => {
           <div className="glass-panel" style={{
             position: 'absolute',
             bottom: '15%',
-            left: '-10%',
-            padding: '12px 16px',
+            left: '-8%',
+            padding: '10px 14px',
             zIndex: 3,
             display: 'flex',
             alignItems: 'center',
-            gap: '10px',
+            gap: '8px',
             animation: 'float-fast 4s ease-in-out infinite',
             background: 'rgba(13, 17, 23, 0.8)',
             border: '1px solid rgba(255, 255, 255, 0.1)',
-            borderRadius: '16px'
+            borderRadius: '14px'
           }}>
-            <div style={{ background: 'var(--color-orange)', width: '28px', height: '28px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Flame size={14} color="white" />
+            <div style={{ background: 'var(--color-orange)', width: '24px', height: '24px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Flame size={12} color="white" />
             </div>
             <div>
-              <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: '700' }}>STREAK</div>
-              <div style={{ fontSize: '0.95rem', fontWeight: '800' }}>12 Days</div>
+              <div style={{ fontSize: '0.6rem', color: 'var(--text-muted)', fontWeight: '700' }}>STREAK</div>
+              <div style={{ fontSize: '0.85rem', fontWeight: '800' }}>12 Days</div>
             </div>
           </div>
 
@@ -233,12 +233,12 @@ const LandingPage = ({ onGetStarted, onLogin }) => {
             position: 'absolute',
             top: '-5%',
             left: '5%',
-            width: '100px',
-            height: '100px',
-            borderRadius: '24px',
+            width: '80px',
+            height: '80px',
+            borderRadius: '20px',
             overflow: 'hidden',
             zIndex: 3,
-            boxShadow: '0 15px 35px rgba(253, 90, 32, 0.25)',
+            boxShadow: '0 12px 28px rgba(253, 90, 32, 0.25)',
             transform: 'rotate(-8deg)',
             border: '1px solid rgba(255, 255, 255, 0.1)',
             background: 'linear-gradient(135deg, rgba(253, 90, 32, 0.2) 0%, rgba(253, 90, 32, 0.05) 100%)',
@@ -249,16 +249,16 @@ const LandingPage = ({ onGetStarted, onLogin }) => {
             animation: 'float-medium 5s ease-in-out infinite'
           }}>
             <div style={{ 
-              width: '52px', 
-              height: '52px', 
-              borderRadius: '16px', 
+              width: '44px', 
+              height: '44px', 
+              borderRadius: '14px', 
               background: 'var(--color-orange)', 
               display: 'flex', 
               alignItems: 'center', 
               justifyContent: 'center',
-              boxShadow: '0 8px 16px rgba(253, 90, 32, 0.4)'
+              boxShadow: '0 6px 12px rgba(253, 90, 32, 0.4)'
             }}>
-              <Dumbbell size={28} color="white" strokeWidth={2.5} />
+              <Dumbbell size={24} color="white" strokeWidth={2.5} />
             </div>
           </div>
 
@@ -267,12 +267,12 @@ const LandingPage = ({ onGetStarted, onLogin }) => {
             position: 'absolute',
             bottom: '-5%',
             right: '10%',
-            width: '130px',
-            height: '90px',
-            borderRadius: '16px',
+            width: '110px',
+            height: '80px',
+            borderRadius: '14px',
             overflow: 'hidden',
             zIndex: 1,
-            boxShadow: '0 15px 30px rgba(0,0,0,0.3)',
+            boxShadow: '0 12px 25px rgba(0,0,0,0.3)',
             transform: 'rotate(8deg)',
             opacity: 0.7,
             border: '1px solid rgba(255,255,255,0.1)'
@@ -288,23 +288,23 @@ const LandingPage = ({ onGetStarted, onLogin }) => {
 
       {/* Features Grid */}
       <section style={{
-        padding: '80px 8%',
+        padding: '60px 8%',
         background: 'rgba(255, 255, 255, 0.01)',
         borderTop: '1px solid var(--glass-card-border)',
         position: 'relative',
         zIndex: 10
       }}>
-        <div style={{ textAlign: 'center', marginBottom: '60px' }}>
-          <h2 style={{ fontSize: '2.4rem', fontWeight: '800', marginBottom: '16px', letterSpacing: '-0.03em' }}>Built for Performance</h2>
-          <p style={{ color: 'var(--text-secondary)', maxWidth: '500px', margin: '0 auto', fontSize: '1rem', lineHeight: '1.6' }}>
+        <div style={{ textAlign: 'center', marginBottom: '48px' }}>
+          <h2 style={{ fontSize: '2rem', fontWeight: '800', marginBottom: '12px', letterSpacing: '-0.03em' }}>Built for Performance</h2>
+          <p style={{ color: 'var(--text-secondary)', maxWidth: '450px', margin: '0 auto', fontSize: '0.95rem', lineHeight: '1.6' }}>
             Our integrated approach ensures every aspect of your fitness journey is optimized and tracked with military precision.
           </p>
         </div>
 
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-          gap: '24px'
+          gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+          gap: '20px'
         }}>
           {[
             { 
@@ -326,23 +326,23 @@ const LandingPage = ({ onGetStarted, onLogin }) => {
               color: 'hsl(340, 90%, 50%)'
             }
           ].map((feature, i) => (
-            <div key={i} className="glass-panel" style={{ padding: '32px', textAlign: 'left', border: '1px solid var(--glass-card-border)' }}>
+            <div key={i} className="glass-panel" style={{ padding: '24px', textAlign: 'left', border: '1px solid var(--glass-card-border)' }}>
               <div style={{ 
-                width: '56px', 
-                height: '56px', 
-                borderRadius: '16px', 
+                width: '48px', 
+                height: '48px', 
+                borderRadius: '14px', 
                 background: `linear-gradient(135deg, ${feature.color}15, ${feature.color}05)`,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                marginBottom: '24px',
+                marginBottom: '20px',
                 color: feature.color,
                 border: `1px solid ${feature.color}20`
               }}>
-                <feature.icon size={28} />
+                <feature.icon size={24} />
               </div>
-              <h3 style={{ fontSize: '1.25rem', fontWeight: '700', marginBottom: '12px' }}>{feature.title}</h3>
-              <p style={{ color: 'var(--text-secondary)', lineHeight: '1.6', fontSize: '0.95rem' }}>{feature.desc}</p>
+              <h3 style={{ fontSize: '1.15rem', fontWeight: '700', marginBottom: '10px' }}>{feature.title}</h3>
+              <p style={{ color: 'var(--text-secondary)', lineHeight: '1.6', fontSize: '0.9rem' }}>{feature.desc}</p>
             </div>
           ))}
         </div>
@@ -350,31 +350,31 @@ const LandingPage = ({ onGetStarted, onLogin }) => {
 
       {/* Call to Action */}
       <section style={{
-        padding: '100px 8%',
+        padding: '80px 8%',
         textAlign: 'center',
         position: 'relative',
         zIndex: 10
       }}>
         <div className="glass-panel" style={{
-          padding: '60px 40px',
-          maxWidth: '1000px',
+          padding: '48px 32px',
+          maxWidth: '900px',
           margin: '0 auto',
           background: 'linear-gradient(135deg, rgba(253, 90, 32, 0.08) 0%, rgba(13, 17, 23, 0.4) 100%)',
           position: 'relative',
           overflow: 'hidden',
-          borderRadius: '32px'
+          borderRadius: '28px'
         }}>
           <div style={{ position: 'relative', zIndex: 1 }}>
-            <h2 style={{ fontSize: '3rem', fontWeight: '800', marginBottom: '24px', letterSpacing: '-0.04em' }}>Transform Today.</h2>
-            <p style={{ color: 'var(--text-secondary)', maxWidth: '600px', margin: '0 auto 40px', fontSize: '1.1rem', lineHeight: '1.6' }}>
+            <h2 style={{ fontSize: '2.4rem', fontWeight: '800', marginBottom: '20px', letterSpacing: '-0.04em' }}>Transform Today.</h2>
+            <p style={{ color: 'var(--text-secondary)', maxWidth: '550px', margin: '0 auto 32px', fontSize: '1.05rem', lineHeight: '1.6' }}>
               Stop guessing and start tracking. Join the AuraFit community and take control of your physical evolution.
             </p>
             <button 
               onClick={onGetStarted}
               className="btn btn-primary"
-              style={{ padding: '20px 56px', fontSize: '1.2rem', fontWeight: '800', borderRadius: '16px', display: 'flex', alignItems: 'center', gap: '14px', margin: '0 auto', cursor: 'pointer', pointerEvents: 'auto' }}
+              style={{ padding: '16px 48px', fontSize: '1.1rem', fontWeight: '800', borderRadius: '14px', display: 'flex', alignItems: 'center', gap: '12px', margin: '0 auto', cursor: 'pointer', pointerEvents: 'auto' }}
             >
-              <Dumbbell size={24} color="white" strokeWidth={2.5} />
+              <Dumbbell size={22} color="white" strokeWidth={2.5} />
               Join AuraFit Now
             </button>
           </div>
@@ -383,45 +383,45 @@ const LandingPage = ({ onGetStarted, onLogin }) => {
 
       {/* Footer */}
       <footer style={{
-        padding: '50px 8% 40px',
+        padding: '40px 8% 32px',
         borderTop: '1px solid var(--glass-card-border)',
         display: 'flex',
         flexDirection: 'column',
-        gap: '32px',
+        gap: '24px',
         position: 'relative',
         zIndex: 100
       }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '32px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '24px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <div style={{ 
               background: 'linear-gradient(135deg, var(--color-orange), hsl(340, 90%, 50%))', 
-              width: '28px', 
-              height: '28px', 
-              borderRadius: '8px',
+              width: '24px', 
+              height: '24px', 
+              borderRadius: '7px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center'
             }}>
-              <Dumbbell size={16} color="white" strokeWidth={2.5} />
+              <Dumbbell size={14} color="white" strokeWidth={2.5} />
             </div>
-            <span style={{ fontWeight: '800', fontSize: '1.1rem', letterSpacing: '-0.02em' }}>AuraFit</span>
+            <span style={{ fontWeight: '800', fontSize: '1rem', letterSpacing: '-0.02em' }}>AuraFit</span>
           </div>
           
-          <div style={{ display: 'flex', gap: '32px', color: 'var(--text-muted)', fontSize: '0.9rem', fontWeight: '600' }}>
+          <div style={{ display: 'flex', gap: '24px', color: 'var(--text-muted)', fontSize: '0.85rem', fontWeight: '600' }}>
             <span>Privacy Policy</span>
             <span>Terms of Service</span>
             <span>Support</span>
           </div>
 
-          <div style={{ display: 'flex', gap: '18px' }}>
-            <ShieldCheck size={20} color="var(--text-muted)" />
-            <Activity size={20} color="var(--text-muted)" />
-            <Heart size={20} color="var(--text-muted)" />
+          <div style={{ display: 'flex', gap: '16px' }}>
+            <ShieldCheck size={18} color="var(--text-muted)" />
+            <Activity size={18} color="var(--text-muted)" />
+            <Heart size={18} color="var(--text-muted)" />
           </div>
         </div>
         
-        <div style={{ textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.85rem', paddingTop: '32px', borderTop: '1px solid rgba(255,255,255,0.03)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-          <Dumbbell size={12} color="var(--text-muted)" strokeWidth={2} />
+        <div style={{ textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.8rem', paddingTop: '24px', borderTop: '1px solid rgba(255,255,255,0.03)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+          <Dumbbell size={10} color="var(--text-muted)" strokeWidth={2} />
           &copy; 2026 AuraFit Digital Systems. Elevate Your Potential.
         </div>
       </footer>

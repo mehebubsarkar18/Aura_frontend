@@ -154,42 +154,42 @@ const WorkoutTracker = ({ onWorkoutLogged, onViewHistory, initialViewHistory = f
 
   if (initialViewHistory) {
     return (
-      <div className="history-page" style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-          <button onClick={onBack} className="btn btn-ghost btn-icon">
-            <ArrowLeft size={24} />
+      <div className="history-page" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <button onClick={onBack} className="btn btn-ghost btn-icon" style={{ padding: '10px' }}>
+            <ArrowLeft size={20} />
           </button>
           <div>
-            <h1 className="text-gradient" style={{ fontSize: '2.4rem', fontWeight: '800' }}>History</h1>
+            <h1 className="text-gradient" style={{ fontSize: '1.8rem', fontWeight: '800' }}>History</h1>
           </div>
         </div>
 
-        <div className="glass-panel" style={{ padding: '32px' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        <div className="glass-panel" style={{ padding: '24px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             {history.length === 0 ? (
-              <div style={{ padding: '80px', textAlign: 'center', opacity: 0.3 }}>
-                <Dumbbell size={64} style={{ margin: '0 auto 20px' }} />
+              <div style={{ padding: '60px', textAlign: 'center', opacity: 0.3 }}>
+                <Dumbbell size={48} style={{ margin: '0 auto 16px' }} />
                 <p>No activity recorded yet.</p>
               </div>
             ) : (
               history.map((w, idx) => (
-                <div key={idx} className="glass-panel-hover" style={{ padding: '24px', background: 'var(--card-overlay)', borderRadius: '24px', border: '1px solid var(--glass-card-border)', display: 'flex', flexWrap: 'wrap', gap: '24px', alignItems: 'center' }}>
-                  <div style={{ padding: '16px', background: 'rgba(253, 90, 32, 0.1)', borderRadius: '18px', color: 'var(--color-orange)' }}>
-                    <Dumbbell size={32} />
+                <div key={idx} className="glass-panel-hover" style={{ padding: '16px', background: 'var(--card-overlay)', borderRadius: '20px', border: '1px solid var(--glass-card-border)', display: 'flex', flexWrap: 'wrap', gap: '20px', alignItems: 'center' }}>
+                  <div style={{ padding: '12px', background: 'rgba(253, 90, 32, 0.1)', borderRadius: '14px', color: 'var(--color-orange)' }}>
+                    <Dumbbell size={24} />
                   </div>
-                  <div style={{ flex: 1, minWidth: '200px' }}>
-                    <h4 style={{ fontSize: '1.4rem', fontWeight: '800', color: 'var(--text-primary)' }}>{w.routineName}</h4>
-                    <div style={{ display: 'flex', gap: '16px', marginTop: '6px', color: 'var(--text-secondary)', fontWeight: '600' }}>
-                      <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><Calendar size={16} /> {new Date(w.loggedAt).toLocaleDateString()}</span>
-                      <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><Clock size={16} /> {w.durationMinutes}m</span>
+                  <div style={{ flex: 1, minWidth: '180px' }}>
+                    <h4 style={{ fontSize: '1.1rem', fontWeight: '800', color: 'var(--text-primary)' }}>{w.routineName}</h4>
+                    <div style={{ display: 'flex', gap: '12px', marginTop: '4px', color: 'var(--text-secondary)', fontWeight: '600', fontSize: '0.85rem' }}>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Calendar size={14} /> {new Date(w.loggedAt).toLocaleDateString()}</span>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Clock size={14} /> {w.durationMinutes}m</span>
                     </div>
                   </div>
                   <div style={{ textAlign: 'right' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'flex-end' }}>
-                       <Flame size={20} color="var(--color-orange)" />
-                       <span style={{ fontSize: '1.8rem', fontWeight: '900', color: 'var(--text-primary)' }}>{w.caloriesBurned}</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', justifyContent: 'flex-end' }}>
+                       <Flame size={18} color="var(--color-orange)" />
+                       <span style={{ fontSize: '1.4rem', fontWeight: '900', color: 'var(--text-primary)' }}>{w.caloriesBurned}</span>
                     </div>
-                    <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)', fontWeight: '700' }}>KCAL</span>
+                    <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: '700' }}>KCAL</span>
                   </div>
                 </div>
               ))
@@ -203,34 +203,35 @@ const WorkoutTracker = ({ onWorkoutLogged, onViewHistory, initialViewHistory = f
   return (
     <div className="workout-page" style={{ width: '100%' }}>
       {!activeSession ? (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
-              <h1 className="text-gradient" style={{ fontSize: '2.8rem', fontWeight: '800' }}>Aura Training</h1>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem', marginTop: '4px' }}>Choose a routine to begin</p>
+              <h1 className="text-gradient" style={{ fontSize: '2.2rem', fontWeight: '800' }}>Aura Training</h1>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', marginTop: '2px' }}>Choose a routine to begin</p>
             </div>
             <button 
               onClick={onViewHistory}
               className="btn btn-orange"
+              style={{ padding: '8px 16px', fontSize: '0.85rem' }}
             >
               History
             </button>
           </div>
 
-          <div className="preset-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '28px' }}>
+          <div className="preset-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px' }}>
             {PRESETS.map((p, i) => (
-              <div key={i} className="glass-panel glass-panel-hover" style={{ padding: '48px 36px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', position: 'relative', overflow: 'hidden', minHeight: '320px' }}>
+              <div key={i} className="glass-panel glass-panel-hover" style={{ padding: '32px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', position: 'relative', overflow: 'hidden', minHeight: '260px' }}>
                 {inProgressId === p.id && (
-                  <div style={{ position: 'absolute', top: '15px', right: '15px', background: 'var(--color-orange)', color: 'white', padding: '4px 12px', borderRadius: '100px', fontSize: '0.7rem', fontWeight: '800', letterSpacing: '0.05em' }}>IN PROGRESS</div>
+                  <div style={{ position: 'absolute', top: '12px', right: '12px', background: 'var(--color-orange)', color: 'white', padding: '3px 10px', borderRadius: '100px', fontSize: '0.65rem', fontWeight: '800', letterSpacing: '0.05em' }}>IN PROGRESS</div>
                 )}
-                <div style={{ width: '110px', height: '110px', borderRadius: '28px', background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '28px', boxShadow: '0 10px 20px rgba(0,0,0,0.05)' }}>
-                  <img src={p.icon} alt={p.name} style={{ width: '60px' }} />
+                <div style={{ width: '80px', height: '80px', borderRadius: '20px', background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px', boxShadow: '0 8px 16px rgba(0,0,0,0.05)' }}>
+                  <img src={p.icon} alt={p.name} style={{ width: '40px' }} />
                 </div>
-                <h3 style={{ fontSize: '1.8rem', fontWeight: '800', marginBottom: '10px', color: 'var(--text-primary)' }}>{p.name}</h3>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '1.2rem', fontWeight: '700' }}>
+                <h3 style={{ fontSize: '1.3rem', fontWeight: '800', marginBottom: '8px', color: 'var(--text-primary)' }}>{p.name}</h3>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', fontWeight: '700' }}>
                   {inProgressId === p.id ? formatTime(timeLeft) : `${p.durationMin} MIN`}
                 </p>
-                <button onClick={() => startSession(p)} className="btn btn-primary" style={{ width: '100%', marginTop: '28px' }}>
+                <button onClick={() => startSession(p)} className="btn btn-primary" style={{ width: '100%', marginTop: '20px', padding: '10px' }}>
                   {inProgressId === p.id ? 'RESUME' : 'START'}
                 </button>
               </div>
@@ -238,33 +239,34 @@ const WorkoutTracker = ({ onWorkoutLogged, onViewHistory, initialViewHistory = f
           </div>
         </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <button 
               onClick={() => { setActiveSession(false); setTimerRunning(false); }} 
               className="btn btn-ghost"
+              style={{ padding: '8px 14px', fontSize: '0.85rem' }}
             >
-              <ArrowLeft size={24} /> Back to Routines
+              <ArrowLeft size={18} /> Back to Routines
             </button>
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
-            <div className="glass-panel" style={{ padding: '60px 40px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '40px', maxWidth: '550px', width: '100%', textAlign: 'center' }}>
-             <div className="active-icon-anim" style={{ width: '180px', height: '180px', borderRadius: '50px', background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '4px solid var(--color-orange)', boxShadow: '0 30px 60px rgba(253, 90, 32, 0.3)' }}>
-                <img src={activeIcon} alt="" style={{ width: '90px' }} />
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50vh' }}>
+            <div className="glass-panel" style={{ padding: '40px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '32px', maxWidth: '450px', width: '100%', textAlign: 'center' }}>
+             <div className="active-icon-anim" style={{ width: '120px', height: '120px', borderRadius: '32px', background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '3px solid var(--color-orange)', boxShadow: '0 20px 40px rgba(253, 90, 32, 0.2)' }}>
+                <img src={activeIcon} alt="" style={{ width: '60px' }} />
              </div>
              
-             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-               <h2 style={{ fontSize: '2.8rem', fontWeight: '900' }} className="text-gradient">{routineName}</h2>
-               <div style={{ fontSize: '7rem', fontFamily: 'monospace', fontWeight: '900', color: 'var(--text-primary)', letterSpacing: '4px', lineHeight: 1 }}>{formatTime(timeLeft)}</div>
+             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+               <h2 style={{ fontSize: '2.2rem', fontWeight: '900' }} className="text-gradient">{routineName}</h2>
+               <div style={{ fontSize: '5rem', fontFamily: 'monospace', fontWeight: '900', color: 'var(--text-primary)', letterSpacing: '3px', lineHeight: 1 }}>{formatTime(timeLeft)}</div>
              </div>
 
-             <div style={{ display: 'flex', gap: '24px', width: '100%' }}>
-                <button onClick={() => setTimerRunning(!timerRunning)} className="btn btn-ghost" style={{ flex: 1, padding: '24px' }}>
-                  {timerRunning ? <Pause size={32} /> : <Play size={32} />}
+             <div style={{ display: 'flex', gap: '16px', width: '100%' }}>
+                <button onClick={() => setTimerRunning(!timerRunning)} className="btn btn-ghost" style={{ flex: 1, padding: '12px', fontSize: '0.95rem' }}>
+                  {timerRunning ? <Pause size={20} /> : <Play size={20} />}
                   {timerRunning ? 'PAUSE' : 'RESUME'}
                 </button>
-                <button onClick={finishWorkout} className="btn btn-primary" style={{ flex: 1, padding: '24px' }}>FINISH</button>
+                <button onClick={finishWorkout} className="btn btn-primary" style={{ flex: 1, padding: '12px', fontSize: '0.95rem' }}>FINISH</button>
              </div>
           </div>
         </div>

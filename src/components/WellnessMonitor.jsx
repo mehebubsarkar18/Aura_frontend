@@ -77,38 +77,37 @@ const WellnessMonitor = ({ onWellnessLogged, onViewHistory, initialViewHistory =
 
   if (initialViewHistory) {
     return (
-      <div className="history-page" style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
-          <button onClick={onBack} className="btn btn-ghost btn-icon">
-            <ArrowLeft size={24} />
+      <div className="history-page" style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          <button onClick={onBack} className="btn btn-ghost btn-icon" style={{ padding: '10px' }}>
+            <ArrowLeft size={20} />
           </button>
-          <h1 className="text-gradient" style={{ fontSize: '2.2rem', fontWeight: 800 }}>Wellness History</h1>
+          <h1 className="text-gradient" style={{ fontSize: '1.8rem', fontWeight: 800 }}>Wellness History</h1>
         </div>
 
-        <div className="glass-panel" style={{ padding: 24, background: 'var(--card-overlay)' }}>
+        <div className="glass-panel" style={{ padding: 20, background: 'var(--card-overlay)' }}>
           {!loading && logs.length === 0 ? (
-            <div style={{ padding: 48, textAlign: 'center', opacity: 0.5 }}>
-              <Heart size={56} style={{ margin: '0 auto 12px' }} />
+            <div style={{ padding: 40, textAlign: 'center', opacity: 0.5 }}>
+              <Heart size={48} style={{ margin: '0 auto 10px' }} />
               <div style={{ fontWeight: 600 }}>No wellness logs yet.</div>
             </div>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               {logs.map((log) => {
                 const logId = log._id || log.id || log.loggedAt;
                 return (
-                  <div key={logId} style={{ display: 'flex', gap: 16, padding: 16, borderRadius: 14, border: '1px solid var(--glass-card-border)', background: 'var(--card-overlay)', alignItems: 'center' }}>
-                    <div style={{ width: 72, height: 72, borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', background: 'var(--icon-bg)' }}>{log.moodEmoji}</div>
+                  <div key={logId} style={{ display: 'flex', gap: 14, padding: 14, borderRadius: 12, border: '1px solid var(--glass-card-border)', background: 'var(--card-overlay)', alignItems: 'center' }}>
+                    <div style={{ width: 60, height: 60, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.6rem', background: 'var(--icon-bg)' }}>{log.moodEmoji}</div>
                     <div style={{ flex: 1 }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <div style={{ fontWeight: 800, color: 'var(--text-primary)' }}>{log.sleepDurationMin > 0 ? `${(Math.round(log.sleepDurationMin/6)/10)}h Sleep` : 'Mindfulness Session'}</div>
-                        <div style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', fontWeight: 700 }}>{new Date(log.loggedAt).toLocaleString(undefined, { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</div>
+                        <div style={{ fontWeight: 800, color: 'var(--text-primary)', fontSize: '1rem' }}>{log.sleepDurationMin > 0 ? `${(Math.round(log.sleepDurationMin/6)/10)}h Sleep` : 'Mindfulness Session'}</div>
+                        <div style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', fontWeight: 700 }}>{new Date(log.loggedAt).toLocaleString(undefined, { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</div>
                       </div>
-                      <div style={{ display: 'flex', gap: 12, marginTop: 8 }}>
-                        <div style={{ display: 'flex', gap: 8, alignItems: 'center', color: 'var(--color-violet)', fontWeight: 700 }}><Star size={14} />{log.sleepQuality}</div>
-                        {log.mindfulnessDurationMin > 0 && <div style={{ display: 'flex', gap: 8, alignItems: 'center', color: 'var(--color-cyan)', fontWeight: 700 }}><Wind size={14} />{log.mindfulnessDurationMin}m</div>}
+                      <div style={{ display: 'flex', gap: 10, marginTop: 6 }}>
+                        <div style={{ display: 'flex', gap: 6, alignItems: 'center', color: 'var(--color-violet)', fontWeight: 700, fontSize: '0.85rem' }}><Star size={12} />{log.sleepQuality}</div>
+                        {log.mindfulnessDurationMin > 0 && <div style={{ display: 'flex', gap: 6, alignItems: 'center', color: 'var(--color-cyan)', fontWeight: 700, fontSize: '0.85rem' }}><Wind size={12} />{log.mindfulnessDurationMin}m</div>}
                       </div>
                     </div>
-                    {/* delete option removed */}
                   </div>
                 );
               })}
@@ -120,55 +119,55 @@ const WellnessMonitor = ({ onWellnessLogged, onViewHistory, initialViewHistory =
   }
 
   return (
-    <div className="wellness-container" style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 24 }}>
+    <div className="wellness-container" style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 20 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <h1 className="text-gradient" style={{ fontSize: '2.4rem', fontWeight: 800 }}>Mind & Body</h1>
-          <p style={{ color: 'var(--text-secondary)', marginTop: 6, fontWeight: 500 }}>Nurture your mental clarity and physical recovery</p>
+          <h1 className="text-gradient" style={{ fontSize: '2rem', fontWeight: 800 }}>Mind & Body</h1>
+          <p style={{ color: 'var(--text-secondary)', marginTop: 4, fontWeight: 500, fontSize: '1rem' }}>Nurture your mental clarity and physical recovery</p>
         </div>
         <div />
       </div>
 
-      <div className="wellness-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: 24 }}>
+      <div className="wellness-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: 20 }}>
         <style>{`@media (max-width: 1200px) { .wellness-grid { grid-template-columns: 1fr !important; } .wellness-left { grid-column: span 1 !important; } }`}</style>
 
-        <div className="wellness-left" style={{ gridColumn: 'span 12', display: 'flex', flexDirection: 'column', gap: 24 }}>
-          <div className="glass-panel" style={{ padding: 32, position: 'relative', background: 'var(--card-overlay)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 18 }}>
-              <div style={{ background: 'rgba(168,85,247,0.15)', padding: 10, borderRadius: 12, color: 'var(--color-violet)' }}><Sparkles size={24} /></div>
-              <h2 style={{ fontSize: '1.4rem', fontWeight: 800, margin: 0, color: 'var(--text-primary)' }}>Daily Recovery</h2>
+        <div className="wellness-left" style={{ gridColumn: 'span 12', display: 'flex', flexDirection: 'column', gap: 20 }}>
+          <div className="glass-panel" style={{ padding: 24, position: 'relative', background: 'var(--card-overlay)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+              <div style={{ background: 'rgba(168,85,247,0.15)', padding: 8, borderRadius: 10, color: 'var(--color-violet)' }}><Sparkles size={20} /></div>
+              <h2 style={{ fontSize: '1.3rem', fontWeight: 800, margin: 0, color: 'var(--text-primary)' }}>Daily Recovery</h2>
               <div style={{ marginLeft: 'auto' }}>
-                <button type="button" onClick={onViewHistory || (() => setShowHistoryOverlay(true))} className="btn btn-violet">History</button>
+                <button type="button" onClick={onViewHistory || (() => setShowHistoryOverlay(true))} className="btn btn-violet" style={{ padding: '6px 14px', fontSize: '0.85rem' }}>History</button>
               </div>
             </div>
 
-            <form onSubmit={handleLogWellness} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+            <form onSubmit={handleLogWellness} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                  <label style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)' }}>Sleep Duration</label>
-                  <div style={{ fontWeight: 900, color: 'var(--color-violet)', fontSize: '1.2rem' }}>{sleepHours || 0} <span style={{ fontSize: '0.9rem', fontWeight: 600 }}>hours</span></div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                  <label style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-primary)' }}>Sleep Duration</label>
+                  <div style={{ fontWeight: 900, color: 'var(--color-violet)', fontSize: '1.1rem' }}>{sleepHours || 0} <span style={{ fontSize: '0.8rem', fontWeight: 600 }}>hours</span></div>
                 </div>
-                <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                   {[5,6,7,8,9,10].map(h => (
-                    <button key={h} type="button" onClick={() => setSleepHours(h)} style={{ flex: '1 0 80px', padding: 14, borderRadius: 12, background: Number(sleepHours) === h ? 'linear-gradient(135deg, var(--color-violet), #7c3aed)' : 'var(--input-bg)', border: '1px solid var(--glass-card-border)', color: Number(sleepHours) === h ? 'white' : 'var(--text-secondary)', fontWeight: 800, transition: 'all 0.2s', fontSize: '1.1rem' }}>{h}h</button>
+                    <button key={h} type="button" onClick={() => setSleepHours(h)} style={{ flex: '1 0 70px', padding: '8px 12px', borderRadius: '10px', background: Number(sleepHours) === h ? 'linear-gradient(135deg, var(--color-violet), #7c3aed)' : 'var(--input-bg)', border: '1px solid var(--glass-card-border)', color: Number(sleepHours) === h ? 'white' : 'var(--text-secondary)', fontWeight: 800, transition: 'all 0.2s', fontSize: '1rem' }}>{h}h</button>
                   ))}
                 </div>
               </div>
 
               <div>
-                <label style={{ fontSize: '1rem', fontWeight: 700, display: 'block', marginBottom: 8, color: 'var(--text-primary)' }}>How are you feeling today?</label>
-                <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+                <label style={{ fontSize: '0.9rem', fontWeight: 700, display: 'block', marginBottom: 6, color: 'var(--text-primary)' }}>How are you feeling today?</label>
+                <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
                   {EMOJIS.map(e => (
-                    <button key={e.char} type="button" onClick={() => setMoodEmoji(e.char)} style={{ flex: 1, minWidth: 100, padding: 16, borderRadius: 14, background: moodEmoji === e.char ? 'rgba(168,85,247,0.12)' : 'var(--input-bg)', border: '1px solid var(--glass-card-border)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, transition: 'all 0.2s' }}>
-                      <div style={{ fontSize: '2rem' }}>{e.char}</div>
-                      <div style={{ fontSize: '0.85rem', fontWeight: 800, color: moodEmoji === e.char ? 'var(--text-primary)' : 'var(--text-secondary)' }}>{e.label}</div>
+                    <button key={e.char} type="button" onClick={() => setMoodEmoji(e.char)} style={{ flex: 1, minWidth: 80, padding: '10px 8px', borderRadius: 12, background: moodEmoji === e.char ? 'rgba(168,85,247,0.12)' : 'var(--input-bg)', border: '1px solid var(--glass-card-border)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, transition: 'all 0.2s' }}>
+                      <div style={{ fontSize: '1.4rem' }}>{e.char}</div>
+                      <div style={{ fontSize: '0.75rem', fontWeight: 800, color: moodEmoji === e.char ? 'var(--text-primary)' : 'var(--text-secondary)' }}>{e.label}</div>
                     </button>
                   ))}
                 </div>
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 10 }}>
-                <button type="submit" className="btn btn-primary" style={{ padding: '16px 32px' }}>Complete Log</button>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 8 }}>
+                <button type="submit" className="btn btn-primary" style={{ padding: '10px 20px', fontSize: '0.95rem' }}>Complete Log</button>
               </div>
             </form>
           </div>
@@ -178,34 +177,33 @@ const WellnessMonitor = ({ onWellnessLogged, onViewHistory, initialViewHistory =
       </div>
       {showHistoryOverlay && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', zIndex: 1200, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', paddingTop: 40, backdropFilter: 'blur(8px)' }}>
-          <div style={{ width: '100%', maxWidth: 1100, maxHeight: '92vh', overflow: 'auto', background: 'var(--bg-primary)', borderRadius: 20, padding: 32, border: '1px solid var(--glass-card-border)', boxShadow: '0 20px 50px rgba(0,0,0,0.5)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 24 }}>
-              <button onClick={() => setShowHistoryOverlay(false)} className="btn btn-ghost" style={{ padding: '10px 20px' }}>Close</button>
-              <h2 style={{ fontSize: '1.8rem', fontWeight: 900, margin: 0, color: 'var(--text-primary)' }}>Wellness History</h2>
+          <div style={{ width: '100%', maxWidth: 1000, maxHeight: '92vh', overflow: 'auto', background: 'var(--bg-primary)', borderRadius: 20, padding: 24, border: '1px solid var(--glass-card-border)', boxShadow: '0 15px 40px rgba(0,0,0,0.5)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
+              <button onClick={() => setShowHistoryOverlay(false)} className="btn btn-ghost" style={{ padding: '8px 16px', fontSize: '0.9rem' }}>Close</button>
+              <h2 style={{ fontSize: '1.6rem', fontWeight: 900, margin: 0, color: 'var(--text-primary)' }}>Wellness History</h2>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               {!loading && logs.length === 0 ? (
-                <div style={{ padding: 48, textAlign: 'center', opacity: 0.5 }}>
-                  <Heart size={64} style={{ margin: '0 auto 16px' }} />
-                  <div style={{ fontWeight: 600, fontSize: '1.2rem' }}>No wellness logs yet.</div>
+                <div style={{ padding: 40, textAlign: 'center', opacity: 0.5 }}>
+                  <Heart size={48} style={{ margin: '0 auto 12px' }} />
+                  <div style={{ fontWeight: 600, fontSize: '1.1rem' }}>No wellness logs yet.</div>
                 </div>
               ) : (
                 logs.map((log) => {
                   const logId = log._id || log.id || log.loggedAt;
                   return (
-                    <div key={logId} style={{ display: 'flex', gap: 16, padding: 20, borderRadius: 16, border: '1px solid var(--glass-card-border)', background: 'var(--card-overlay)', alignItems: 'center' }}>
-                      <div style={{ width: 80, height: 80, borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2.5rem', background: 'var(--icon-bg)' }}>{log.moodEmoji}</div>
+                    <div key={logId} style={{ display: 'flex', gap: 14, padding: 16, borderRadius: 14, border: '1px solid var(--glass-card-border)', background: 'var(--card-overlay)', alignItems: 'center' }}>
+                      <div style={{ width: 70, height: 70, borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', background: 'var(--icon-bg)' }}>{log.moodEmoji}</div>
                       <div style={{ flex: 1 }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <div style={{ fontWeight: 800, color: 'var(--text-primary)', fontSize: '1.1rem' }}>{log.sleepDurationMin > 0 ? `${(Math.round(log.sleepDurationMin/6)/10)}h Sleep` : 'Mindfulness Session'}</div>
-                          <div style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', fontWeight: 700 }}>{new Date(log.loggedAt).toLocaleString(undefined, { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</div>
+                          <div style={{ fontWeight: 800, color: 'var(--text-primary)', fontSize: '1rem' }}>{log.sleepDurationMin > 0 ? `${(Math.round(log.sleepDurationMin/6)/10)}h Sleep` : 'Mindfulness Session'}</div>
+                          <div style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', fontWeight: 700 }}>{new Date(log.loggedAt).toLocaleString(undefined, { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</div>
                         </div>
-                        <div style={{ display: 'flex', gap: 16, marginTop: 10 }}>
-                          <div style={{ display: 'flex', gap: 8, alignItems: 'center', color: 'var(--color-violet)', fontWeight: 800 }}><Star size={16} />{log.sleepQuality}</div>
-                          {log.mindfulnessDurationMin > 0 && <div style={{ display: 'flex', gap: 8, alignItems: 'center', color: 'var(--color-cyan)', fontWeight: 800 }}><Wind size={16} />{log.mindfulnessDurationMin}m</div>}
+                        <div style={{ display: 'flex', gap: 12, marginTop: 8 }}>
+                          <div style={{ display: 'flex', gap: 6, alignItems: 'center', color: 'var(--color-violet)', fontWeight: 800, fontSize: '0.85rem' }}><Star size={14} />{log.sleepQuality}</div>
+                          {log.mindfulnessDurationMin > 0 && <div style={{ display: 'flex', gap: 6, alignItems: 'center', color: 'var(--color-cyan)', fontWeight: 800, fontSize: '0.85rem' }}><Wind size={14} />{log.mindfulnessDurationMin}m</div>}
                         </div>
                       </div>
-                      {/* delete option removed */}
                     </div>
                   );
                 })
