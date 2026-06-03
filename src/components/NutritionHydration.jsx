@@ -4,11 +4,16 @@ import { INDIAN_FOOD_DATABASE } from '../utils/foodDatabase';
 import { Utensils, Droplet, Plus, Trash2, Search, Beef, Wheat, Pizza, ArrowLeft, Calendar } from 'lucide-react';
 
 const NutritionHydration = ({ user, onLogsUpdated, onViewHistory, initialViewHistory = false, onBack }) => {
+  const getTodayDateString = () => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  };
+
   const [foods, setFoods] = useState([]);
   const [waterTotal, setWaterTotal] = useState(0);
   
   // History states
-  const [historyDate, setHistoryDate] = useState(new Date().toISOString().split('T')[0]);
+  const [historyDate, setHistoryDate] = useState(getTodayDateString());
   const [historyFoods, setHistoryFoods] = useState([]);
   const [historyWaterTotal, setHistoryWaterTotal] = useState(0);
 

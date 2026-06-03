@@ -203,7 +203,7 @@ const WellnessMonitor = ({ onWellnessLogged, onViewHistory, initialViewHistory =
                       <div style={{ flex: 1 }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                           <div style={{ fontWeight: 800, color: 'var(--text-primary)', fontSize: '0.95rem' }}>{log.sleepDurationMin > 0 ? `${(Math.round(log.sleepDurationMin/6)/10)}h Sleep` : 'Mindfulness Session'}</div>
-                          <div style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', fontWeight: 700 }}>{new Date(log.loggedAt).toLocaleString(undefined, { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</div>
+                          <div style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', fontWeight: 700 }}>{new Date(log.loggedAt).toLocaleString('en-IN', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</div>
                         </div>
                         <div style={{ display: 'flex', gap: 10, marginTop: 6 }}>
                           <div style={{ display: 'flex', gap: 4, alignItems: 'center', color: 'var(--color-violet)', fontWeight: 800, fontSize: '0.8rem' }}><Star size={12} />{log.sleepQuality}</div>

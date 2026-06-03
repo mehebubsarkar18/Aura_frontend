@@ -452,7 +452,12 @@ const WellnessScoreGraph = ({ history, todaySummary }) => {
 };
 
 const Dashboard = ({ user }) => {
-  const [selectedDate] = useState(new Date().toISOString().split('T')[0]);
+  const getTodayDateString = () => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  };
+
+  const [selectedDate] = useState(getTodayDateString());
   
   // Synchronous initial data from cache for ultra-fast loading
   const cachedSummaryRes = api.getCached(`dashboard_summary_${selectedDate || 'today'}`);
@@ -462,7 +467,7 @@ const Dashboard = ({ user }) => {
   const getInitialWeightHistory = () => {
     if (cachedWeightRes && cachedWeightRes.data) {
       return cachedWeightRes.data.map((d, idx) => ({ 
-        day: idx === 0 && cachedWeightRes.data.length > 1 ? 'Start' : new Date(d.loggedAt).toLocaleDateString([], { month: 'short', day: 'numeric' }), 
+        day: idx === 0 && cachedWeightRes.data.length > 1 ? 'Start' : new Date(d.loggedAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }), 
         val: d.weight 
       }));
     }
@@ -482,7 +487,7 @@ const Dashboard = ({ user }) => {
   const fetchData = useCallback(async (date) => {
     const processData = (wRes, hRes, sRes) => {
       let wData = (wRes.data || []).map((d, idx) => ({ 
-        day: idx === 0 && (wRes.data || []).length > 1 ? 'Start' : new Date(d.loggedAt).toLocaleDateString([], { month: 'short', day: 'numeric' }), 
+        day: idx === 0 && (wRes.data || []).length > 1 ? 'Start' : new Date(d.loggedAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }), 
         val: d.weight 
       }));
 
@@ -562,7 +567,7 @@ const Dashboard = ({ user }) => {
         <div>
           <h1 className="text-gradient page-title" style={{ fontSize: '2.5rem', fontWeight: '800' }}>Performance Metrics</h1>
           <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Calendar size={18} /> {new Date(selectedDate).toLocaleDateString([], { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+            <Calendar size={18} /> {new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
           </p>
         </div>
       </div>

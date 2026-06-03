@@ -91,6 +91,11 @@ const BenefitsModal = ({ workout, onClose }) => {
 };
 
 const WorkoutTracker = ({ onWorkoutLogged, onViewHistory, initialViewHistory = false, onBack }) => {
+  const getTodayDateString = () => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  };
+
   const [history, setHistory] = useState([]);
   const [activeSession, setActiveSession] = useState(false);
   const [timeLeft, setTimeLeft] = useState(0); // Countdown state
@@ -121,7 +126,7 @@ const WorkoutTracker = ({ onWorkoutLogged, onViewHistory, initialViewHistory = f
       const saved = localStorage.getItem('aura_workout_session');
       if (saved) {
         const session = JSON.parse(saved);
-        const today = new Date().toISOString().split('T')[0];
+        const today = getTodayDateString();
         if (session.date === today) {
           setRoutineName(session.routineName);
           setTotalDuration(session.totalDuration);
@@ -150,7 +155,7 @@ const WorkoutTracker = ({ onWorkoutLogged, onViewHistory, initialViewHistory = f
         totalDuration,
         timeLeft,
         calsPerMin,
-        date: new Date().toISOString().split('T')[0]
+        date: getTodayDateString()
       };
       localStorage.setItem('aura_workout_session', JSON.stringify(sessionData));
     }
@@ -252,7 +257,7 @@ const WorkoutTracker = ({ onWorkoutLogged, onViewHistory, initialViewHistory = f
                   <div style={{ flex: 1, minWidth: '180px' }}>
                     <h4 style={{ fontSize: '1rem', fontWeight: '800', color: 'var(--text-primary)' }}>{w.routineName}</h4>
                     <div style={{ display: 'flex', gap: '10px', marginTop: '2px', color: 'var(--text-secondary)', fontWeight: '600', fontSize: '0.8rem' }}>
-                      <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Calendar size={12} /> {new Date(w.loggedAt).toLocaleDateString()}</span>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Calendar size={12} /> {new Date(w.loggedAt).toLocaleDateString('en-IN')}</span>
                       <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Clock size={12} /> {w.durationMinutes}m</span>
                     </div>
                   </div>
