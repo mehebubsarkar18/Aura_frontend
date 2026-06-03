@@ -34,13 +34,15 @@ function App() {
           setUser(profileData.user);
         } catch (error) {
           console.error('Auth initialization failed', error);
-          if (!user) api.logout(); // Only logout if we don't even have cached user
+          // Only logout if we don't have a user at all (even cached)
+          const cached = api.getCached('user_me');
+          if (!cached) api.logout();
         }
       }
       setLoading(false);
     };
     initAuth();
-  }, [user]);
+  }, []); // Only run once on mount
 
   const refreshSummary = async () => {
     // This is now handled by components internally if needed, 
