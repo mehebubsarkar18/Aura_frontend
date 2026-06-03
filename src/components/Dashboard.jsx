@@ -471,15 +471,12 @@ const Dashboard = ({ user }) => {
         </div>
       </div>
       
-      <div className="dashboard-metrics-grid">
-        {renderGraph(0)}
-        {renderGraph(1)}
-        {renderGraph(2)}
-      </div>
-
-      <div className="dashboard-middle-grid">
-        {renderGraph(3)}
-        {renderGraph(4)}
+      <div className="dashboard-graphs-container">
+        <div className="graph-item-macros">{renderGraph(3)}</div>
+        <div className="graph-item-aura">{renderGraph(4)}</div>
+        <div className="graph-item-workout">{renderGraph(1)}</div>
+        <div className="graph-item-wellness">{renderGraph(2)}</div>
+        <div className="graph-item-weight">{renderGraph(0)}</div>
       </div>
 
       <div className="progress-grid" style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
