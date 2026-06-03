@@ -93,9 +93,9 @@ const GoalAchievementView = ({ history = [], goals, todaySummary }) => {
 
   return (
     <div className="glass-panel premium-graph-card" style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px', height: '100%' }}>
-      <div className="graph-header">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
         <h3 style={{ fontSize: '1.2rem', fontWeight: '800' }}>{showHistory ? 'Weekly Discipline' : 'Daily Aura Score'}</h3>
-        <button onClick={() => setShowHistory(!showHistory)} className="btn btn-orange" style={{ padding: '5px 12px', fontSize: '0.8rem' }}>
+        <button onClick={() => setShowHistory(!showHistory)} className="btn btn-ghost" style={{ padding: '4px 10px', fontSize: '0.75rem' }}>
           {showHistory ? 'TODAY' : 'HISTORY'}
         </button>
       </div>
@@ -149,14 +149,14 @@ const WeightModule = ({ data, user, loggingWeight, newWeight, setNewWeight, hand
 
   return (
     <div className="glass-panel premium-graph-card" style={{ padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%' }}>
-      <div className="graph-header">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
         <h3 style={{ fontSize: '1.2rem', fontWeight: '800' }}>{showHistory ? 'Weight History' : 'Current Weight'}</h3>
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-          <button onClick={() => setShowHistory(!showHistory)} className="btn btn-orange" style={{ padding: '5px 10px', fontSize: '0.8rem' }}>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <button onClick={() => setShowHistory(!showHistory)} className="btn btn-ghost" style={{ padding: '4px 10px', fontSize: '0.75rem' }}>
             {showHistory ? 'TODAY' : 'HISTORY'}
           </button>
-          <div style={{ background: 'rgba(253, 90, 32, 0.1)', padding: '6px', borderRadius: '8px' }}>
-            <Scale size={16} style={{ color: 'var(--color-orange)' }} />
+          <div style={{ background: 'var(--icon-bg)', padding: '6px', borderRadius: '8px' }}>
+            <Scale size={18} style={{ color: 'var(--color-orange)' }} />
           </div>
         </div>
       </div>
@@ -238,14 +238,14 @@ const WorkoutTimeGraph = ({ history, todayValue, goal = 45 }) => {
   
   return (
     <div className="glass-panel premium-graph-card" style={{ padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%' }}>
-      <div className="graph-header">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
         <h3 style={{ fontSize: '1.2rem', fontWeight: '800' }}>{showHistory ? 'Workout History' : 'Today Activity'}</h3>
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-          <button onClick={() => setShowHistory(!showHistory)} className="btn btn-green" style={{ padding: '5px 10px', fontSize: '0.8rem' }}>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <button onClick={() => setShowHistory(!showHistory)} className="btn btn-ghost" style={{ padding: '4px 10px', fontSize: '0.75rem' }}>
             {showHistory ? 'TODAY' : 'HISTORY'}
           </button>
-          <div className="graph-card-header-icon workout-icon-bg" style={{ padding: '6px' }}>
-            <Clock size={16} style={{ color: 'var(--color-green)' }} />
+          <div style={{ background: 'var(--icon-bg)', padding: '6px', borderRadius: '8px' }}>
+            <Clock size={18} style={{ color: 'var(--color-green)' }} />
           </div>
         </div>
       </div>
@@ -321,14 +321,14 @@ const WellnessScoreGraph = ({ history, todaySummary }) => {
 
   return (
     <div className="glass-panel premium-graph-card" style={{ padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%' }}>
-      <div className="graph-header">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
         <h3 style={{ fontSize: '1.2rem', fontWeight: '800' }}>{showHistory ? 'Wellness History' : 'Daily Wellness'}</h3>
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-          <button onClick={() => setShowHistory(!showHistory)} className="btn btn-violet" style={{ padding: '5px 10px', fontSize: '0.8rem' }}>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <button onClick={() => setShowHistory(!showHistory)} className="btn btn-ghost" style={{ padding: '4px 10px', fontSize: '0.75rem' }}>
             {showHistory ? 'TODAY' : 'HISTORY'}
           </button>
-          <div className="graph-card-header-icon wellness-icon-bg" style={{ padding: '6px' }}>
-            <Heart size={16} style={{ color: 'var(--color-violet)' }} />
+          <div style={{ background: 'var(--icon-bg)', padding: '6px', borderRadius: '8px' }}>
+            <Heart size={18} style={{ color: 'var(--color-violet)' }} />
           </div>
         </div>
       </div>
