@@ -314,7 +314,76 @@
     grid-column: span 1 !important;
     margin: 0 !important;
   }
+
+  /* Global mobile button scaling */
+  .btn {
+    padding: 6px 12px !important;
+    font-size: 0.75rem !important;
+    min-height: 32px !important;
+  }
+
+  .btn-primary, .btn-orange, .btn-violet, .btn-green {
+    padding: 6px 14px !important;
+  }
+
+  /* Specific buttons named by user */
+  .login-btn, .signup-btn, .settings-page .btn, .workout-page .btn, .wellness-container .btn, .nutrition-grid .btn, .auth-submit-btn, .landing-nav-btn {
+    font-size: 0.65rem !important;
+    padding: 4px 10px !important;
+    min-height: 28px !important;
+  }
+
+  .auth-toggle-text {
+    font-size: 0.75rem !important;
+  }
+
+  .auth-toggle-link {
+    font-size: 0.75rem !important;
+  }
+
+  /* Colorful History Buttons for Mobile */
+  .btn-history-orange, .btn-history-green, .btn-history-violet, .btn-history-cyan {
+    background: rgba(253, 90, 32, 0.15) !important;
+    color: var(--color-orange) !important;
+    border: 1px solid rgba(253, 90, 32, 0.3) !important;
+    font-weight: 800 !important;
+    font-size: 0.65rem !important;
+    padding: 3px 8px !important;
+  }
+  
+  .btn-history-green {
+    background: rgba(74, 222, 128, 0.15) !important;
+    color: var(--color-green) !important;
+    border: 1px solid rgba(74, 222, 128, 0.3) !important;
+  }
+
+  .btn-history-violet {
+    background: rgba(168, 85, 247, 0.15) !important;
+    color: var(--color-violet) !important;
+    border: 1px solid rgba(168, 85, 247, 0.3) !important;
+  }
+
+  .btn-history-cyan {
+    background: rgba(34, 211, 238, 0.15) !important;
+    color: var(--color-cyan) !important;
+    border: 1px solid rgba(34, 211, 238, 0.3) !important;
+  }
+
+  /* Hide icons on mobile for specific graphs */
+  .mobile-hide-icon {
+    display: none !important;
+  }
 }
+
+/* History buttons colorful on Desktop too but more subtle */
+.btn-history-orange, .btn-history-green, .btn-history-violet, .btn-history-cyan {
+  transition: all 0.2s ease;
+}
+.btn-history-orange:hover { background: rgba(253, 90, 32, 0.1); }
+.btn-history-green:hover { background: rgba(74, 222, 128, 0.1); }
+.btn-history-violet:hover { background: rgba(168, 85, 247, 0.1); }
+.btn-history-cyan:hover { background: rgba(34, 211, 238, 0.1); }
+
 
 @media (max-width: 480px) {
   .progress-grid { grid-template-columns: repeat(2, 1fr) !important; }

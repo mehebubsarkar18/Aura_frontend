@@ -184,7 +184,7 @@ const LoginRegister = ({ onAuthSuccess, onBack, initialIsLogin = true }) => {
 
           <button
             type="submit"
-            className="btn btn-primary"
+            className="btn btn-primary auth-submit-btn"
             disabled={loading}
             style={{
               padding: '12px',
@@ -203,13 +203,14 @@ const LoginRegister = ({ onAuthSuccess, onBack, initialIsLogin = true }) => {
         </form>
 
         <div style={{ textAlign: 'center', marginTop: '24px' }}>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }} className="auth-toggle-text">
             {isLogin ? "Don't have an account? " : "Already have an account? "}
             <span
               onClick={() => {
                 setIsLogin(!isLogin);
                 setError('');
               }}
+              className="auth-toggle-link"
               style={{
                 color: 'var(--color-orange)',
                 cursor: 'pointer',

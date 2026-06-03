@@ -283,7 +283,7 @@ const WorkoutTracker = ({ onWorkoutLogged, onViewHistory, initialViewHistory = f
             </div>
             <button 
               onClick={onViewHistory}
-              className="btn btn-orange"
+              className="btn btn-history-orange"
               style={{ padding: '8px 16px', fontSize: '0.85rem' }}
             >
               History

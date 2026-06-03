@@ -74,11 +74,11 @@ const LandingPage = ({ onGetStarted, onLogin }) => {
         <style>{`
           @media (max-width: 768px) {
             .landing-nav-btn {
-              padding: 6px 14px !important;
-              font-size: 0.8rem !important;
+              padding: 4px 10px !important;
+              font-size: 0.65rem !important;
             }
             .nav-buttons-mobile {
-              gap: 8px !important;
+              gap: 6px !important;
             }
             .hero-trial-btn {
               display: none !important;

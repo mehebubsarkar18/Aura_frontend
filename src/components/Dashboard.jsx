@@ -92,7 +92,7 @@ const GoalAchievementView = ({ history = [], goals, todaySummary }) => {
     <div className="glass-panel premium-graph-card" style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px', height: '100%' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
         <h3 style={{ fontSize: '1.1rem', fontWeight: '800' }}>{showHistory ? 'Weekly Discipline' : 'Daily Aura Score'}</h3>
-        <button onClick={() => setShowHistory(!showHistory)} className="btn btn-ghost" style={{ padding: '3px 8px', fontSize: '0.7rem' }}>
+        <button onClick={() => setShowHistory(!showHistory)} className="btn btn-ghost btn-history-orange" style={{ padding: '3px 8px', fontSize: '0.7rem' }}>
           {showHistory ? 'TODAY' : 'HISTORY'}
         </button>
       </div>
@@ -149,10 +149,10 @@ const WeightModule = ({ data, user, loggingWeight, newWeight, setNewWeight, hand
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
         <h3 style={{ fontSize: '1.1rem', fontWeight: '800' }}>{showHistory ? 'Weight History' : 'Current Weight'}</h3>
         <div style={{ display: 'flex', gap: '6px' }}>
-          <button onClick={() => setShowHistory(!showHistory)} className="btn btn-ghost" style={{ padding: '3px 8px', fontSize: '0.7rem' }}>
+          <button onClick={() => setShowHistory(!showHistory)} className="btn btn-ghost btn-history-orange" style={{ padding: '3px 8px', fontSize: '0.7rem' }}>
             {showHistory ? 'TODAY' : 'HISTORY'}
           </button>
-          <div style={{ background: 'var(--icon-bg)', padding: '5px', borderRadius: '7px' }}>
+          <div className="mobile-hide-icon" style={{ background: 'var(--icon-bg)', padding: '5px', borderRadius: '7px' }}>
             <Scale size={16} style={{ color: 'var(--color-orange)' }} />
           </div>
         </div>
@@ -238,10 +238,10 @@ const WorkoutTimeGraph = ({ history, todayValue, goal = 45 }) => {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
         <h3 style={{ fontSize: '1.1rem', fontWeight: '800' }}>{showHistory ? 'Workout History' : 'Today Activity'}</h3>
         <div style={{ display: 'flex', gap: '6px' }}>
-          <button onClick={() => setShowHistory(!showHistory)} className="btn btn-ghost" style={{ padding: '3px 8px', fontSize: '0.7rem' }}>
+          <button onClick={() => setShowHistory(!showHistory)} className="btn btn-ghost btn-history-green" style={{ padding: '3px 8px', fontSize: '0.7rem' }}>
             {showHistory ? 'TODAY' : 'HISTORY'}
           </button>
-          <div style={{ background: 'var(--icon-bg)', padding: '5px', borderRadius: '7px' }}>
+          <div className="mobile-hide-icon" style={{ background: 'var(--icon-bg)', padding: '5px', borderRadius: '7px' }}>
             <Clock size={16} style={{ color: 'var(--color-green)' }} />
           </div>
         </div>
@@ -321,10 +321,10 @@ const WellnessScoreGraph = ({ history, todaySummary }) => {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
         <h3 style={{ fontSize: '1.1rem', fontWeight: '800' }}>{showHistory ? 'Wellness History' : 'Daily Wellness'}</h3>
         <div style={{ display: 'flex', gap: '6px' }}>
-          <button onClick={() => setShowHistory(!showHistory)} className="btn btn-ghost" style={{ padding: '3px 8px', fontSize: '0.7rem' }}>
+          <button onClick={() => setShowHistory(!showHistory)} className="btn btn-ghost btn-history-violet" style={{ padding: '3px 8px', fontSize: '0.7rem' }}>
             {showHistory ? 'TODAY' : 'HISTORY'}
           </button>
-          <div style={{ background: 'var(--icon-bg)', padding: '5px', borderRadius: '7px' }}>
+          <div className="mobile-hide-icon" style={{ background: 'var(--icon-bg)', padding: '5px', borderRadius: '7px' }}>
             <Heart size={16} style={{ color: 'var(--color-violet)' }} />
           </div>
         </div>

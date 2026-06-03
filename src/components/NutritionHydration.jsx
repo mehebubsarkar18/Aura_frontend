@@ -245,7 +245,7 @@ const NutritionHydration = ({ user, onLogsUpdated, onViewHistory, initialViewHis
             <h2 style={{ fontSize: '1.4rem', fontWeight: '800', color: 'var(--text-primary)' }}>Nutrition</h2>
             <button 
               onClick={onViewHistory}
-              className="btn btn-cyan"
+              className="btn btn-history-cyan"
               style={{ padding: '6px 14px', fontSize: '0.85rem' }}
             >
               History

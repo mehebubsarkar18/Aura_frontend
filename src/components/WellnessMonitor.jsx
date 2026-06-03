@@ -142,7 +142,7 @@ const WellnessMonitor = ({ onWellnessLogged, onViewHistory, initialViewHistory =
               <div style={{ background: 'rgba(168,85,247,0.15)', padding: 6, borderRadius: 8, color: 'var(--color-violet)' }}><Sparkles size={18} /></div>
               <h2 style={{ fontSize: '1.2rem', fontWeight: 800, margin: 0, color: 'var(--text-primary)' }}>Daily Recovery</h2>
               <div style={{ marginLeft: 'auto' }}>
-                <button type="button" onClick={onViewHistory || (() => setShowHistoryOverlay(true))} className="btn btn-violet" style={{ padding: '6px 14px', fontSize: '0.85rem' }}>History</button>
+                <button type="button" onClick={onViewHistory || (() => setShowHistoryOverlay(true))} className="btn btn-history-violet" style={{ padding: '6px 14px', fontSize: '0.85rem' }}>History</button>
               </div>
             </div>
 
