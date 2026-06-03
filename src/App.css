@@ -192,6 +192,20 @@
   border-radius: 0 0 10px 10px;
 }
 
+/* Dashboard Grid Layouts for PC */
+.dashboard-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.dashboard-middle-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 24px;
+  margin-top: 24px;
+}
+
 /* Responsive Breakpoints */
 @media (max-width: 1200px) {
   .app-sidebar { width: 240px; }

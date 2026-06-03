@@ -451,35 +451,38 @@ const Dashboard = ({ user }) => {
 
   const renderGraph = (index) => {
     switch(index) {
-      case 0: return <MacroChart protein={protein} carbs={carbs} fat={fat} targetCals={user?.dailyGoals?.calories} consumedCals={caloriesConsumed} />;
-      case 1: return <GoalAchievementView history={rawHistory} goals={user?.dailyGoals} todaySummary={summary} />;
-      case 2: return <WorkoutTimeGraph history={rawHistory} todayValue={activeMinutes} goal={user?.dailyGoals?.activeMinutes} />;
-      case 3: return <WellnessScoreGraph history={rawHistory} todaySummary={summary} />;
-      case 4: return <WeightModule data={weightHistory} user={user} loggingWeight={loggingWeight} newWeight={newWeight} setNewWeight={setNewWeight} handleWeightUpdate={handleWeightUpdate} />;
+      case 0: return <WeightModule data={weightHistory} user={user} loggingWeight={loggingWeight} newWeight={newWeight} setNewWeight={setNewWeight} handleWeightUpdate={handleWeightUpdate} />;
+      case 1: return <WorkoutTimeGraph history={rawHistory} todayValue={activeMinutes} goal={user?.dailyGoals?.activeMinutes} />;
+      case 2: return <WellnessScoreGraph history={rawHistory} todaySummary={summary} />;
+      case 3: return <MacroChart protein={protein} carbs={carbs} fat={fat} targetCals={user?.dailyGoals?.calories} consumedCals={caloriesConsumed} />; 
+      case 4: return <GoalAchievementView history={rawHistory} goals={user?.dailyGoals} todaySummary={summary} />;
       default: return null;
     }
   };
 
   return (
-    <div className="dashboard-page" style={{ display: 'flex', flexDirection: 'column', gap: '24px', width: '100%' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '12px' }}>
+    <div className="dashboard-page" style={{ display: 'flex', flexDirection: 'column', gap: '32px', width: '100%' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
         <div>
-          <h1 className="text-gradient page-title" style={{ fontSize: '2rem', fontWeight: '800' }}>Performance Metrics</h1>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Calendar size={16} /> {new Date(selectedDate).toLocaleDateString([], { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+          <h1 className="text-gradient page-title" style={{ fontSize: '2.5rem', fontWeight: '800' }}>Performance Metrics</h1>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Calendar size={18} /> {new Date(selectedDate).toLocaleDateString([], { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
           </p>
         </div>
       </div>
       
-      <div className="dashboard-metrics-grid" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+      <div className="dashboard-metrics-grid">
         {renderGraph(0)}
         {renderGraph(1)}
         {renderGraph(2)}
+      </div>
+
+      <div className="dashboard-middle-grid">
         {renderGraph(3)}
         {renderGraph(4)}
       </div>
 
-      <div className="progress-grid" style={{ display: 'flex', flexWrap: 'wrap', gap: '16px' }}>
+      <div className="progress-grid" style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
         <ProgressRing percentage={(caloriesConsumed / (user?.dailyGoals?.calories || 2000)) * 100} color="#3b82f6" icon={Flame} title="Energy In" value={caloriesConsumed} unit="kcal" />
         <ProgressRing percentage={(caloriesBurned / (user?.dailyGoals?.caloriesBurned || 500)) * 100} color="var(--color-orange)" icon={Flame} title="Energy Out" value={caloriesBurned} unit="kcal" />
         <ProgressRing percentage={(waterConsumedMl / (user?.dailyGoals?.waterMl || 2500)) * 100} color="var(--color-cyan)" icon={Droplet} title="Hydration" value={waterConsumedMl} unit="mL" />
