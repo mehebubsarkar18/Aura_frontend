@@ -14,11 +14,10 @@ const WellnessMonitor = ({ onWellnessLogged, onViewHistory, initialViewHistory =
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showHistoryOverlay, setShowHistoryOverlay] = useState(false);
-
-  
+  const [logSuccess, setLogSuccess] = useState(false);
 
   const [sleepHours, setSleepHours] = useState('');
-  const [moodEmoji, setMoodEmoji] = useState('😄');
+  const [moodEmoji, setMoodEmoji] = useState(null);
 
   const fetchHistory = useCallback(async () => {
     setLoading(true);
@@ -38,7 +37,10 @@ const WellnessMonitor = ({ onWellnessLogged, onViewHistory, initialViewHistory =
 
   const handleLogWellness = async (e) => {
     e.preventDefault();
-    if (!sleepHours) return;
+    if (!sleepHours || !moodEmoji) {
+      alert('Please select both sleep duration and your mood.');
+      return;
+    }
     try {
       await api.logWellness({
         sleepDurationMin: Math.round(Number(sleepHours) * 60),
@@ -48,6 +50,9 @@ const WellnessMonitor = ({ onWellnessLogged, onViewHistory, initialViewHistory =
         mindfulnessDurationMin: 0
       });
       setSleepHours('');
+      setMoodEmoji(null);
+      setLogSuccess(true);
+      setTimeout(() => setLogSuccess(false), 3000);
       fetchHistory();
       if (onWellnessLogged) onWellnessLogged();
     } catch (err) {
@@ -158,15 +163,18 @@ const WellnessMonitor = ({ onWellnessLogged, onViewHistory, initialViewHistory =
                 <label style={{ fontSize: '0.85rem', fontWeight: 700, display: 'block', marginBottom: 4, color: 'var(--text-primary)' }}>How are you feeling today?</label>
                 <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                   {EMOJIS.map(e => (
-                    <button key={e.char} type="button" onClick={() => setMoodEmoji(e.char)} style={{ flex: 1, minWidth: 70, padding: '8px 6px', borderRadius: 10, background: moodEmoji === e.char ? 'rgba(168,85,247,0.12)' : 'var(--input-bg)', border: '1px solid var(--glass-card-border)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, transition: 'all 0.2s' }}>
+                    <button key={e.char} type="button" onClick={() => setMoodEmoji(e.char)} style={{ flex: 1, minWidth: 70, padding: '8px 6px', borderRadius: 10, background: moodEmoji === e.char ? 'linear-gradient(135deg, var(--color-violet), #7c3aed)' : 'var(--input-bg)', border: '1px solid var(--glass-card-border)', color: moodEmoji === e.char ? 'white' : 'var(--text-secondary)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, transition: 'all 0.2s' }}>
                       <div style={{ fontSize: '1.4rem' }}>{e.char}</div>
-                      <div style={{ fontSize: '0.75rem', fontWeight: 800, color: moodEmoji === e.char ? 'var(--text-primary)' : 'var(--text-secondary)' }}>{e.label}</div>
+                      <div style={{ fontSize: '0.75rem', fontWeight: 800, color: moodEmoji === e.char ? 'white' : 'var(--text-secondary)' }}>{e.label}</div>
                     </button>
                   ))}
                 </div>
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 4 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 4 }}>
+                <div style={{ minHeight: '24px' }}>
+                  {logSuccess && <span style={{ color: 'var(--color-green)', fontWeight: 800, fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '4px' }}><Star size={14} fill="var(--color-green)" /> Log added successfully!</span>}
+                </div>
                 <button type="submit" className="btn btn-primary" style={{ padding: '10px 20px', fontSize: '0.95rem' }}>Complete Log</button>
               </div>
             </form>

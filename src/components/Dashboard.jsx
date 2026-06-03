@@ -165,9 +165,9 @@ const WeightModule = ({ data, user, loggingWeight, newWeight, setNewWeight, hand
             <div style={{ fontSize: '0.85rem', fontWeight: '700', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: '2px' }}>Kilograms</div>
           </div>
           
-          <form onSubmit={handleWeightUpdate} style={{ display: 'flex', gap: '8px', width: '100%', maxWidth: '220px', position: 'relative', zIndex: 1 }}>
-             <input type="number" step="0.1" className="glass-input" value={newWeight} onChange={e => setNewWeight(e.target.value)} placeholder="New log" style={{ flex: 1, padding: '7px 10px', fontSize: '0.9rem' }} />
-             <button type="submit" disabled={loggingWeight} className="btn btn-primary" style={{ padding: '7px 14px' }}>LOG</button>
+          <form onSubmit={handleWeightUpdate} style={{ display: 'flex', gap: '6px', width: '100%', maxWidth: '180px', position: 'relative', zIndex: 1 }}>
+             <input type="number" step="0.1" className="glass-input" value={newWeight} onChange={e => setNewWeight(e.target.value)} placeholder="New log" style={{ flex: 1, padding: '5px 8px', fontSize: '0.8rem' }} />
+             <button type="submit" disabled={loggingWeight} className="btn btn-primary" style={{ padding: '5px 12px', fontSize: '0.8rem' }}>LOG</button>
           </form>
         </div>
       ) : (
