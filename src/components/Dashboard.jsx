@@ -466,33 +466,51 @@ const Dashboard = ({ user }) => {
   const [activeGraphIndex, setActiveGraphIndex] = useState(0);
 
   const fetchData = useCallback(async (date) => {
-    setLoading(true);
-    try {
-      const [wRes, hRes, sRes] = await Promise.all([
-        api.getWeightHistory(), 
-        api.getDashboardHistory(),
-        api.getTodaySummary(date)
-        ]);
-
-        let wData = (wRes.data || []).map((d, idx) => ({ 
+    const processData = (wRes, hRes, sRes) => {
+      let wData = (wRes.data || []).map((d, idx) => ({ 
         day: idx === 0 && (wRes.data || []).length > 1 ? 'Start' : new Date(d.loggedAt).toLocaleDateString([], { month: 'short', day: 'numeric' }), 
         val: d.weight 
-        }));
+      }));
 
-        if (wData.length === 0 && user.weight) {
+      if (wData.length === 0 && user.weight) {
         wData = [{ day: 'Start', val: user.weight }];
-        } else if (wData.length === 1 && user.weight && wData[0].val !== user.weight) {
+      } else if (wData.length === 1 && user.weight && wData[0].val !== user.weight) {
         wData = [{ day: 'Start', val: user.weight }, { day: 'Today', val: wData[0].val }];
-        }
+      }
 
-        setWeightHistory(wData);
+      setWeightHistory(wData);
       if (hRes && hRes.success) setRawHistory(hRes.history || []);
       if (sRes && sRes.success) setSummary(sRes.summary);
+    };
+
+    // Try to get from cache first for instant load
+    try {
+      const [wCached, hCached, sCached] = await Promise.all([
+        api.getWeightHistory(true),
+        api.getDashboardHistory(true),
+        api.getTodaySummary(date, true)
+      ]);
+      
+      if (wCached && hCached && sCached) {
+        processData(wCached, hCached, sCached);
+        setLoading(false);
+      }
+    } catch (e) {
+      console.warn('Cache load failed', e);
+    }
+
+    // Always fetch fresh data in background
+    try {
+      const [wRes, hRes, sRes] = await Promise.all([
+        api.getWeightHistory(false), 
+        api.getDashboardHistory(false),
+        api.getTodaySummary(date, false)
+      ]);
+      processData(wRes, hRes, sRes);
     } catch (error) {
       console.error('Dashboard fetch failed', error);
     } finally {
-      // Adding a small delay for the animation to feel smoother
-      setTimeout(() => setLoading(false), 800);
+      setLoading(false);
     }
   }, [user.weight]);
 

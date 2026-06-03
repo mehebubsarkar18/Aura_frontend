@@ -19,6 +19,44 @@ const handleResponse = async (response) => {
   return data;
 };
 
+// Simple caching logic
+const CACHE_PREFIX = 'aura_cache_';
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+const getCache = (key) => {
+  try {
+    const cached = localStorage.getItem(CACHE_PREFIX + key);
+    if (!cached) return null;
+    const { data, timestamp } = JSON.parse(cached);
+    if (Date.now() - timestamp > CACHE_TTL) {
+      localStorage.removeItem(CACHE_PREFIX + key);
+      return null;
+    }
+    return data;
+  } catch (e) {
+    return null;
+  }
+};
+
+const setCache = (key, data) => {
+  try {
+    localStorage.setItem(CACHE_PREFIX + key, JSON.stringify({
+      data,
+      timestamp: Date.now()
+    }));
+  } catch (e) {
+    console.warn('Cache write failed', e);
+  }
+};
+
+const clearCache = (pattern) => {
+  Object.keys(localStorage).forEach(key => {
+    if (key.startsWith(CACHE_PREFIX) && (!pattern || key.includes(pattern))) {
+      localStorage.removeItem(key);
+    }
+  });
+};
+
 export const api = {
   // Auth endpoints
   login: async (email, password) => {
@@ -30,6 +68,7 @@ export const api = {
     const data = await handleResponse(res);
     if (data.token) {
       localStorage.setItem('token', data.token);
+      clearCache(); // Reset all cache on new login
     }
     return data;
   },
@@ -43,6 +82,7 @@ export const api = {
     const data = await handleResponse(res);
     if (data.token) {
       localStorage.setItem('token', data.token);
+      clearCache();
     }
     return data;
   },
@@ -70,6 +110,7 @@ export const api = {
       headers: getHeaders(),
       body: JSON.stringify(goals),
     });
+    clearCache('dashboard'); // Specific cache invalidation
     return await handleResponse(res);
   },
 
@@ -84,6 +125,7 @@ export const api = {
 
   logout: () => {
     localStorage.removeItem('token');
+    clearCache();
   },
 
   getPublicStats: async () => {
@@ -104,7 +146,13 @@ export const api = {
   },
 
   // Dashboard endpoint
-  getTodaySummary: async (date) => {
+  getTodaySummary: async (date, useCache = true) => {
+    const cacheKey = `dashboard_summary_${date || 'today'}`;
+    if (useCache) {
+      const cached = getCache(cacheKey);
+      if (cached) return cached;
+    }
+
     const url = date 
       ? `${API_BASE_URL}/dashboard/summary?date=${date}`
       : `${API_BASE_URL}/dashboard/summary`;
@@ -112,25 +160,43 @@ export const api = {
       method: 'GET',
       headers: getHeaders(),
     });
-    return await handleResponse(res);
+    const data = await handleResponse(res);
+    setCache(cacheKey, data);
+    return data;
   },
 
-  getDashboardHistory: async () => {
+  getDashboardHistory: async (useCache = true) => {
+    const cacheKey = 'dashboard_history';
+    if (useCache) {
+      const cached = getCache(cacheKey);
+      if (cached) return cached;
+    }
+
     const res = await fetch(`${API_BASE_URL}/dashboard/history`, {
       method: 'GET',
       headers: getHeaders(),
     });
-    return await handleResponse(res);
+    const data = await handleResponse(res);
+    setCache(cacheKey, data);
+    return data;
   },
 
 
   // Workout endpoints
-  getWorkoutHistory: async () => {
+  getWorkoutHistory: async (useCache = true) => {
+    const cacheKey = 'workout_history';
+    if (useCache) {
+      const cached = getCache(cacheKey);
+      if (cached) return cached;
+    }
+
     const res = await fetch(`${API_BASE_URL}/workouts/history`, {
       method: 'GET',
       headers: getHeaders(),
     });
-    return await handleResponse(res);
+    const data = await handleResponse(res);
+    setCache(cacheKey, data);
+    return data;
   },
 
   logWorkout: async (workoutData) => {
@@ -139,6 +205,8 @@ export const api = {
       headers: getHeaders(),
       body: JSON.stringify(workoutData),
     });
+    clearCache('dashboard');
+    clearCache('workout');
     return await handleResponse(res);
   },
 
@@ -168,6 +236,7 @@ export const api = {
       headers: getHeaders(),
       body: JSON.stringify(foodData),
     });
+    clearCache('dashboard');
     return await handleResponse(res);
   },
 
@@ -177,6 +246,7 @@ export const api = {
       headers: getHeaders(),
       body: JSON.stringify({ amountMl }),
     });
+    clearCache('dashboard');
     return await handleResponse(res);
   },
 
@@ -185,16 +255,25 @@ export const api = {
       method: 'DELETE',
       headers: getHeaders(),
     });
+    clearCache('dashboard');
     return await handleResponse(res);
   },
 
   // Wellness endpoints
-  getWellnessHistory: async () => {
+  getWellnessHistory: async (useCache = true) => {
+    const cacheKey = 'wellness_history';
+    if (useCache) {
+      const cached = getCache(cacheKey);
+      if (cached) return cached;
+    }
+
     const res = await fetch(`${API_BASE_URL}/wellness/history`, {
       method: 'GET',
       headers: getHeaders(),
     });
-    return await handleResponse(res);
+    const data = await handleResponse(res);
+    setCache(cacheKey, data);
+    return data;
   },
 
   logWellness: async (wellnessData) => {
@@ -203,6 +282,8 @@ export const api = {
       headers: getHeaders(),
       body: JSON.stringify(wellnessData),
     });
+    clearCache('dashboard');
+    clearCache('wellness');
     return await handleResponse(res);
   },
   
@@ -211,16 +292,26 @@ export const api = {
       method: 'DELETE',
       headers: getHeaders(),
     });
+    clearCache('dashboard');
+    clearCache('wellness');
     return await handleResponse(res);
   },
 
   // Weight endpoints
-  getWeightHistory: async () => {
+  getWeightHistory: async (useCache = true) => {
+    const cacheKey = 'weight_history';
+    if (useCache) {
+      const cached = getCache(cacheKey);
+      if (cached) return cached;
+    }
+
     const res = await fetch(`${API_BASE_URL}/weight/history`, {
       method: 'GET',
       headers: getHeaders(),
     });
-    return await handleResponse(res);
+    const data = await handleResponse(res);
+    setCache(cacheKey, data);
+    return data;
   },
 
   logWeight: async (weightData) => {
@@ -229,6 +320,8 @@ export const api = {
       headers: getHeaders(),
       body: JSON.stringify(weightData),
     });
+    clearCache('dashboard');
+    clearCache('weight');
     return await handleResponse(res);
   },
 };
