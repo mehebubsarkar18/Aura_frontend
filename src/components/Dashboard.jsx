@@ -89,7 +89,7 @@ const GoalAchievementView = ({ history = [], goals, todaySummary }) => {
   const weeklyData = history.map(d => ({ day: d.day, val: calculateAvg(d) }));
 
   return (
-    <div className="glass-panel premium-graph-card" style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px', height: '100%' }}>
+    <div className="glass-panel premium-graph-card" style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px', height: '280px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
         <h3 style={{ fontSize: '1.1rem', fontWeight: '800' }}>{showHistory ? 'Weekly Discipline' : 'Daily Aura Score'}</h3>
         <button onClick={() => setShowHistory(!showHistory)} className="btn btn-ghost btn-history-orange" style={{ padding: '3px 8px', fontSize: '0.7rem' }}>
@@ -145,7 +145,7 @@ const WeightModule = ({ data, user, loggingWeight, newWeight, setNewWeight, hand
   const points = pointsArray.map(p => `${p.x},${p.y}`).join(' ');
 
   return (
-    <div className="glass-panel premium-graph-card" style={{ padding: '16px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%' }}>
+    <div className="glass-panel premium-graph-card" style={{ padding: '16px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '280px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
         <h3 style={{ fontSize: '1.1rem', fontWeight: '800' }}>{showHistory ? 'Weight History' : 'Current Weight'}</h3>
         <div style={{ display: 'flex', gap: '6px' }}>
@@ -234,7 +234,7 @@ const WorkoutTimeGraph = ({ history, todayValue, goal = 45 }) => {
   const maxMin = Math.max(...history.map(h => h.activeMinutes), todayValue) || 60;
   
   return (
-    <div className="glass-panel premium-graph-card" style={{ padding: '16px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%' }}>
+    <div className="glass-panel premium-graph-card" style={{ padding: '16px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '280px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
         <h3 style={{ fontSize: '1.1rem', fontWeight: '800' }}>{showHistory ? 'Workout History' : 'Today Activity'}</h3>
         <div style={{ display: 'flex', gap: '6px' }}>
@@ -271,7 +271,7 @@ const WorkoutTimeGraph = ({ history, todayValue, goal = 45 }) => {
                     width: '100%'
                   }}
                 >
-                   {d.activeMinutes > 0 ? <div className="bar-value-label workout-text" style={{ fontSize: '0.65rem', top: '-18px' }}>{d.activeMinutes}</div> : null}
+                   {d.activeMinutes > 0 ? <div className="bar-value-label workout-text" style={{ fontSize: '0.65rem', top: '-22px' }}>{d.activeMinutes}</div> : null}
                 </div>
               </div>
               <span className="chart-day-label" style={{ textAlign: 'center', display: 'block', fontSize: '0.7rem', marginTop: '8px' }}>{d.day}</span>
@@ -317,7 +317,7 @@ const WellnessScoreGraph = ({ history, todaySummary }) => {
   const todayScore = calculateScore(todaySummary?.sleepMinutes, todaySummary?.moodEmoji);
 
   return (
-    <div className="glass-panel premium-graph-card" style={{ padding: '16px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%' }}>
+    <div className="glass-panel premium-graph-card" style={{ padding: '16px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '280px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
         <h3 style={{ fontSize: '1.1rem', fontWeight: '800' }}>{showHistory ? 'Wellness History' : 'Daily Wellness'}</h3>
         <div style={{ display: 'flex', gap: '6px' }}>
@@ -359,7 +359,7 @@ const WellnessScoreGraph = ({ history, todaySummary }) => {
                     width: '100%'
                   }}
                 >
-                   {d.score > 0 ? <div className="bar-value-label wellness-text" style={{ fontSize: '0.65rem', top: '-18px' }}>{d.score}</div> : null}
+                   {d.score > 0 ? <div className="bar-value-label wellness-text" style={{ fontSize: '0.65rem', top: '-22px' }}>{d.score}</div> : null}
                 </div>
               </div>
               <span className="chart-day-label" style={{ textAlign: 'center', display: 'block', fontSize: '0.7rem', marginTop: '8px' }}>{d.day}</span>
