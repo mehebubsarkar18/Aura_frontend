@@ -108,11 +108,40 @@ const GoalAchievementView = ({ history = [], goals, todaySummary }) => {
             </div>
           </div>
         ) : (
-            <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', height: '120px' }}>
+            <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', height: '140px', marginTop: '20px' }}>
             {weeklyData.map((d, i) => (
               <div key={i} className="chart-bar-wrapper">
-                <div style={{ width: '100%', background: `linear-gradient(to top, var(--color-violet), var(--color-violet-light))`, borderRadius: '4px', height: `${d.val}%`, minWidth: '16px' }} className="bar-premium" />
-                <span className="chart-day-label" style={{ fontSize: '0.7rem', marginTop: '6px' }}>{d.day}</span>
+                <div style={{ 
+                  flex: 1, 
+                  position: 'relative', 
+                  display: 'flex', 
+                  alignItems: 'flex-end', 
+                  width: '100%', 
+                  maxWidth: '24px', 
+                  background: 'rgba(255,255,255,0.04)', 
+                  borderRadius: '12px 12px 4px 4px' 
+                }}>
+                  <div style={{ 
+                    position: 'absolute', 
+                    top: '-20px', 
+                    width: '100%', 
+                    textAlign: 'center', 
+                    fontSize: '0.65rem', 
+                    fontWeight: '900',
+                    color: 'var(--text-primary)',
+                    opacity: d.val > 0 ? 1 : 0.4
+                  }}>
+                    {d.val}%
+                  </div>
+                  <div style={{ 
+                    width: '100%', 
+                    background: d.val > 0 ? `linear-gradient(to top, var(--color-violet), var(--color-violet-light))` : 'rgba(255,255,255,0.08)', 
+                    borderRadius: '12px 12px 4px 4px', 
+                    height: `${d.val || 4}%`,
+                    opacity: d.val > 0 ? 1 : 0.2
+                  }} className="bar-premium" />
+                </div>
+                <span className="chart-day-label" style={{ fontSize: '0.65rem', marginTop: '8px', fontWeight: '800', opacity: 0.8 }}>{d.day}</span>
               </div>
             ))}
           </div>
@@ -260,34 +289,47 @@ const WorkoutTimeGraph = ({ history, todayValue, goal = 45 }) => {
           )}
         </div>
       ) : (
-        <div className="graph-container-inner" style={{ height: '180px', display: 'flex', justifyContent: 'space-between', gap: '8px', marginTop: '25px', position: 'relative' }}>
+        <div className="graph-container-inner" style={{ height: '180px', display: 'flex', justifyContent: 'space-between', gap: '4px', marginTop: '25px', position: 'relative' }}>
           {history.map((d, i) => {
-            const barHeight = d.activeMinutes > 0 ? Math.max(5, (d.activeMinutes / maxMin) * 85) : 0;
+            const barHeight = d.activeMinutes > 0 ? Math.max(8, (d.activeMinutes / maxMin) * 82) : 0;
             return (
               <div key={i} className="chart-bar-wrapper">
-                <div style={{ flex: 1, position: 'relative', display: 'flex', alignItems: 'flex-end', width: '100%', background: 'rgba(255,255,255,0.03)', borderRadius: '6px' }}>
+                <div style={{ 
+                  flex: 1, 
+                  position: 'relative', 
+                  display: 'flex', 
+                  alignItems: 'flex-end', 
+                  width: '100%', 
+                  maxWidth: '24px', 
+                  background: 'rgba(255,255,255,0.04)', 
+                  borderRadius: '12px 12px 4px 4px'
+                }}>
                   <div 
-                    className="bar-value-label workout-text" 
                     style={{ 
+                      position: 'absolute',
+                      width: '100%',
+                      textAlign: 'center',
                       fontSize: '0.7rem', 
-                      top: '-22px',
-                      opacity: d.activeMinutes > 0 ? 1 : 0.3
+                      top: '-24px',
+                      fontWeight: '900',
+                      color: 'var(--text-primary)',
+                      opacity: d.activeMinutes > 0 ? 1 : 0.4
                     }}
                   >
                     {d.activeMinutes}
                   </div>
                   <div 
-                    className="chart-bar bar-premium bar-workout" 
+                    className="bar-premium" 
                     style={{ 
-                      height: `${barHeight || 2}%`,
+                      height: `${barHeight || 4}%`,
                       width: '100%',
-                      minWidth: '16px',
-                      background: 'var(--color-green)',
-                      opacity: d.activeMinutes > 0 ? 1 : 0.1
+                      background: d.activeMinutes > 0 ? 'linear-gradient(to top, var(--color-green), #86efac)' : 'rgba(255,255,255,0.08)',
+                      borderRadius: '12px 12px 4px 4px',
+                      opacity: d.activeMinutes > 0 ? 1 : 0.2
                     }}
                   />
                 </div>
-                <span className="chart-day-label" style={{ textAlign: 'center', display: 'block', fontSize: '0.7rem', marginTop: '8px', fontWeight: '800' }}>{d.day}</span>
+                <span className="chart-day-label" style={{ textAlign: 'center', display: 'block', fontSize: '0.65rem', marginTop: '8px', fontWeight: '800', opacity: 0.8 }}>{d.day}</span>
               </div>
             );
           })}
@@ -362,31 +404,45 @@ const WellnessScoreGraph = ({ history, todaySummary }) => {
           )}
         </div>
       ) : (
-        <div className="graph-container-inner" style={{ height: '180px', display: 'flex', justifyContent: 'space-between', gap: '8px', marginTop: '20px' }}>
+        <div className="graph-container-inner" style={{ height: '180px', display: 'flex', justifyContent: 'space-between', gap: '4px', marginTop: '20px' }}>
           {wellnessData.map((d, i) => (
             <div key={i} className="chart-bar-wrapper">
-              <div style={{ flex: 1, position: 'relative', display: 'flex', alignItems: 'flex-end', width: '100%', background: 'rgba(255,255,255,0.03)', borderRadius: '6px' }}>
+              <div style={{ 
+                flex: 1, 
+                position: 'relative', 
+                display: 'flex', 
+                alignItems: 'flex-end', 
+                width: '100%', 
+                maxWidth: '24px', 
+                background: 'rgba(255,255,255,0.04)', 
+                borderRadius: '12px 12px 4px 4px'
+              }}>
                 <div 
-                  className="bar-value-label wellness-text" 
                   style={{ 
-                    fontSize: '0.65rem', 
-                    top: '-22px',
-                    opacity: d.score > 0 ? 1 : 0.3
+                    position: 'absolute',
+                    width: '100%',
+                    textAlign: 'center',
+                    fontSize: '0.7rem', 
+                    top: '-24px',
+                    fontWeight: '900',
+                    color: 'var(--text-primary)',
+                    opacity: d.score > 0 ? 1 : 0.4
                   }}
                 >
                   {d.score}
                 </div>
                 <div 
-                  className="chart-bar bar-premium bar-wellness" 
+                  className="bar-premium" 
                   style={{ 
-                    height: `${(d.score / 10) * 100 || 2}%`,
+                    height: `${(d.score / 10) * 100 || 4}%`,
                     width: '100%',
-                    background: 'var(--color-violet)',
-                    opacity: d.score > 0 ? 1 : 0.1
+                    background: d.score > 0 ? 'linear-gradient(to top, var(--color-violet), #c084fc)' : 'rgba(255,255,255,0.08)',
+                    borderRadius: '12px 12px 4px 4px',
+                    opacity: d.score > 0 ? 1 : 0.2
                   }}
                 />
               </div>
-              <span className="chart-day-label" style={{ textAlign: 'center', display: 'block', fontSize: '0.7rem', marginTop: '8px', fontWeight: '800' }}>{d.day}</span>
+              <span className="chart-day-label" style={{ textAlign: 'center', display: 'block', fontSize: '0.65rem', marginTop: '8px', fontWeight: '800', opacity: 0.8 }}>{d.day}</span>
             </div>
           ))}
         </div>
