@@ -149,51 +149,51 @@ const NutritionHydration = ({ user, onLogsUpdated, onViewHistory, initialViewHis
 
   if (initialViewHistory) {
     return (
-      <div className="history-page" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <button onClick={onBack} className="btn btn-ghost btn-icon" style={{ padding: '10px' }}>
-            <ArrowLeft size={20} />
+      <div className="history-page" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <button onClick={onBack} className="btn btn-ghost btn-icon" style={{ padding: '8px' }}>
+            <ArrowLeft size={18} />
           </button>
-          <h1 className="text-gradient" style={{ fontSize: '1.8rem', fontWeight: '800' }}>History</h1>
+          <h1 className="text-gradient" style={{ fontSize: '1.6rem', fontWeight: '800' }}>History</h1>
         </div>
 
-        <div className="glass-panel" style={{ padding: '24px', display: 'flex', flexWrap: 'wrap', gap: '20px', alignItems: 'center' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <Calendar size={20} style={{ color: 'var(--color-orange)' }} />
+        <div className="glass-panel" style={{ padding: '20px', display: 'flex', flexWrap: 'wrap', gap: '16px', alignItems: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <Calendar size={18} style={{ color: 'var(--color-orange)' }} />
             <input 
               type="date" 
               className="glass-input" 
               value={historyDate} 
               onChange={e => setHistoryDate(e.target.value)} 
-              style={{ fontSize: '1rem', padding: '10px 16px' }}
+              style={{ fontSize: '0.95rem', padding: '8px 12px' }}
             />
           </div>
           <div style={{ flex: 1 }} />
           <div style={{ textAlign: 'right' }}>
-            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: '700' }}>DAILY TOTAL</span>
-            <h3 style={{ fontSize: '1.6rem', fontWeight: '900', color: 'var(--text-primary)' }}>{totalCals} <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', fontWeight: '500' }}>kcal</span></h3>
+            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: '700' }}>DAILY TOTAL</span>
+            <h3 style={{ fontSize: '1.4rem', fontWeight: '900', color: 'var(--text-primary)' }}>{totalCals} <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: '500' }}>kcal</span></h3>
           </div>
         </div>
 
-        <div className="glass-panel" style={{ padding: '24px' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <div className="glass-panel" style={{ padding: '20px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             {currentFoods.length === 0 ? (
-              <div style={{ padding: '60px', textAlign: 'center', opacity: 0.3 }}>
-                <Utensils size={48} style={{ margin: '0 auto 16px' }} />
-                <p style={{ fontSize: '1rem' }}>No data for this date.</p>
+              <div style={{ padding: '40px', textAlign: 'center', opacity: 0.3 }}>
+                <Utensils size={40} style={{ margin: '0 auto 12px' }} />
+                <p style={{ fontSize: '0.95rem' }}>No data for this date.</p>
               </div>
             ) : (
               currentFoods.map(f => (
-                <div key={f._id} style={{ display: 'flex', justifyContent: 'space-between', padding: '16px', background: 'var(--card-overlay)', borderRadius: '16px', border: '1px solid var(--glass-card-border)' }}>
+                <div key={f._id} style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 16px', background: 'var(--card-overlay)', borderRadius: '12px', border: '1px solid var(--glass-card-border)' }}>
                   <div>
-                    <h4 style={{ fontSize: '1.1rem', fontWeight: '800', color: 'var(--text-primary)' }}>{f.foodItem}</h4>
-                    <div style={{ display: 'flex', gap: '16px', marginTop: '6px', color: 'var(--text-secondary)', fontWeight: '600', fontSize: '0.85rem' }}>
+                    <h4 style={{ fontSize: '1rem', fontWeight: '800', color: 'var(--text-primary)' }}>{f.foodItem}</h4>
+                    <div style={{ display: 'flex', gap: '12px', marginTop: '4px', color: 'var(--text-secondary)', fontWeight: '600', fontSize: '0.8rem' }}>
                       <span>P: {f.protein}g</span> <span>C: {f.carbs}g</span> <span>F: {f.fat}g</span>
                     </div>
                   </div>
                   <div style={{ textAlign: 'right' }}>
-                    <div style={{ fontSize: '1.3rem', fontWeight: '900', color: 'var(--color-orange)' }}>{f.calories}</div>
-                    <div style={{ fontSize: '0.75rem', fontWeight: '700', opacity: 0.6 }}>KCAL</div>
+                    <div style={{ fontSize: '1.15rem', fontWeight: '900', color: 'var(--color-orange)' }}>{f.calories}</div>
+                    <div style={{ fontSize: '0.7rem', fontWeight: '700', opacity: 0.6 }}>KCAL</div>
                   </div>
                 </div>
               ))
@@ -205,12 +205,12 @@ const NutritionHydration = ({ user, onLogsUpdated, onViewHistory, initialViewHis
   }
 
   return (
-    <div className="nutrition-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: '20px', width: '100%' }}>
+    <div className="nutrition-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: '16px', width: '100%' }}>
       
-      <div className="tracker-primary" style={{ gridColumn: 'span 7', display: 'flex', flexDirection: 'column', gap: '20px' }}>
-        <div className="glass-panel" style={{ padding: '24px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-            <h2 style={{ fontSize: '1.6rem', fontWeight: '800', color: 'var(--text-primary)' }}>Nutrition</h2>
+      <div className="tracker-primary" style={{ gridColumn: 'span 7', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <div className="glass-panel" style={{ padding: '20px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+            <h2 style={{ fontSize: '1.4rem', fontWeight: '800', color: 'var(--text-primary)' }}>Nutrition</h2>
             <button 
               onClick={onViewHistory}
               className="btn btn-cyan"
@@ -220,60 +220,60 @@ const NutritionHydration = ({ user, onLogsUpdated, onViewHistory, initialViewHis
             </button>
           </div>
 
-          <div style={{ padding: '24px', background: 'var(--card-overlay)', borderRadius: '24px', border: '1px solid var(--glass-card-border)', marginBottom: '24px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '16px' }}>
+          <div style={{ padding: '20px', background: 'var(--card-overlay)', borderRadius: '20px', border: '1px solid var(--glass-card-border)', marginBottom: '20px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '12px' }}>
               <div>
-                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: '800', textTransform: 'uppercase' }}>Daily Progression</span>
-                <h3 style={{ fontSize: '2.4rem', fontWeight: '900', marginTop: '4px', color: 'var(--text-primary)' }}>{totalCals} <span style={{ fontSize: '1.1rem', color: 'var(--text-secondary)', fontWeight: '500' }}>/ {dailyCals} kcal</span></h3>
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: '800', textTransform: 'uppercase' }}>Daily Progression</span>
+                <h3 style={{ fontSize: '2rem', fontWeight: '900', marginTop: '2px', color: 'var(--text-primary)' }}>{totalCals} <span style={{ fontSize: '1rem', color: 'var(--text-secondary)', fontWeight: '500' }}>/ {dailyCals} kcal</span></h3>
               </div>
-              <span style={{ fontSize: '1.3rem', fontWeight: '900', color: 'var(--color-orange)' }}>{Math.round((totalCals / dailyCals) * 100)}%</span>
+              <span style={{ fontSize: '1.15rem', fontWeight: '900', color: 'var(--color-orange)' }}>{Math.round((totalCals / dailyCals) * 100)}%</span>
             </div>
-            <div style={{ height: '10px', background: 'var(--icon-bg)', borderRadius: '5px', overflow: 'hidden' }}>
-              <div style={{ width: `${Math.min(100, (totalCals / dailyCals) * 100)}%`, height: '100%', background: 'linear-gradient(90deg, var(--color-orange), #f97316)', borderRadius: '5px' }} />
+            <div style={{ height: '8px', background: 'var(--icon-bg)', borderRadius: '4px', overflow: 'hidden' }}>
+              <div style={{ width: `${Math.min(100, (totalCals / dailyCals) * 100)}%`, height: '100%', background: 'linear-gradient(90deg, var(--color-orange), #f97316)', borderRadius: '4px' }} />
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
             {[
               { label: 'Protein', val: foods.reduce((s, f) => s + f.protein, 0), target: 150, color: '#3b82f6', icon: Beef },
               { label: 'Carbs', val: foods.reduce((s, f) => s + f.carbs, 0), target: 250, color: 'var(--color-orange)', icon: Wheat },
               { label: 'Fats', val: foods.reduce((s, f) => s + f.fat, 0), target: 70, color: 'var(--color-green)', icon: Pizza }
             ].map(m => (
-              <div key={m.label} style={{ padding: '16px', background: 'var(--card-overlay)', borderRadius: '20px', border: '1px solid var(--glass-card-border)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
-                   <m.icon size={16} style={{ color: m.color }} />
-                   <span style={{ fontWeight: '800', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>{m.label}</span>
+              <div key={m.label} style={{ padding: '14px', background: 'var(--card-overlay)', borderRadius: '16px', border: '1px solid var(--glass-card-border)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
+                   <m.icon size={14} style={{ color: m.color }} />
+                   <span style={{ fontWeight: '800', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{m.label}</span>
                 </div>
-                <div style={{ marginBottom: '8px' }}>
-                  <span style={{ fontSize: '1.25rem', fontWeight: '900', color: 'var(--text-primary)' }}>{Math.round(m.val)}g</span>
-                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginLeft: '4px' }}>/ {m.target}g</span>
+                <div style={{ marginBottom: '6px' }}>
+                  <span style={{ fontSize: '1.15rem', fontWeight: '900', color: 'var(--text-primary)' }}>{Math.round(m.val)}g</span>
+                  <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginLeft: '2px' }}>/ {m.target}g</span>
                 </div>
-                <div style={{ height: '4px', background: 'var(--icon-bg)', borderRadius: '2px', overflow: 'hidden' }}>
-                  <div style={{ width: `${Math.min(100, (m.val / m.target) * 100)}%`, height: '100%', background: m.color, borderRadius: '2px' }} />
+                <div style={{ height: '3px', background: 'var(--icon-bg)', borderRadius: '1.5px', overflow: 'hidden' }}>
+                  <div style={{ width: `${Math.min(100, (m.val / m.target) * 100)}%`, height: '100%', background: m.color, borderRadius: '1.5px' }} />
                 </div>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="glass-panel" style={{ padding: '24px', flex: 1 }}>
-          <h3 style={{ fontSize: '1.3rem', fontWeight: '800', marginBottom: '16px', color: 'var(--text-primary)' }}>Today's Entries</h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+        <div className="glass-panel" style={{ padding: '20px', flex: 1 }}>
+          <h3 style={{ fontSize: '1.15rem', fontWeight: '800', marginBottom: '14px', color: 'var(--text-primary)' }}>Today's Entries</h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {foods.length === 0 ? (
-              <p style={{ opacity: 0.3, textAlign: 'center', padding: '32px' }}>No logs yet</p>
+              <p style={{ opacity: 0.3, textAlign: 'center', padding: '24px', fontSize: '0.9rem' }}>No logs yet</p>
             ) : (
               foods.map(f => (
-                <div key={f._id} style={{ display: 'flex', alignItems: 'center', gap: 16, padding: '14px 18px', background: 'var(--card-overlay)', borderRadius: '16px', border: '1px solid var(--glass-card-border)' }}>
+                <div key={f._id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 14px', background: 'var(--card-overlay)', borderRadius: '12px', border: '1px solid var(--glass-card-border)' }}>
                   <div style={{ flex: 1 }}>
-                    <h4 style={{ fontSize: '1rem', fontWeight: '800', color: 'var(--text-primary)' }}>{f.foodItem}</h4>
-                    <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '2px', fontWeight: '600' }}>P: {f.protein}g • C: {f.carbs}g • F: {f.fat}g</div>
+                    <h4 style={{ fontSize: '0.95rem', fontWeight: '800', color: 'var(--text-primary)' }}>{f.foodItem}</h4>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '1px', fontWeight: '600' }}>P: {f.protein}g • C: {f.carbs}g • F: {f.fat}g</div>
                   </div>
-                  <div style={{ textAlign: 'right', marginRight: '12px' }}>
-                    <div style={{ fontSize: '1.25rem', fontWeight: '900', color: 'var(--text-primary)' }}>{f.calories}</div>
-                    <div style={{ fontSize: '0.7rem', fontWeight: '800', opacity: 0.5 }}>KCAL</div>
+                  <div style={{ textAlign: 'right', marginRight: '8px' }}>
+                    <div style={{ fontSize: '1.1rem', fontWeight: '900', color: 'var(--text-primary)' }}>{f.calories}</div>
+                    <div style={{ fontSize: '0.65rem', fontWeight: '800', opacity: 0.5 }}>KCAL</div>
                   </div>
-                  <button onClick={() => handleDeleteFood(f._id)} className="btn btn-ghost btn-icon" style={{ color: '#f87171', padding: '8px' }}>
-                    <Trash2 size={18} />
+                  <button onClick={() => handleDeleteFood(f._id)} className="btn btn-ghost btn-icon" style={{ color: '#f87171', padding: '6px' }}>
+                    <Trash2 size={16} />
                   </button>
                 </div>
               ))
@@ -282,80 +282,80 @@ const NutritionHydration = ({ user, onLogsUpdated, onViewHistory, initialViewHis
         </div>
       </div>
 
-      <div className="tracker-secondary" style={{ gridColumn: 'span 5', display: 'flex', flexDirection: 'column', gap: '20px' }}>
-        <div className="glass-panel" style={{ padding: '24px' }}>
-          <h3 style={{ fontSize: '1.3rem', fontWeight: '800', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px', color: 'var(--text-primary)' }}>
-            <Plus size={24} style={{ color: 'var(--color-orange)' }} /> Log Meal
+      <div className="tracker-secondary" style={{ gridColumn: 'span 5', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <div className="glass-panel" style={{ padding: '20px' }}>
+          <h3 style={{ fontSize: '1.15rem', fontWeight: '800', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--text-primary)' }}>
+            <Plus size={20} style={{ color: 'var(--color-orange)' }} /> Log Meal
           </h3>
-          <form onSubmit={handleLogFood} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <form onSubmit={handleLogFood} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
             <div style={{ position: 'relative' }} ref={suggestionRef}>
-              <label style={{ fontSize: '0.9rem', fontWeight: '700', color: 'var(--text-secondary)', display: 'block', marginBottom: '8px' }}>Food Name</label>
+              <label style={{ fontSize: '0.85rem', fontWeight: '700', color: 'var(--text-secondary)', display: 'block', marginBottom: '6px' }}>Food Name</label>
               <div style={{ position: 'relative' }}>
-                <Search size={18} style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', opacity: 0.5 }} />
-                <input type="text" className="glass-input" value={foodItem} onChange={handleFoodInputChange} placeholder="Search..." style={{ width: '100%', paddingLeft: '44px', padding: '10px 14px' }} required />
+                <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.5 }} />
+                <input type="text" className="glass-input" value={foodItem} onChange={handleFoodInputChange} placeholder="Search..." style={{ width: '100%', paddingLeft: '38px', padding: '8px 12px', fontSize: '0.95rem' }} required />
               </div>
               {showSuggestions && suggestions.length > 0 && (
-                <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, background: 'var(--bg-primary)', border: '1px solid var(--glass-card-border)', borderRadius: '12px', marginTop: '8px', zIndex: 100, maxHeight: '240px', overflowY: 'auto', padding: '10px', boxShadow: '0 15px 40px rgba(0,0,0,0.5)' }}>
+                <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, background: 'var(--bg-primary)', border: '1px solid var(--glass-card-border)', borderRadius: '10px', marginTop: '6px', zIndex: 100, maxHeight: '200px', overflowY: 'auto', padding: '8px', boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}>
                   {suggestions.map((s, i) => (
-                    <div key={i} onClick={() => selectSuggestion(s)} style={{ padding: '10px', borderRadius: '10px', cursor: 'pointer', marginBottom: '4px', background: 'var(--icon-bg)', fontSize: '0.9rem' }}>
+                    <div key={i} onClick={() => selectSuggestion(s)} style={{ padding: '8px', borderRadius: '8px', cursor: 'pointer', marginBottom: '3px', background: 'var(--icon-bg)', fontSize: '0.85rem' }}>
                       <div style={{ fontWeight: '700', color: 'var(--text-primary)' }}>{s.name}</div>
-                      <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{s.calories} kcal • P:{s.protein} C:{s.carbs} F:{s.fat}</div>
+                      <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>{s.calories} kcal • P:{s.protein} C:{s.carbs} F:{s.fat}</div>
                     </div>
                   ))}
                 </div>
               )}
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <label style={{ fontSize: '0.85rem', fontWeight: '700', color: 'var(--text-secondary)' }}>Quantity</label>
-                  <input type="number" className="glass-input" value={quantity} onChange={e => setQuantity(e.target.value)} min="1" style={{ padding: '10px 14px' }} />
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  <label style={{ fontSize: '0.8rem', fontWeight: '700', color: 'var(--text-secondary)' }}>Quantity</label>
+                  <input type="number" className="glass-input" value={quantity} onChange={e => setQuantity(e.target.value)} min="1" style={{ padding: '8px 12px', fontSize: '0.95rem' }} />
                </div>
-               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <label style={{ fontSize: '0.85rem', fontWeight: '700', color: 'var(--text-secondary)' }}>Calories</label>
-                  <input type="number" className="glass-input" value={calories} onChange={e => setCalories(e.target.value)} required style={{ padding: '10px 14px' }} />
+               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  <label style={{ fontSize: '0.8rem', fontWeight: '700', color: 'var(--text-secondary)' }}>Calories</label>
+                  <input type="number" className="glass-input" value={calories} onChange={e => setCalories(e.target.value)} required style={{ padding: '8px 12px', fontSize: '0.95rem' }} />
                </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ fontSize: '0.75rem', fontWeight: '800', opacity: 0.7, color: 'var(--text-secondary)' }}>Protein</label>
-                <input type="number" className="glass-input" value={protein} onChange={e => setProtein(e.target.value)} style={{ padding: '10px 14px' }} />
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <label style={{ fontSize: '0.7rem', fontWeight: '800', opacity: 0.7, color: 'var(--text-secondary)' }}>Protein</label>
+                <input type="number" className="glass-input" value={protein} onChange={e => setProtein(e.target.value)} style={{ padding: '8px 12px', fontSize: '0.95rem' }} />
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ fontSize: '0.75rem', fontWeight: '800', opacity: 0.7, color: 'var(--text-secondary)' }}>Carbs</label>
-                <input type="number" className="glass-input" value={carbs} onChange={e => setCarbs(e.target.value)} style={{ padding: '10px 14px' }} />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <label style={{ fontSize: '0.7rem', fontWeight: '800', opacity: 0.7, color: 'var(--text-secondary)' }}>Carbs</label>
+                <input type="number" className="glass-input" value={carbs} onChange={e => setCarbs(e.target.value)} style={{ padding: '8px 12px', fontSize: '0.95rem' }} />
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ fontSize: '0.75rem', fontWeight: '800', opacity: 0.7, color: 'var(--text-secondary)' }}>Fat</label>
-                <input type="number" className="glass-input" value={fat} onChange={e => setFat(e.target.value)} style={{ padding: '10px 14px' }} />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <label style={{ fontSize: '0.7rem', fontWeight: '800', opacity: 0.7, color: 'var(--text-secondary)' }}>Fat</label>
+                <input type="number" className="glass-input" value={fat} onChange={e => setFat(e.target.value)} style={{ padding: '8px 12px', fontSize: '0.95rem' }} />
               </div>
             </div>
 
-            <button type="submit" className="btn btn-primary" style={{ marginTop: '8px', padding: '12px' }}>LOG MEAL</button>
+            <button type="submit" className="btn btn-primary" style={{ marginTop: '4px', padding: '10px' }}>LOG MEAL</button>
           </form>
         </div>
 
-        <div className="glass-panel" style={{ padding: '32px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '32px' }}>
+        <div className="glass-panel" style={{ padding: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' }}>
            <div style={{ textAlign: 'center' }}>
-             <h3 style={{ fontSize: '1.6rem', fontWeight: '900', color: 'var(--color-cyan)', display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'center' }}>
-               <Droplet size={24} /> Hydration
+             <h3 style={{ fontSize: '1.3rem', fontWeight: '900', color: 'var(--color-cyan)', display: 'flex', alignItems: 'center', gap: '10px', justifyContent: 'center' }}>
+               <Droplet size={20} /> Hydration
              </h3>
-             <p style={{ marginTop: '6px', fontSize: '1rem', color: 'var(--text-secondary)' }}>Goal: {dailyWater} mL</p>
+             <p style={{ marginTop: '4px', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Goal: {dailyWater} mL</p>
            </div>
 
-           <div style={{ position: 'relative', width: '140px', height: '190px', border: '3px solid var(--glass-card-border)', borderRadius: '0 0 40px 40px', overflow: 'hidden', background: 'var(--icon-bg)', boxShadow: '0 15px 30px rgba(0,0,0,0.1)' }}>
-              <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '100%', transform: `translateY(${190 - (hydrationPct / 100) * 190}px)`, transition: 'transform 1s cubic-bezier(0.16, 1, 0.3, 1)' }}>
-                <svg width="350" height="240" viewBox="0 0 350 240" style={{ position: 'absolute', left: 0, bottom: 0 }}>
-                  <path className="water-wave" d="M 0 30 Q 43.75 20 87.5 30 T 175 30 T 262.5 30 T 350 30 L 350 240 L 0 240 Z" fill="var(--color-cyan)" style={{ opacity: 0.6 }} />
+           <div style={{ position: 'relative', width: '120px', height: '160px', border: '3px solid var(--glass-card-border)', borderRadius: '0 0 32px 32px', overflow: 'hidden', background: 'var(--icon-bg)', boxShadow: '0 10px 20px rgba(0,0,0,0.1)' }}>
+              <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '100%', transform: `translateY(${160 - (hydrationPct / 100) * 160}px)`, transition: 'transform 1s cubic-bezier(0.16, 1, 0.3, 1)' }}>
+                <svg width="300" height="200" viewBox="0 0 300 200" style={{ position: 'absolute', left: 0, bottom: 0 }}>
+                  <path className="water-wave" d="M 0 25 Q 37.5 15 75 25 T 150 25 T 225 25 T 300 25 L 300 200 L 0 200 Z" fill="var(--color-cyan)" style={{ opacity: 0.6 }} />
                 </svg>
               </div>
-              <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', fontWeight: '900', fontSize: '2.8rem', color: 'var(--text-primary)', textShadow: '0 0 15px rgba(0,0,0,0.1)' }}>{Math.round(hydrationPct)}%</div>
+              <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', fontWeight: '900', fontSize: '2.2rem', color: 'var(--text-primary)', textShadow: '0 0 12px rgba(0,0,0,0.1)' }}>{Math.round(hydrationPct)}%</div>
            </div>
 
-           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', width: '100%' }}>
+           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', width: '100%' }}>
              {[250, 500, 750].map(amt => (
-               <button key={amt} onClick={() => handleLogWater(amt)} className="btn btn-cyan" style={{ padding: '10px' }}>+{amt}</button>
+               <button key={amt} onClick={() => handleLogWater(amt)} className="btn btn-cyan" style={{ padding: '8px', fontSize: '0.85rem' }}>+{amt}</button>
              ))}
            </div>
         </div>
