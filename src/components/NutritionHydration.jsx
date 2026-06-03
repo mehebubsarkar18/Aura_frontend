@@ -326,7 +326,21 @@ const NutritionHydration = ({ user, onLogsUpdated, onViewHistory, initialViewHis
                 <input type="text" className="glass-input food-search-input" value={foodItem} onChange={handleFoodInputChange} placeholder="Search..." style={{ width: '100%', padding: '8px 12px', fontSize: '0.95rem' }} required />
               </div>
               {showSuggestions && suggestions.length > 0 && (
-                <div className="glass-panel food-suggestions-dropdown" style={{ position: 'absolute', top: '100%', left: 0, right: 0, marginTop: '8px', zIndex: 100, maxHeight: '280px', overflowY: 'auto', padding: '10px', boxShadow: '0 12px 40px rgba(0,0,0,0.6)', border: '1px solid var(--glass-card-border)' }}>
+                <div className="food-suggestions-dropdown" style={{ 
+                  position: 'absolute', 
+                  top: '100%', 
+                  left: 0, 
+                  right: 0, 
+                  marginTop: '8px', 
+                  zIndex: 1000, 
+                  maxHeight: '280px', 
+                  overflowY: 'auto', 
+                  padding: '10px', 
+                  boxShadow: '0 20px 50px rgba(0,0,0,0.6)', 
+                  border: '1px solid var(--glass-card-border)',
+                  background: '#1a1f2e', // Deep solid blue-gray background
+                  borderRadius: '16px'
+                }}>
                   {suggestions.map((s, i) => (
                     <div 
                       key={i} 
@@ -337,7 +351,7 @@ const NutritionHydration = ({ user, onLogsUpdated, onViewHistory, initialViewHis
                         borderRadius: '12px', 
                         cursor: 'pointer', 
                         marginBottom: '6px', 
-                        background: 'var(--card-overlay)', 
+                        background: 'rgba(255,255,255,0.03)', 
                         transition: 'all 0.2s ease',
                         border: '1px solid transparent'
                       }}
