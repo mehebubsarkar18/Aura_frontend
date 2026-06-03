@@ -154,9 +154,9 @@ const LandingPage = ({ onGetStarted, onLogin }) => {
           {/* Main Dashboard Card */}
           <div className="glass-panel" style={{
             width: '100%',
-            maxWidth: '360px',
-            height: '280px',
-            padding: '20px',
+            maxWidth: '320px',
+            height: '240px',
+            padding: '16px',
             position: 'relative',
             zIndex: 2,
             background: 'linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)',
@@ -164,18 +164,18 @@ const LandingPage = ({ onGetStarted, onLogin }) => {
             border: '1px solid rgba(255,255,255,0.1)',
             animation: 'float-slow 6s ease-in-out infinite'
           }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
-              <div style={{ height: '8px', width: '80px', background: 'rgba(255,255,255,0.1)', borderRadius: '8px' }} />
-              <div style={{ height: '16px', width: '16px', background: 'var(--color-orange)', borderRadius: '4px' }} />
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
+              <div style={{ height: '7px', width: '70px', background: 'rgba(255,255,255,0.1)', borderRadius: '8px' }} />
+              <div style={{ height: '14px', width: '14px', background: 'var(--color-orange)', borderRadius: '4px' }} />
             </div>
             
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', marginBottom: '24px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px', marginBottom: '20px' }}>
               {[1, 2, 3].map(i => (
-                <div key={i} style={{ height: '60px', background: 'rgba(255,255,255,0.03)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)' }} />
+                <div key={i} style={{ height: '50px', background: 'rgba(255,255,255,0.03)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)' }} />
               ))}
             </div>
 
-            <div style={{ height: '70px', width: '100%', background: 'linear-gradient(90deg, transparent, rgba(253, 90, 32, 0.1), transparent)', borderRadius: '8px', position: 'relative', overflow: 'hidden' }}>
+            <div style={{ height: '60px', width: '100%', background: 'linear-gradient(90deg, transparent, rgba(253, 90, 32, 0.1), transparent)', borderRadius: '8px', position: 'relative', overflow: 'hidden' }}>
               <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '40%', background: 'var(--color-orange)', opacity: 0.2, clipPath: 'polygon(0 50%, 20% 40%, 40% 60%, 60% 30%, 80% 50%, 100% 20%, 100% 100%, 0 100%)' }} />
             </div>
           </div>
