@@ -73,7 +73,7 @@ const LoginRegister = ({ onAuthSuccess, onBack, initialIsLogin = true }) => {
 
         <div style={{ textAlign: 'center', marginBottom: '28px' }}>
           <div style={{
-            background: 'linear-gradient(135deg, var(--color-orange), hsl(340, 90%, 50%))',
+            background: 'var(--aura-gradient)',
             width: '40px',
             height: '40px',
             borderRadius: '10px',
@@ -81,7 +81,7 @@ const LoginRegister = ({ onAuthSuccess, onBack, initialIsLogin = true }) => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: '0 6px 15px rgba(253, 90, 32, 0.3)'
+            boxShadow: 'var(--aura-glow)'
           }}>
             <Dumbbell size={20} color="white" strokeWidth={2.5} />
           </div>

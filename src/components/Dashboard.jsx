@@ -581,9 +581,9 @@ const Dashboard = ({ user }) => {
       </div>
 
       <div className="progress-grid" style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
-        <ProgressRing percentage={(caloriesConsumed / (user?.dailyGoals?.calories || 2000)) * 100} color="#3b82f6" icon={Flame} title="Energy In" value={caloriesConsumed} unit="kcal" />
+        <ProgressRing percentage={(caloriesConsumed / (user?.dailyGoals?.calories || 2000)) * 100} color="var(--color-cyan)" icon={Flame} title="Energy In" value={caloriesConsumed} unit="kcal" />
         <ProgressRing percentage={(caloriesBurned / (user?.dailyGoals?.caloriesBurned || 500)) * 100} color="var(--color-orange)" icon={Flame} title="Energy Out" value={caloriesBurned} unit="kcal" />
-        <ProgressRing percentage={(waterConsumedMl / (user?.dailyGoals?.waterMl || 2500)) * 100} color="var(--color-cyan)" icon={Droplet} title="Hydration" value={waterConsumedMl} unit="mL" />
+        <ProgressRing percentage={(waterConsumedMl / (user?.dailyGoals?.waterMl || 2500)) * 100} color="var(--color-green)" icon={Droplet} title="Hydration" value={waterConsumedMl} unit="mL" />
         <ProgressRing percentage={(sleepMinutes / (user?.dailyGoals?.sleepMinutes || 480)) * 100} color="var(--color-violet)" icon={Moon} title="Recovery" value={Math.round(sleepMinutes/60*10)/10} unit="hrs" />
       </div>
     </div>

@@ -27,14 +27,14 @@ const LandingPage = ({ onGetStarted, onLogin }) => {
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <div style={{ 
-            background: 'linear-gradient(135deg, var(--color-orange), hsl(340, 90%, 50%))', 
+            background: 'var(--aura-gradient)', 
             width: '28px', 
             height: '28px', 
             borderRadius: '8px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: '0 4px 10px rgba(253, 90, 32, 0.3)'
+            boxShadow: 'var(--aura-glow)'
           }}>
             <Dumbbell size={16} color="white" strokeWidth={2.5} />
           </div>

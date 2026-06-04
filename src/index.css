@@ -1,36 +1,38 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-  /* HSL Color System - Base Colors */
-  --color-orange: hsl(14, 100%, 57%);
-  --color-cyan: hsl(188, 95%, 50%);
-  --color-green: hsl(145, 80%, 48%);
-  --color-violet: hsl(268, 85%, 64%);
-  --color-violet-light: #BEC6FF; /* softer lilac */
+  /* Vibrant Color System - Inspired by HireHub & Modern Glassmorphism */
+  --color-orange: #ff5a1f; /* Brighter Orange */
+  --color-cyan: #00d2ff;   /* Electric Cyan */
+  --color-green: #00d285;  /* HireHub Mint Green */
+  --color-violet: #8b5cf6; /* Vibrant Violet */
+  --color-violet-light: #c4b5fd;
   
   --font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   
-  /* Primary button gradient stops */
-  --btn-primary-start: hsl(14, 100%, 57%);
-  --btn-primary-end: hsl(340, 90%, 50%);
+  /* Aura Gradients */
+  --btn-primary-start: #242b5e; /* HireHub Navy */
+  --btn-primary-end: #00d285;   /* HireHub Green */
+  --aura-gradient: linear-gradient(135deg, #242b5e 0%, #00d285 100%);
+  --aura-glow: 0 0 20px rgba(0, 210, 133, 0.3);
 
   font-size: 16px;
 }
 
 [data-theme='dark'] {
-  --bg-primary: hsl(224, 25%, 8%);
-  --glass-card-bg: hsla(224, 25%, 15%, 0.4);
-  --glass-card-border: hsla(224, 20%, 30%, 0.25);
-  --text-primary: hsl(210, 40%, 98%);
-  --text-secondary: hsl(215, 20%, 65%);
-  --text-muted: hsl(215, 15%, 45%);
-  --shadow-main: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
-  --glow-main: 0 0 15px rgba(255, 255, 255, 0.05);
-  --sidebar-bg: rgba(13, 17, 23, 0.4);
-  --input-bg: rgba(255, 255, 255, 0.05);
-  --card-overlay: rgba(255, 255, 255, 0.04);
-  --card-overlay-hover: rgba(255, 255, 255, 0.08);
-  --icon-bg: rgba(255, 255, 255, 0.06);
+  --bg-primary: #0a0f1e; /* Deeper Navy-Black */
+  --glass-card-bg: rgba(30, 41, 59, 0.5); /* Slate Blue tint */
+  --glass-card-border: rgba(255, 255, 255, 0.08);
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --shadow-main: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+  --glow-main: 0 0 20px rgba(0, 210, 133, 0.05);
+  --sidebar-bg: rgba(15, 23, 42, 0.7);
+  --input-bg: rgba(30, 41, 59, 0.5);
+  --card-overlay: rgba(255, 255, 255, 0.03);
+  --card-overlay-hover: rgba(255, 255, 255, 0.06);
+  --icon-bg: rgba(255, 255, 255, 0.05);
 }
 
 /* Make icons inherit color so classes can tint them */
@@ -235,7 +237,7 @@ button:active, .btn:active {
 .orb-1 {
   width: 450px;
   height: 450px;
-  background: radial-gradient(circle, rgba(168, 85, 247, 0.15) 0%, rgba(168, 85, 247, 0) 70%);
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.2) 0%, rgba(139, 92, 246, 0) 70%);
   top: -10%;
   right: -5%;
 }
@@ -243,7 +245,7 @@ button:active, .btn:active {
 .orb-2 {
   width: 500px;
   height: 500px;
-  background: radial-gradient(circle, rgba(6, 182, 212, 0.13) 0%, rgba(6, 182, 212, 0) 70%);
+  background: radial-gradient(circle, rgba(0, 210, 133, 0.15) 0%, rgba(0, 210, 133, 0) 70%);
   bottom: -15%;
   left: -10%;
 }
@@ -251,7 +253,7 @@ button:active, .btn:active {
 .orb-3 {
   width: 350px;
   height: 350px;
-  background: radial-gradient(circle, rgba(239, 68, 68, 0.08) 0%, rgba(239, 68, 68, 0) 70%);
+  background: radial-gradient(circle, rgba(0, 210, 255, 0.12) 0%, rgba(0, 210, 255, 0) 70%);
   top: 40%;
   left: 30%;
 }
