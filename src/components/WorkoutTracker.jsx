@@ -12,11 +12,11 @@ import meditationIcon from '../assets/workout-icons/icons8-meditation-50.png';
 import gymnasticsIcon from '../assets/workout-icons/icons8-gymnastics-50.png';
 
 // Import Lottie animations
-import jumpingJacksAnim from '../assets/workout-animations/JUMPING JACLS.json';
-import pushUpsAnim from '../assets/workout-animations/PUSH UPS.json';
-import reverseCrunchesAnim from '../assets/workout-animations/REVERSE CRUNCHES.json';
-import splitJumpAnim from '../assets/workout-animations/SPLIT JUMP.json';
-import squatReachUpsAnim from '../assets/workout-animations/SQUAT REACH UPS.json';
+import jumpingJacksAnim from '../assets/workout-animations/jumping_jacks.json';
+import pushUpsAnim from '../assets/workout-animations/push_ups.json';
+import reverseCrunchesAnim from '../assets/workout-animations/reverse_crunches.json';
+import splitJumpAnim from '../assets/workout-animations/split_jump.json';
+import squatReachUpsAnim from '../assets/workout-animations/squat_reach_ups.json';
 import squatKicksAnim from '../assets/workout-animations/squat_kicks.json';
 
 const PRESETS = [

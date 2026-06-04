@@ -2,9 +2,9 @@ import { Dumbbell, ArrowRight, ShieldCheck, Activity, Heart, Droplet, TrendingUp
 import Lottie from 'lottie-react';
 
 // Import Lottie animations
-import jumpingJacksAnim from '../assets/workout-animations/JUMPING JACLS.json';
-import pushUpsAnim from '../assets/workout-animations/PUSH UPS.json';
-import splitJumpAnim from '../assets/workout-animations/SPLIT JUMP.json';
+import jumpingJacksAnim from '../assets/workout-animations/jumping_jacks.json';
+import pushUpsAnim from '../assets/workout-animations/push_ups.json';
+import splitJumpAnim from '../assets/workout-animations/split_jump.json';
 
 const LandingPage = ({ onGetStarted, onLogin }) => {
   return (

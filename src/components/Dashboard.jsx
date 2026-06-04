@@ -4,7 +4,7 @@ import { Flame, Droplet, Clock, Moon, Scale, PieChart, Loader2, Heart, Calendar 
 import Lottie from 'lottie-react';
 
 // Import loading animation
-import loadingAnim from '../assets/workout-animations/JUMPING JACLS.json';
+import loadingAnim from '../assets/workout-animations/jumping_jacks.json';
 
 const ProgressRing = ({ percentage, color, icon: Icon, title, value, unit }) => {
   const radius = 34;
@@ -542,11 +542,13 @@ const Dashboard = ({ user }) => {
   };
 
   if (loading) return (
-    <div className="loading-screen" style={{ height: '70vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '20px' }}>
-      <div style={{ width: '150px', height: '150px' }}>
-        <Lottie animationData={loadingAnim} loop={true} />
+    <div className="loading-screen" style={{ height: '70vh' }}>
+      <div className="aura-pulse">
+        <div></div>
+        <div></div>
+        <div></div>
       </div>
-      <div className="loading-text" style={{ letterSpacing: '4px', fontWeight: '800', color: 'var(--color-orange)' }}>SYNCING YOUR AURA</div>
+      <div className="loading-text">SYNCING YOUR AURA</div>
     </div>
   );
 
