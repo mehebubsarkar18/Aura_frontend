@@ -15,16 +15,27 @@
 }
 
 .app-header {
-  height: 64px;
-  display: flex;
-  align-items: center;
-  padding: 0 32px;
-  background: transparent;
-  backdrop-filter: blur(20px);
-  z-index: 100;
+  display: none !important;
 }
 
-.header-profile-btn {
+@media (max-width: 900px) {
+  .app-header {
+    height: 64px;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    padding: 0 18px !important;
+    background: var(--sidebar-bg) !important;
+    backdrop-filter: blur(20px) !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 2000 !important;
+    border-bottom: 1px solid var(--glass-card-border) !important;
+    width: 100% !important;
+  }
+}
+
+.mobile-profile-btn {
   width: 38px;
   height: 38px;
   border-radius: 50%;
@@ -35,19 +46,11 @@
   justify-content: center;
   cursor: pointer;
   color: var(--text-secondary);
-  transition: all 0.3s ease;
-}
-
-.header-profile-btn:hover, .header-profile-btn.active {
-  background: var(--aura-gradient);
-  color: white;
-  border-color: transparent;
-  box-shadow: var(--aura-glow);
 }
 
 .main-content {
   flex: 1;
-  padding: 0 32px 32px;
+  padding: 32px;
   width: 100%;
   overflow-y: auto;
   scrollbar-width: thin;
@@ -124,6 +127,10 @@
 
 .nav-button.active:hover {
   transform: none;
+}
+
+.logout-btn:hover {
+  background: rgba(248, 113, 113, 0.1) !important;
 }
 
 /* Hide Mobile Header on PC */

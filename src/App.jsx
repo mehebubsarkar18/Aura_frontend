@@ -141,19 +141,35 @@ function App() {
               </button>
             ))}
           </nav>
+          
+          <div style={{ marginTop: 'auto' }}>
+            <button 
+              onClick={() => setActiveTab('settings')} 
+              className={`nav-button ${activeTab === 'settings' ? 'active' : ''}`}
+              style={{ marginBottom: '12px' }}
+            >
+              <div className="nav-icon-wrapper">
+                <UserIcon size={20} />
+              </div>
+              <span>Profile</span>
+            </button>
+            <button className="nav-button logout-btn" onClick={handleLogout} style={{ color: '#f87171' }}>
+              <div className="nav-icon-wrapper">
+                <LogOut size={20} />
+              </div>
+              <span>Logout</span>
+            </button>
+          </div>
         </div>
       </aside>
 
       <div className="main-wrapper">
         <header className="app-header">
-          <div className="header-right" style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <div 
-              className={`header-profile-btn ${activeTab === 'settings' ? 'active' : ''}`}
-              onClick={() => setActiveTab('settings')}
-              title="Settings"
-            >
-              <UserIcon size={20} />
-            </div>
+          <div 
+            className="mobile-profile-btn"
+            onClick={() => setActiveTab('settings')}
+          >
+            <UserIcon size={20} />
           </div>
         </header>
 
