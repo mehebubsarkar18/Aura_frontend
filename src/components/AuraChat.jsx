@@ -1,12 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
 import { api } from '../utils/api';
-import { Bot, X, Send, Loader2, Dumbbell, Sparkles } from 'lucide-react';
+import { Bot, Send, Loader2, Sparkles } from 'lucide-react';
 
 const AuraChat = ({ user }) => {
-  const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState('');
   const [chatHistory, setChatHistory] = useState([
-    { role: 'ai', text: "Hello! I'm Aura AI, your personal fitness coach. How can I help you level up your performance today?" }
+    { role: 'ai', text: `Hello ${user?.fullName || 'there'}! I'm AuraAI, your personal fitness coach. How can I help you level up your performance today?` }
   ]);
   const [loading, setLoading] = useState(false);
   const scrollRef = useRef(null);
@@ -27,7 +26,6 @@ const AuraChat = ({ user }) => {
     setLoading(true);
 
     try {
-      // Gather user context for the AI
       const userContext = {
         name: user?.fullName,
         age: user?.age,
@@ -49,158 +47,105 @@ const AuraChat = ({ user }) => {
   };
 
   return (
-    <>
-      {/* Floating Toggle Button */}
-      <button 
-        onClick={() => setIsOpen(!isOpen)}
-        style={{
-          position: 'fixed',
-          bottom: '110px',
-          right: '24px',
-          width: '56px',
-          height: '56px',
-          borderRadius: '50%',
-          background: 'var(--aura-gradient)',
-          color: 'white',
-          border: 'none',
-          boxShadow: 'var(--aura-glow)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 3000,
-          transition: 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
-        }}
-        className="chat-toggle-btn"
-      >
-        {isOpen ? <X size={24} /> : <Bot size={28} />}
-        {!isOpen && (
-          <div style={{
-            position: 'absolute',
-            top: '-5px',
-            right: '-5px',
-            background: 'var(--color-orange)',
-            width: '20px',
-            height: '20px',
-            borderRadius: '50%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '0.7rem',
-            fontWeight: '900',
-            border: '2px solid var(--bg-primary)'
-          }}>
-            AI
-          </div>
-        )}
-      </button>
+    <div className="ai-chat-page" style={{ height: 'calc(100vh - 100px)', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div>
+          <h1 className="text-gradient page-title" style={{ fontSize: '2.5rem', fontWeight: '800' }}>AuraAI Coach</h1>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', fontWeight: '600' }}>Your personalized performance assistant</p>
+        </div>
+      </div>
 
-      {/* Chat Window */}
-      {isOpen && (
+      <div 
+        className="glass-panel"
+        style={{
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
+          border: '1px solid var(--glass-card-border)',
+          boxShadow: 'var(--shadow-main)',
+          background: 'var(--glass-card-bg)',
+          borderRadius: '24px'
+        }}
+      >
+        {/* Messages Area */}
         <div 
-          className="glass-panel"
+          ref={scrollRef}
           style={{
-            position: 'fixed',
-            bottom: '180px',
-            right: '24px',
-            width: 'min(400px, 90vw)',
-            height: 'min(550px, 60vh)',
-            zIndex: 3000,
+            flex: 1,
+            padding: '24px',
+            overflowY: 'auto',
             display: 'flex',
             flexDirection: 'column',
-            overflow: 'hidden',
-            border: '1px solid var(--glass-card-border)',
-            boxShadow: '0 20px 50px rgba(0,0,0,0.4)',
-            animation: 'fadeIn 0.3s ease-out forwards'
+            gap: '16px'
           }}
         >
-          {/* Header */}
-          <div style={{
-            padding: '16px 20px',
-            background: 'var(--aura-gradient)',
-            color: 'white',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '12px'
-          }}>
-            <div style={{ background: 'rgba(255,255,255,0.2)', padding: '8px', borderRadius: '10px' }}>
-              <Bot size={20} />
-            </div>
-            <div>
-              <div style={{ fontWeight: '800', fontSize: '1rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                Aura AI <Sparkles size={14} />
-              </div>
-              <div style={{ fontSize: '0.65rem', opacity: 0.8, fontWeight: '600' }}>YOUR FITNESS COACH</div>
-            </div>
-          </div>
-
-          {/* Messages */}
-          <div 
-            ref={scrollRef}
-            style={{
-              flex: 1,
-              padding: '20px',
-              overflowY: 'auto',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '16px'
-            }}
-          >
-            {chatHistory.map((chat, i) => (
-              <div 
-                key={i} 
-                style={{
-                  alignSelf: chat.role === 'user' ? 'flex-end' : 'flex-start',
-                  maxWidth: '85%',
-                  padding: '12px 16px',
-                  borderRadius: chat.role === 'user' ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
-                  background: chat.role === 'user' ? 'var(--aura-gradient)' : 'var(--card-overlay)',
-                  color: chat.role === 'user' ? 'white' : 'var(--text-primary)',
-                  fontSize: '0.9rem',
-                  lineHeight: '1.5',
-                  border: chat.role === 'user' ? 'none' : '1px solid var(--glass-card-border)',
-                  fontWeight: chat.role === 'user' ? '600' : '500'
-                }}
-              >
-                {chat.text}
-              </div>
-            ))}
-            {loading && (
-              <div style={{ alignSelf: 'flex-start', background: 'var(--card-overlay)', padding: '12px', borderRadius: '16px 16px 16px 4px', border: '1px solid var(--glass-card-border)' }}>
-                <Loader2 size={20} className="animate-spin" style={{ color: 'var(--color-green)' }} />
-              </div>
-            )}
-          </div>
-
-          {/* Input */}
-          <form 
-            onSubmit={handleSend}
-            style={{
-              padding: '16px',
-              borderTop: '1px solid var(--glass-card-border)',
-              display: 'flex',
-              gap: '10px'
-            }}
-          >
-            <input 
-              type="text"
-              className="glass-input"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              placeholder="Ask about your progress..."
-              style={{ flex: 1, height: '44px' }}
-            />
-            <button 
-              type="submit"
-              disabled={loading || !message.trim()}
-              className="btn btn-primary"
-              style={{ width: '44px', height: '44px', padding: 0, flexShrink: 0 }}
+          {chatHistory.map((chat, i) => (
+            <div 
+              key={i} 
+              style={{
+                alignSelf: chat.role === 'user' ? 'flex-end' : 'flex-start',
+                maxWidth: 'min(500px, 85%)',
+                padding: '14px 20px',
+                borderRadius: chat.role === 'user' ? '20px 20px 4px 20px' : '20px 20px 20px 4px',
+                background: chat.role === 'user' ? 'var(--aura-gradient)' : 'var(--card-overlay)',
+                color: chat.role === 'user' ? 'white' : 'var(--text-primary)',
+                fontSize: '1rem',
+                lineHeight: '1.6',
+                border: chat.role === 'user' ? 'none' : '1px solid var(--glass-card-border)',
+                fontWeight: chat.role === 'user' ? '600' : '500',
+                boxShadow: chat.role === 'user' ? 'var(--aura-glow)' : 'none'
+              }}
             >
-              <Send size={18} />
-            </button>
-          </form>
+              {chat.text}
+            </div>
+          ))}
+          {loading && (
+            <div style={{ alignSelf: 'flex-start', background: 'var(--card-overlay)', padding: '14px 20px', borderRadius: '20px 20px 20px 4px', border: '1px solid var(--glass-card-border)' }}>
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                <Loader2 size={20} className="animate-spin" style={{ color: 'var(--color-green)' }} />
+                <span style={{ fontSize: '0.85rem', fontWeight: '700', color: 'var(--text-muted)' }}>AuraAI is thinking...</span>
+              </div>
+            </div>
+          )}
         </div>
-      )}
-    </>
+
+        {/* Input Area */}
+        <form 
+          onSubmit={handleSend}
+          style={{
+            padding: '24px',
+            borderTop: '1px solid var(--glass-card-border)',
+            display: 'flex',
+            gap: '12px',
+            background: 'rgba(0,0,0,0.02)'
+          }}
+        >
+          <input 
+            type="text"
+            className="glass-input"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            placeholder="Type your question here (e.g. 'Give me a 10 min HIIT plan')"
+            style={{ 
+              flex: 1, 
+              height: '56px', 
+              fontSize: '1rem',
+              padding: '0 24px',
+              borderRadius: '16px'
+            }}
+          />
+          <button 
+            type="submit"
+            disabled={loading || !message.trim()}
+            className="btn btn-primary"
+            style={{ width: '56px', height: '56px', padding: 0, flexShrink: 0, borderRadius: '16px' }}
+          >
+            <Send size={24} />
+          </button>
+        </form>
+      </div>
+    </div>
   );
 };
 
