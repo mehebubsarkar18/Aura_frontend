@@ -165,6 +165,21 @@ function App() {
 
       <div className="main-wrapper">
         <header className="app-header">
+          <div className="mobile-brand-left" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div style={{ 
+              background: 'var(--aura-gradient)', 
+              width: '28px', 
+              height: '28px', 
+              borderRadius: '7px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              <Dumbbell size={16} color="white" strokeWidth={2.5} />
+            </div>
+            <h2 style={{ fontSize: '1.1rem', fontWeight: '800' }} className="text-gradient">AuraFit</h2>
+          </div>
+          
           <div 
             className="mobile-profile-btn"
             onClick={() => setActiveTab('settings')}

@@ -1,6 +1,7 @@
 /* App specific styles - general overrides */
 .app-container {
-  min-height: 100vh;
+  height: 100vh;
+  width: 100vw;
   display: flex;
   background-color: var(--bg-primary);
   overflow: hidden;
@@ -11,7 +12,9 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  min-width: 0;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
 }
 
 .app-header {
@@ -23,15 +26,18 @@
     height: 64px;
     display: flex !important;
     align-items: center !important;
-    justify-content: flex-end !important;
+    justify-content: space-between !important;
     padding: 0 18px !important;
     background: var(--sidebar-bg) !important;
     backdrop-filter: blur(20px) !important;
-    position: sticky !important;
-    top: 0 !important;
+    position: relative !important;
     z-index: 2000 !important;
     border-bottom: 1px solid var(--glass-card-border) !important;
     width: 100% !important;
+  }
+
+  .mobile-brand-left {
+    display: flex !important;
   }
 }
 
@@ -55,6 +61,7 @@
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: var(--glass-card-border) transparent;
+  height: 100%;
 }
 
 /* Sidebar Styling - Desktop Only */
@@ -72,8 +79,7 @@
   background: var(--sidebar-bg);
   backdrop-filter: blur(20px);
   transition: all 0.3s ease;
-  position: sticky;
-  top: 16px;
+  position: relative;
 }
 
 .brand-lockup h2 {
