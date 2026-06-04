@@ -270,7 +270,17 @@
 .graph-item-aura     { grid-column: span 6 !important; order: 5; }
 
 @media (max-width: 900px) {
-  .app-container { flex-direction: column !important; }
+  .app-container { 
+    flex-direction: column !important; 
+    height: auto !important;
+    min-height: 100vh !important;
+    overflow-y: auto !important;
+  }
+  
+  .main-wrapper {
+    height: auto !important;
+    overflow: visible !important;
+  }
   
   .app-sidebar { 
     display: none !important; 
