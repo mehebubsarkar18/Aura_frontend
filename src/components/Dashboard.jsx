@@ -1,10 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { api } from '../utils/api';
 import { Flame, Droplet, Clock, Moon, Scale, PieChart, Loader2, Heart, Calendar } from 'lucide-react';
-import Lottie from 'lottie-react';
-
-// Import loading animation
-import loadingAnim from '../assets/workout-animations/jumping_jacks.json';
 
 const ProgressRing = ({ percentage, color, icon: Icon, title, value, unit }) => {
   const radius = 34;

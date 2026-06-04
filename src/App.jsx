@@ -11,10 +11,6 @@ import WellnessMonitor from './components/WellnessMonitor';
 import Settings from './components/Settings';
 import AuraChat from './components/AuraChat';
 import { LayoutDashboard, Dumbbell, Droplet, Heart, User as UserIcon, Settings as SettingsIcon, Bot, LogOut } from 'lucide-react';
-import Lottie from 'lottie-react';
-
-// Import loading animation
-import loadingAnim from './assets/workout-animations/jumping_jacks.json';
 
 function App() {
   const [user, setUser] = useState(() => {

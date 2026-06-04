@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { api } from '../utils/api';
 import { Play, Pause, Calendar, Clock, Flame, Dumbbell, ArrowLeft } from 'lucide-react';
-import Lottie from 'lottie-react';
 
 // Import workout icons
 import pushupsIcon from '../assets/workout-icons/icons8-pushups-50.png';
@@ -11,14 +10,6 @@ import pilatesIcon from '../assets/workout-icons/icons8-pilates-50.png';
 import meditationIcon from '../assets/workout-icons/icons8-meditation-50.png';
 import gymnasticsIcon from '../assets/workout-icons/icons8-gymnastics-50.png';
 
-// Import Lottie animations
-import jumpingJacksAnim from '../assets/workout-animations/jumping_jacks.json';
-import pushUpsAnim from '../assets/workout-animations/push_ups.json';
-import reverseCrunchesAnim from '../assets/workout-animations/reverse_crunches.json';
-import splitJumpAnim from '../assets/workout-animations/split_jump.json';
-import squatReachUpsAnim from '../assets/workout-animations/squat_reach_ups.json';
-import squatKicksAnim from '../assets/workout-animations/squat_kicks.json';
-
 const PRESETS = [
   { 
     id: 0, 
@@ -27,8 +18,7 @@ const PRESETS = [
     color: 'var(--color-orange)', 
     durationMin: 10, 
     calsPerMin: 12,
-    benefits: ['Builds muscle', 'Increases strength', 'Boosts metabolism'],
-    lottieData: pushUpsAnim
+    benefits: ['Builds muscle', 'Increases strength', 'Boosts metabolism']
   },
   { 
     id: 1, 
@@ -37,8 +27,7 @@ const PRESETS = [
     color: '#f87171', 
     durationMin: 7, 
     calsPerMin: 15,
-    benefits: ['Burns calories', 'Improves endurance', 'Supports fat loss'],
-    lottieData: jumpingJacksAnim
+    benefits: ['Burns calories', 'Improves endurance', 'Supports fat loss']
   },
   { 
     id: 2, 
@@ -47,8 +36,7 @@ const PRESETS = [
     color: 'var(--color-cyan)', 
     durationMin: 5, 
     calsPerMin: 8,
-    benefits: ['Improves functional strength', 'Enhances balance', 'Better mobility'],
-    lottieData: squatReachUpsAnim
+    benefits: ['Improves functional strength', 'Enhances balance', 'Better mobility']
   },
   { 
     id: 3, 
@@ -57,8 +45,7 @@ const PRESETS = [
     color: 'var(--color-green)', 
     durationMin: 15, 
     calsPerMin: 4,
-    benefits: ['Enhances flexibility', 'Improves posture', 'Promotes relaxation'],
-    lottieData: splitJumpAnim
+    benefits: ['Enhances flexibility', 'Improves posture', 'Promotes relaxation']
   },
   { 
     id: 4, 
@@ -67,8 +54,7 @@ const PRESETS = [
     color: 'var(--color-violet)', 
     durationMin: 10, 
     calsPerMin: 7,
-    benefits: ['Strengthens core', 'Improves stability', 'Better posture'],
-    lottieData: reverseCrunchesAnim
+    benefits: ['Strengthens core', 'Improves stability', 'Better posture']
   },
   { 
     id: 5, 
@@ -77,8 +63,7 @@ const PRESETS = [
     color: '#94a3b8', 
     durationMin: 3, 
     calsPerMin: 2,
-    benefits: ['Reduces stress', 'Improves recovery', 'Sharpens mental focus'],
-    lottieData: squatKicksAnim
+    benefits: ['Reduces stress', 'Improves recovery', 'Sharpens mental focus']
   }
 ];
 
@@ -87,12 +72,8 @@ const BenefitsModal = ({ workout, onClose }) => {
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', zIndex: 1200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', backdropFilter: 'blur(10px)' }} onClick={onClose}>
       <div className="glass-panel" style={{ maxWidth: '400px', width: '100%', padding: '32px', textAlign: 'center', position: 'relative', border: '1px solid var(--glass-card-border)', boxShadow: '0 20px 50px rgba(0,0,0,0.5)' }} onClick={e => e.stopPropagation()}>
-        <div style={{ width: '120px', height: '120px', borderRadius: '24px', background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', boxShadow: '0 8px 16px rgba(0,0,0,0.1)', overflow: 'hidden' }}>
-          {workout.lottieData ? (
-            <Lottie animationData={workout.lottieData} loop={true} style={{ width: '100%', height: '100%' }} />
-          ) : (
-            <img src={workout.icon} alt="" style={{ width: '60px' }} />
-          )}
+        <div style={{ width: '80px', height: '80px', borderRadius: '20px', background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', boxShadow: '0 8px 16px rgba(0,0,0,0.1)' }}>
+          <img src={workout.icon} alt="" style={{ width: '40px' }} />
         </div>
         <h2 style={{ fontSize: '1.8rem', fontWeight: '900', marginBottom: '16px' }} className="text-gradient">{workout.name}</h2>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'flex-start', textAlign: 'left', background: 'rgba(255,255,255,0.03)', padding: '20px', borderRadius: '16px' }}>
@@ -121,7 +102,6 @@ const WorkoutTracker = ({ onWorkoutLogged, onViewHistory, initialViewHistory = f
   const [timerRunning, setTimerRunning] = useState(false);
   const [routineName, setRoutineName] = useState('');
   const [activeIcon, setActiveIcon] = useState(null);
-  const [lottieData, setLottieData] = useState(null);
   const [totalDuration, setTotalDuration] = useState(0);
   const [calsPerMin, setCalsPerMin] = useState(5);
   const [inProgressId, setInProgressId] = useState(null);
@@ -160,7 +140,6 @@ const WorkoutTracker = ({ onWorkoutLogged, onViewHistory, initialViewHistory = f
           const preset = PRESETS.find(p => p.id === session.presetId);
           if (preset) {
             setActiveIcon(preset.icon);
-            setLottieData(preset.lottieData);
           }
         } else {
           localStorage.removeItem('aura_workout_session');
@@ -196,7 +175,6 @@ const WorkoutTracker = ({ onWorkoutLogged, onViewHistory, initialViewHistory = f
         setCalsPerMin(session.calsPerMin);
         setInProgressId(preset.id);
         setActiveIcon(preset.icon);
-        setLottieData(preset.lottieData);
         setActiveSession(true);
         setTimerRunning(true);
         return;
@@ -206,7 +184,6 @@ const WorkoutTracker = ({ onWorkoutLogged, onViewHistory, initialViewHistory = f
     // New session
     setRoutineName(preset.name);
     setActiveIcon(preset.icon);
-    setLottieData(preset.lottieData);
     setCalsPerMin(preset.calsPerMin);
     setTotalDuration(preset.durationMin);
     setTimeLeft(preset.durationMin * 60); // Convert min to sec
@@ -240,7 +217,6 @@ const WorkoutTracker = ({ onWorkoutLogged, onViewHistory, initialViewHistory = f
       setActiveSession(false);
       setTimerRunning(false);
       setInProgressId(null);
-      setLottieData(null);
       localStorage.removeItem('aura_workout_session');
       onWorkoutLogged();
     } catch (error) {
@@ -327,12 +303,8 @@ const WorkoutTracker = ({ onWorkoutLogged, onViewHistory, initialViewHistory = f
                 {inProgressId === p.id && (
                   <div style={{ position: 'absolute', top: '10px', right: '10px', background: 'var(--color-orange)', color: 'white', padding: '2px 8px', borderRadius: '100px', fontSize: '0.6rem', fontWeight: '800', letterSpacing: '0.05em' }}>IN PROGRESS</div>
                 )}
-                <div style={{ width: '60px', height: '60px', borderRadius: '16px', background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px', boxShadow: '0 6px 12px rgba(0,0,0,0.05)', overflow: 'hidden' }}>
-                  {p.lottieData ? (
-                    <Lottie animationData={p.lottieData} loop={true} style={{ width: '100%', height: '100%' }} />
-                  ) : (
-                    <img src={p.icon} alt={p.name} style={{ width: '32px' }} />
-                  )}
+                <div style={{ width: '60px', height: '60px', borderRadius: '16px', background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px', boxShadow: '0 6px 12px rgba(0,0,0,0.05)' }}>
+                  <img src={p.icon} alt={p.name} style={{ width: '32px' }} />
                 </div>
                 <h3 style={{ fontSize: '1.15rem', fontWeight: '800', marginBottom: '6px', color: 'var(--text-primary)' }}>{p.name}</h3>
                 <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', fontWeight: '700' }}>
@@ -375,19 +347,8 @@ const WorkoutTracker = ({ onWorkoutLogged, onViewHistory, initialViewHistory = f
 
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50vh' }}>
             <div className="glass-panel" style={{ padding: '32px 20px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px', maxWidth: '400px', width: '100%', textAlign: 'center' }}>
-             <div className="active-icon-anim" style={{ width: '180px', height: '180px', borderRadius: '24px', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                {lottieData ? (
-                  <Lottie 
-                    animationData={lottieData} 
-                    loop={true}
-                    autoplay={timerRunning}
-                    style={{ width: '100%', height: '100%' }} 
-                  />
-                ) : (
-                  <div style={{ width: '100px', height: '100px', borderRadius: '24px', background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid var(--color-orange)', boxShadow: '0 15px 30px rgba(253, 90, 32, 0.2)' }}>
-                    <img src={activeIcon} alt="" style={{ width: '50px' }} />
-                  </div>
-                )}
+             <div className="active-icon-anim" style={{ width: '100px', height: '100px', borderRadius: '24px', background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid var(--color-orange)', boxShadow: '0 15px 30px rgba(253, 90, 32, 0.2)' }}>
+                <img src={activeIcon} alt="" style={{ width: '50px' }} />
              </div>
              
              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
