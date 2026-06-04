@@ -48,11 +48,11 @@ const AuraChat = ({ user }) => {
   };
 
   return (
-    <div className="ai-chat-page" style={{ height: 'calc(100vh - 100px)', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+    <div className="ai-chat-page" style={{ height: 'calc(100vh - 60px)', display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '1200px', margin: '0 auto' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <h1 className="text-gradient page-title" style={{ fontSize: '2.5rem', fontWeight: '800' }}>AuraAI Coach</h1>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', fontWeight: '600' }}>Your personalized performance assistant</p>
+          <h1 className="text-gradient page-title" style={{ fontSize: '1.7rem', fontWeight: '800', marginBottom: '4px' }}>AuraAI Coach</h1>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', fontWeight: '600' }}>Your personalized performance assistant</p>
         </div>
       </div>
 
@@ -86,7 +86,7 @@ const AuraChat = ({ user }) => {
               key={i} 
               style={{
                 alignSelf: chat.role === 'user' ? 'flex-end' : 'flex-start',
-                maxWidth: 'min(500px, 85%)',
+                maxWidth: 'min(800px, 85%)',
                 padding: '14px 20px',
                 borderRadius: chat.role === 'user' ? '20px 20px 4px 20px' : '20px 20px 20px 4px',
                 background: chat.role === 'user' ? 'var(--aura-gradient)' : 'var(--card-overlay)',
