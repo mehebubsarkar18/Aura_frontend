@@ -1,6 +1,6 @@
 import { Dumbbell, ArrowRight, ShieldCheck, Activity, Heart, Droplet, TrendingUp, Flame } from 'lucide-react';
 
-const LandingPage = ({ user, onGetStarted, onLogin }) => {
+const LandingPage = ({ onGetStarted, onLogin }) => {
   return (
     <div className="landing-container" style={{
       minHeight: '100vh',
@@ -9,8 +9,7 @@ const LandingPage = ({ user, onGetStarted, onLogin }) => {
       color: 'var(--text-primary)',
       overflowX: 'hidden',
       position: 'relative',
-      fontFamily: 'var(--font-family)',
-      transition: 'background-color 0.3s ease, color 0.3s ease'
+      fontFamily: 'var(--font-family)'
     }}>
       {/* Background Orbs */}
       <div className="glow-orb orb-1" />
