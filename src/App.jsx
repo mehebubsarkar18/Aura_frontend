@@ -10,7 +10,7 @@ import NutritionHydration from './components/NutritionHydration';
 import WellnessMonitor from './components/WellnessMonitor';
 import Settings from './components/Settings';
 import AuraChat from './components/AuraChat';
-import { LayoutDashboard, Dumbbell, Droplet, Heart, User as UserIcon, Settings as SettingsIcon } from 'lucide-react';
+import { LayoutDashboard, Dumbbell, Droplet, Heart, User as UserIcon, Settings as SettingsIcon, Bot, LogOut } from 'lucide-react';
 
 function App() {
   const [user, setUser] = useState(() => {
@@ -33,6 +33,7 @@ function App() {
           // Fetch fresh profile in background
           const profileData = await api.getMe(false);
           setUser(profileData.user);
+          setAuthView(null);
         } catch (error) {
           console.error('Auth initialization failed', error);
           // Only logout if we don't have a user at all (even cached)
@@ -117,10 +118,8 @@ function App() {
           </div>
           <h2 style={{ fontSize: '1.1rem', fontWeight: '800' }} className="text-gradient">AuraFit</h2>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <button onClick={toggleTheme} className="btn btn-ghost btn-icon" style={{ padding: '8px', background: 'var(--icon-bg)' }}>
-            {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
-          </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <UserIcon size={18} color="var(--text-secondary)" />
         </div>
       </header>
 
@@ -156,11 +155,7 @@ function App() {
             ))}
           </nav>
 
-          <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            <button className="nav-button" onClick={toggleTheme} style={{ background: 'var(--icon-bg)', border: '1px solid var(--glass-card-border)' }}>
-              {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
-              <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
-            </button>
+          <div style={{ marginTop: 'auto' }}>
             <button className="nav-button logout-btn" onClick={handleLogout} style={{ color: '#f87171' }}>
               <LogOut size={20} /> <span>Logout</span>
             </button>

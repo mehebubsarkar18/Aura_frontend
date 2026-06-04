@@ -467,7 +467,7 @@ const Dashboard = ({ user }) => {
   const getInitialWeightHistory = () => {
     if (cachedWeightRes && cachedWeightRes.data) {
       return cachedWeightRes.data.map((d, idx) => ({ 
-        day: idx === 0 && cachedWeightRes.data.length > 1 ? 'Start' : new Date(d.loggedAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }), 
+        day: idx === 0 && cachedWeightRes.data.length > 1 ? 'Start' : (d.loggedAt ? new Date(d.loggedAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }) : '---'), 
         val: d.weight 
       }));
     }
@@ -487,7 +487,7 @@ const Dashboard = ({ user }) => {
   const fetchData = useCallback(async (date) => {
     const processData = (wRes, hRes, sRes) => {
       let wData = (wRes.data || []).map((d, idx) => ({ 
-        day: idx === 0 && (wRes.data || []).length > 1 ? 'Start' : new Date(d.loggedAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }), 
+        day: idx === 0 && (wRes.data || []).length > 1 ? 'Start' : (d.loggedAt ? new Date(d.loggedAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }) : '---'), 
         val: d.weight 
       }));
 
