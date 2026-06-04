@@ -40,7 +40,8 @@ const AuraChat = ({ user }) => {
       }
     } catch (error) {
       console.error("Chat error:", error);
-      setChatHistory(prev => [...prev, { role: 'ai', text: "I'm having a bit of a connection issue. Please try again in a moment." }]);
+      const errorMessage = error.message || "I'm having a bit of a connection issue. Please try again in a moment.";
+      setChatHistory(prev => [...prev, { role: 'ai', text: errorMessage }]);
     } finally {
       setLoading(false);
     }

@@ -12,9 +12,18 @@ const getHeaders = () => {
 };
 
 const handleResponse = async (response) => {
-  const data = await response.json();
+  let data;
+  try {
+    data = await response.json();
+  } catch (e) {
+    if (!response.ok) {
+      throw new Error(`Server Error (${response.status}): ${response.statusText}`);
+    }
+    throw new Error('Invalid response format from server');
+  }
+
   if (!response.ok) {
-    throw new Error(data.error || 'Something went wrong');
+    throw new Error(data.error || data.message || 'Something went wrong');
   }
   return data;
 };
