@@ -9,6 +9,7 @@ import WorkoutTracker from './components/WorkoutTracker';
 import NutritionHydration from './components/NutritionHydration';
 import WellnessMonitor from './components/WellnessMonitor';
 import Settings from './components/Settings';
+import AuraChat from './components/AuraChat';
 import { LayoutDashboard, Dumbbell, Droplet, Heart, User as UserIcon, Settings as SettingsIcon } from 'lucide-react';
 
 function App() {
@@ -186,6 +187,9 @@ function App() {
         
         {activeTab === 'settings' && <Settings user={user} onGoalsUpdated={(u) => { setUser(u); refreshSummary(); }} onLogout={handleLogout} />}
       </main>
+
+      {/* Global AI Assistant */}
+      <AuraChat user={user} />
     </div>
   );
 }

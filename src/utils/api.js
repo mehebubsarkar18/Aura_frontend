@@ -336,4 +336,14 @@ export const api = {
     clearCache('weight');
     return await handleResponse(res);
   },
+
+  // AI endpoints
+  askAI: async (message, userContext) => {
+    const res = await fetch(`${API_BASE_URL}/ai/chat`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify({ message, userContext }),
+    });
+    return await handleResponse(res);
+  },
 };
