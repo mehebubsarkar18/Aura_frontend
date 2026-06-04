@@ -119,7 +119,12 @@ function App() {
           <h2 style={{ fontSize: '1.1rem', fontWeight: '800' }} className="text-gradient">AuraFit</h2>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <UserIcon size={18} color="var(--text-secondary)" />
+          <div 
+            onClick={() => setActiveTab('settings')}
+            style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '4px' }}
+          >
+            <UserIcon size={20} color="var(--text-secondary)" />
+          </div>
         </div>
       </header>
 
@@ -146,8 +151,7 @@ function App() {
               { id: 'workouts', icon: Dumbbell, label: 'Workouts' },
               { id: 'nutrition', icon: Droplet, label: 'Nutrition' },
               { id: 'wellness', icon: Heart, label: 'Wellness' },
-              { id: 'aura-ai', icon: Bot, label: 'AuraAI' },
-              { id: 'settings', icon: SettingsIcon, label: 'Settings' }
+              { id: 'aura-ai', icon: Bot, label: 'AuraAI' }
             ].map(({ id, icon: Icon, label }) => (
               <button key={id} onClick={() => setActiveTab(id)} className={`nav-button ${activeTab === id ? 'active' : ''}`}>
                 <Icon size={20} /> <span>{label}</span>
@@ -156,6 +160,9 @@ function App() {
           </nav>
 
           <div style={{ marginTop: 'auto' }}>
+            <button className="nav-button" onClick={() => setActiveTab('settings')} style={{ marginBottom: '12px', border: activeTab === 'settings' ? '1px solid var(--color-green)' : 'none' }}>
+              <SettingsIcon size={20} /> <span>Settings</span>
+            </button>
             <button className="nav-button logout-btn" onClick={handleLogout} style={{ color: '#f87171' }}>
               <LogOut size={20} /> <span>Logout</span>
             </button>
@@ -170,8 +177,7 @@ function App() {
           { id: 'workouts', icon: Dumbbell },
           { id: 'nutrition', icon: Droplet },
           { id: 'wellness', icon: Heart },
-          { id: 'aura-ai', icon: Bot },
-          { id: 'settings', icon: SettingsIcon }
+          { id: 'aura-ai', icon: Bot }
         ].map(({ id, icon: Icon }) => (
           <button 
             key={id} 
