@@ -103,13 +103,21 @@ const AuraChat = ({ user }) => {
           ))}
           {loading && (
             <div style={{ alignSelf: 'flex-start', background: 'var(--card-overlay)', padding: '14px 20px', borderRadius: '20px 20px 20px 4px', border: '1px solid var(--glass-card-border)' }}>
-              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                <Loader2 size={20} className="animate-spin" style={{ color: 'var(--color-green)' }} />
-                <span style={{ fontSize: '0.85rem', fontWeight: '700', color: 'var(--text-muted)' }}>AuraAI is thinking...</span>
+              <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                <span className="dot-pulse" style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--color-green)', animation: 'pulse 1.4s infinite ease-in-out' }}></span>
+                <span className="dot-pulse" style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--color-green)', animation: 'pulse 1.4s infinite ease-in-out 0.2s' }}></span>
+                <span className="dot-pulse" style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--color-green)', animation: 'pulse 1.4s infinite ease-in-out 0.4s' }}></span>
               </div>
             </div>
           )}
         </div>
+
+        <style>{`
+          @keyframes pulse {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1.0); }
+          }
+        `}</style>
 
         {/* Input Area */}
         <form 
