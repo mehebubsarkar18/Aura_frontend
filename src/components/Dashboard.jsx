@@ -92,7 +92,7 @@ const GoalAchievementView = ({ history = [], goals, todaySummary }) => {
     <div className="glass-panel premium-graph-card" style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px', height: '280px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
         <h3 style={{ fontSize: '1.1rem', fontWeight: '800' }}>{showHistory ? 'Weekly Discipline' : 'Daily Aura Score'}</h3>
-        <button onClick={() => setShowHistory(!showHistory)} className="btn btn-ghost btn-history-orange" style={{ padding: '3px 8px', fontSize: '0.7rem' }}>
+        <button onClick={() => setShowHistory(!showHistory)} className="btn btn-ghost btn-history-green" style={{ padding: '3px 8px', fontSize: '0.7rem' }}>
           {showHistory ? 'TODAY' : 'HISTORY'}
         </button>
       </div>
@@ -101,7 +101,7 @@ const GoalAchievementView = ({ history = [], goals, todaySummary }) => {
             <div style={{ position: 'relative', width: '130px', height: '130px' }}>
             <svg viewBox="0 0 100 100" style={{ width: '100%', height: '100%', transform: 'rotate(-90deg)' }}>
               <circle cx="50" cy="50" r="45" fill="none" stroke="var(--card-overlay)" strokeWidth="8" />
-              <circle cx="50" cy="50" r="45" fill="none" stroke="var(--color-orange)" strokeWidth="8" strokeDasharray="282.7" strokeDashoffset={282.7 - (282.7 * todayAvg) / 100} strokeLinecap="round" />
+              <circle cx="50" cy="50" r="45" fill="none" stroke="var(--color-green)" strokeWidth="8" strokeDasharray="282.7" strokeDashoffset={282.7 - (282.7 * todayAvg) / 100} strokeLinecap="round" />
             </svg>
             <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
               <div style={{ fontSize: '1.8rem', fontWeight: '950', color: 'var(--text-primary)' }}>{todayAvg}%</div>
@@ -135,7 +135,7 @@ const GoalAchievementView = ({ history = [], goals, todaySummary }) => {
                   </div>
                   <div style={{ 
                     width: '100%', 
-                    background: d.val > 0 ? `linear-gradient(to top, var(--color-violet), var(--color-violet-light))` : 'rgba(255,255,255,0.08)', 
+                    background: d.val > 0 ? `linear-gradient(to top, var(--color-green), #86efac)` : 'rgba(255,255,255,0.08)', 
                     borderRadius: '12px 12px 4px 4px', 
                     height: `${d.val || 4}%`,
                     opacity: d.val > 0 ? 1 : 0.2
@@ -267,21 +267,21 @@ const WorkoutTimeGraph = ({ history, todayValue, goal = 45 }) => {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
         <h3 style={{ fontSize: '1.1rem', fontWeight: '800' }}>{showHistory ? 'Workout History' : 'Today Activity'}</h3>
         <div style={{ display: 'flex', gap: '6px' }}>
-          <button onClick={() => setShowHistory(!showHistory)} className="btn btn-ghost btn-history-green" style={{ padding: '3px 8px', fontSize: '0.7rem' }}>
+          <button onClick={() => setShowHistory(!showHistory)} className="btn btn-ghost btn-history-orange" style={{ padding: '3px 8px', fontSize: '0.7rem' }}>
             {showHistory ? 'TODAY' : 'HISTORY'}
           </button>
           <div className="mobile-hide-icon" style={{ background: 'var(--icon-bg)', padding: '5px', borderRadius: '7px' }}>
-            <Clock size={16} style={{ color: 'var(--color-green)' }} />
+            <Clock size={16} style={{ color: 'var(--color-orange)' }} />
           </div>
         </div>
       </div>
 
       {!showHistory ? (
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
-          <div className="text-gradient" style={{ fontSize: '2.2rem', fontWeight: '950', lineHeight: 1 }}>{todayValue || 0}</div>
+          <div className="text-gradient" style={{ fontSize: '2.2rem', fontWeight: '950', lineHeight: 1, color: 'var(--color-orange)' }}>{todayValue || 0}</div>
           <div style={{ fontSize: '0.75rem', fontWeight: '700', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Minutes Today</div>
           {todayValue > 0 ? (
-            <div style={{ marginTop: '8px', padding: '3px 10px', background: 'rgba(74, 222, 128, 0.1)', borderRadius: '100px', color: 'var(--color-green)', fontWeight: '800', fontSize: '0.65rem' }}>
+            <div style={{ marginTop: '8px', padding: '3px 10px', background: 'rgba(255, 90, 31, 0.1)', borderRadius: '100px', color: 'var(--color-orange)', fontWeight: '800', fontSize: '0.65rem' }}>
               Goal: {goal}m
             </div>
           ) : (
@@ -323,7 +323,7 @@ const WorkoutTimeGraph = ({ history, todayValue, goal = 45 }) => {
                     style={{ 
                       height: `${barHeight || 4}%`,
                       width: '100%',
-                      background: d.activeMinutes > 0 ? 'linear-gradient(to top, var(--color-green), #86efac)' : 'rgba(255,255,255,0.08)',
+                      background: d.activeMinutes > 0 ? 'linear-gradient(to top, var(--color-orange), #ff8c5a)' : 'rgba(255,255,255,0.08)',
                       borderRadius: '12px 12px 4px 4px',
                       opacity: d.activeMinutes > 0 ? 1 : 0.2
                     }}
@@ -392,10 +392,10 @@ const WellnessScoreGraph = ({ history, todaySummary }) => {
           <div style={{ fontSize: '0.75rem', fontWeight: '700', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Wellness Index</div>
           {todayScore > 0 ? (
             <div style={{ marginTop: '8px', display: 'flex', gap: '6px' }}>
-              <div style={{ padding: '3px 8px', background: 'rgba(168, 85, 247, 0.1)', borderRadius: '6px', color: 'var(--color-violet)', fontSize: '0.6rem', fontWeight: '700' }}>
+              <div style={{ padding: '3px 8px', background: 'rgba(139, 92, 246, 0.1)', borderRadius: '6px', color: 'var(--color-violet)', fontSize: '0.6rem', fontWeight: '700' }}>
                 Sleep: {Math.round((todaySummary?.sleepMinutes || 0) / 60 * 10) / 10}h
               </div>
-              <div style={{ padding: '3px 8px', background: 'rgba(168, 85, 247, 0.1)', borderRadius: '6px', color: 'var(--color-violet)', fontSize: '0.75rem' }}>
+              <div style={{ padding: '3px 8px', background: 'rgba(139, 92, 246, 0.1)', borderRadius: '6px', color: 'var(--color-violet)', fontSize: '0.75rem' }}>
                 {todaySummary?.moodEmoji || '😐'}
               </div>
             </div>
@@ -582,7 +582,7 @@ const Dashboard = ({ user }) => {
 
       <div className="progress-grid" style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
         <ProgressRing percentage={(caloriesConsumed / (user?.dailyGoals?.calories || 2000)) * 100} color="var(--color-cyan)" icon={Flame} title="Energy In" value={caloriesConsumed} unit="kcal" />
-        <ProgressRing percentage={(caloriesBurned / (user?.dailyGoals?.caloriesBurned || 500)) * 100} color="var(--color-orange)" icon={Flame} title="Energy Out" value={caloriesBurned} unit="kcal" />
+        <ProgressRing percentage={(caloriesBurned / (user?.dailyGoals?.caloriesBurned || 500)) * 100} color="#f87171" icon={Flame} title="Energy Out" value={caloriesBurned} unit="kcal" />
         <ProgressRing percentage={(waterConsumedMl / (user?.dailyGoals?.waterMl || 2500)) * 100} color="var(--color-green)" icon={Droplet} title="Hydration" value={waterConsumedMl} unit="mL" />
         <ProgressRing percentage={(sleepMinutes / (user?.dailyGoals?.sleepMinutes || 480)) * 100} color="var(--color-violet)" icon={Moon} title="Recovery" value={Math.round(sleepMinutes/60*10)/10} unit="hrs" />
       </div>
