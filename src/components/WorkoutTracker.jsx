@@ -9,11 +9,12 @@ import yogaIcon from '../assets/workout-icons/icons8-yoga-50.png';
 import pilatesIcon from '../assets/workout-icons/icons8-pilates-50.png';
 import meditationIcon from '../assets/workout-icons/icons8-meditation-50.png';
 import gymnasticsIcon from '../assets/workout-icons/icons8-gymnastics-50.png';
+import plankIcon from '../assets/workout-icons/icons8-plank-50.png';
 
 const PRESETS = [
   { 
     id: 0, 
-    name: 'Strength Training', 
+    name: 'Pushups', 
     icon: pushupsIcon, 
     color: 'var(--color-orange)', 
     durationMin: 10, 
@@ -22,7 +23,7 @@ const PRESETS = [
   },
   { 
     id: 1, 
-    name: 'HIIT Cardio', 
+    name: 'Gymnastics', 
     icon: gymnasticsIcon, 
     color: '#f87171', 
     durationMin: 7, 
@@ -31,7 +32,7 @@ const PRESETS = [
   },
   { 
     id: 2, 
-    name: 'Bodyweight Basics', 
+    name: 'Squats', 
     icon: squatsIcon, 
     color: 'var(--color-cyan)', 
     durationMin: 5, 
@@ -40,7 +41,7 @@ const PRESETS = [
   },
   { 
     id: 3, 
-    name: 'Split Jump', 
+    name: 'Yoga', 
     icon: yogaIcon, 
     color: 'var(--color-green)', 
     durationMin: 15, 
@@ -49,7 +50,7 @@ const PRESETS = [
   },
   { 
     id: 4, 
-    name: 'Reverse Crunches', 
+    name: 'Pilates', 
     icon: pilatesIcon, 
     color: 'var(--color-violet)', 
     durationMin: 10, 
@@ -58,12 +59,21 @@ const PRESETS = [
   },
   { 
     id: 5, 
-    name: 'Squat Kicks', 
+    name: 'Meditation', 
     icon: meditationIcon, 
     color: '#94a3b8', 
     durationMin: 3, 
     calsPerMin: 2,
     benefits: ['Reduces stress', 'Improves recovery', 'Sharpens mental focus']
+  },
+  { 
+    id: 6, 
+    name: 'Plank', 
+    icon: plankIcon, 
+    color: '#fbbf24', 
+    durationMin: 2, 
+    calsPerMin: 5,
+    benefits: ['Increases core endurance', 'Improves posture', 'Builds isometric strength']
   }
 ];
 
