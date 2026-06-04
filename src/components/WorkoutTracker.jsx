@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { api } from '../utils/api';
 import { Play, Pause, Calendar, Clock, Flame, Dumbbell, ArrowLeft } from 'lucide-react';
+import Lottie from 'lottie-react';
 
 // Import workout icons
 import pushupsIcon from '../assets/workout-icons/icons8-pushups-50.png';
@@ -18,7 +19,8 @@ const PRESETS = [
     color: 'var(--color-orange)', 
     durationMin: 10, 
     calsPerMin: 12,
-    benefits: ['Builds muscle', 'Increases strength', 'Boosts metabolism']
+    benefits: ['Builds muscle', 'Increases strength', 'Boosts metabolism'],
+    lottieUrl: 'https://lottie.host/8c659424-6045-420a-867c-9694e963b652/qX0vKzO9R9.json'
   },
   { 
     id: 1, 
@@ -27,7 +29,8 @@ const PRESETS = [
     color: '#f87171', 
     durationMin: 7, 
     calsPerMin: 15,
-    benefits: ['Burns calories', 'Improves endurance', 'Supports fat loss']
+    benefits: ['Burns calories', 'Improves endurance', 'Supports fat loss'],
+    lottieUrl: 'https://lottie.host/93f9c6d4-8c85-4876-8f94-6b9909780004/Uv1vS8uG4Z.json'
   },
   { 
     id: 2, 
@@ -36,7 +39,8 @@ const PRESETS = [
     color: 'var(--color-cyan)', 
     durationMin: 5, 
     calsPerMin: 8,
-    benefits: ['Improves functional strength', 'Enhances balance', 'Better mobility']
+    benefits: ['Improves functional strength', 'Enhances balance', 'Better mobility'],
+    lottieUrl: 'https://lottie.host/57f648d8-7489-4e78-8f8d-4f6b99780005/Tz1vS8uG4Z.json'
   },
   { 
     id: 3, 
@@ -45,7 +49,8 @@ const PRESETS = [
     color: 'var(--color-green)', 
     durationMin: 15, 
     calsPerMin: 4,
-    benefits: ['Enhances flexibility', 'Improves posture', 'Promotes relaxation']
+    benefits: ['Enhances flexibility', 'Improves posture', 'Promotes relaxation'],
+    lottieUrl: 'https://lottie.host/620a1324-4f9e-49b2-a400-0259e8601677/8F47q5wXF3.json'
   },
   { 
     id: 4, 
@@ -54,7 +59,8 @@ const PRESETS = [
     color: 'var(--color-violet)', 
     durationMin: 10, 
     calsPerMin: 7,
-    benefits: ['Strengthens core', 'Improves stability', 'Better posture']
+    benefits: ['Strengthens core', 'Improves stability', 'Better posture'],
+    lottieUrl: 'https://lottie.host/a7e034e3-8531-482d-8e4b-74a496468745/v3f98WfO8S.json'
   },
   { 
     id: 5, 
@@ -63,7 +69,8 @@ const PRESETS = [
     color: '#94a3b8', 
     durationMin: 3, 
     calsPerMin: 2,
-    benefits: ['Reduces stress', 'Improves recovery', 'Sharpens mental focus']
+    benefits: ['Reduces stress', 'Improves recovery', 'Sharpens mental focus'],
+    lottieUrl: 'https://lottie.host/8e7f1e6b-734e-486d-9653-e380f3310034/0D3z0I7V0u.json'
   }
 ];
 
@@ -102,6 +109,8 @@ const WorkoutTracker = ({ onWorkoutLogged, onViewHistory, initialViewHistory = f
   const [timerRunning, setTimerRunning] = useState(false);
   const [routineName, setRoutineName] = useState('');
   const [activeIcon, setActiveIcon] = useState(null);
+  const [activeLottie, setActiveLottie] = useState(null);
+  const [lottieData, setLottieData] = useState(null);
   const [totalDuration, setTotalDuration] = useState(0);
   const [calsPerMin, setCalsPerMin] = useState(5);
   const [inProgressId, setInProgressId] = useState(null);
@@ -138,13 +147,26 @@ const WorkoutTracker = ({ onWorkoutLogged, onViewHistory, initialViewHistory = f
           
           // Map icon back
           const preset = PRESETS.find(p => p.id === session.presetId);
-          if (preset) setActiveIcon(preset.icon);
+          if (preset) {
+            setActiveIcon(preset.icon);
+            setActiveLottie(preset.lottieUrl);
+          }
         } else {
           localStorage.removeItem('aura_workout_session');
         }
       }
     }
   }, [fetchHistory, initialViewHistory]);
+
+  // Fetch Lottie data when activeLottie changes
+  useEffect(() => {
+    if (activeLottie) {
+      fetch(activeLottie)
+        .then(res => res.json())
+        .then(data => setLottieData(data))
+        .catch(err => console.error('Failed to load Lottie', err));
+    }
+  }, [activeLottie]);
 
   // Save session progress to localStorage
   useEffect(() => {
@@ -173,6 +195,7 @@ const WorkoutTracker = ({ onWorkoutLogged, onViewHistory, initialViewHistory = f
         setCalsPerMin(session.calsPerMin);
         setInProgressId(preset.id);
         setActiveIcon(preset.icon);
+        setActiveLottie(preset.lottieUrl);
         setActiveSession(true);
         setTimerRunning(true);
         return;
@@ -182,6 +205,7 @@ const WorkoutTracker = ({ onWorkoutLogged, onViewHistory, initialViewHistory = f
     // New session
     setRoutineName(preset.name);
     setActiveIcon(preset.icon);
+    setActiveLottie(preset.lottieUrl);
     setCalsPerMin(preset.calsPerMin);
     setTotalDuration(preset.durationMin);
     setTimeLeft(preset.durationMin * 60); // Convert min to sec
@@ -215,6 +239,8 @@ const WorkoutTracker = ({ onWorkoutLogged, onViewHistory, initialViewHistory = f
       setActiveSession(false);
       setTimerRunning(false);
       setInProgressId(null);
+      setActiveLottie(null);
+      setLottieData(null);
       localStorage.removeItem('aura_workout_session');
       onWorkoutLogged();
     } catch (error) {
@@ -345,8 +371,18 @@ const WorkoutTracker = ({ onWorkoutLogged, onViewHistory, initialViewHistory = f
 
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50vh' }}>
             <div className="glass-panel" style={{ padding: '32px 20px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px', maxWidth: '400px', width: '100%', textAlign: 'center' }}>
-             <div className="active-icon-anim" style={{ width: '100px', height: '100px', borderRadius: '24px', background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid var(--color-orange)', boxShadow: '0 15px 30px rgba(253, 90, 32, 0.2)' }}>
-                <img src={activeIcon} alt="" style={{ width: '50px' }} />
+             <div className="active-icon-anim" style={{ width: '180px', height: '180px', borderRadius: '24px', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                {lottieData ? (
+                  <Lottie 
+                    animationData={lottieData} 
+                    loop={timerRunning} 
+                    style={{ width: '100%', height: '100%' }} 
+                  />
+                ) : (
+                  <div style={{ width: '100px', height: '100px', borderRadius: '24px', background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid var(--color-orange)', boxShadow: '0 15px 30px rgba(253, 90, 32, 0.2)' }}>
+                    <img src={activeIcon} alt="" style={{ width: '50px' }} />
+                  </div>
+                )}
              </div>
              
              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -371,3 +407,4 @@ const WorkoutTracker = ({ onWorkoutLogged, onViewHistory, initialViewHistory = f
 };
 
 export default WorkoutTracker;
+
