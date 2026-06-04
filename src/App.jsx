@@ -9,9 +9,20 @@ import WorkoutTracker from './components/WorkoutTracker';
 import NutritionHydration from './components/NutritionHydration';
 import WellnessMonitor from './components/WellnessMonitor';
 import Settings from './components/Settings';
-import { LayoutDashboard, Dumbbell, Droplet, Heart, User as UserIcon, Settings as SettingsIcon } from 'lucide-react';
+import { 
+  LayoutDashboard, 
+  Dumbbell, 
+  Droplet, 
+  Heart, 
+  User as UserIcon, 
+  Settings as SettingsIcon, 
+  Sun, 
+  Moon, 
+  LogOut 
+} from 'lucide-react';
 
 function App() {
+  const [theme, setTheme] = useState(() => localStorage.getItem('aura_theme') || 'dark');
   const [user, setUser] = useState(() => {
     const cached = api.getCached('user_me');
     return cached ? cached.user : null;
@@ -21,8 +32,11 @@ function App() {
   const [authView, setAuthView] = useState('landing');
 
   useEffect(() => {
-    document.documentElement.setAttribute('data-theme', 'dark');
-  }, []);
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('aura_theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => setTheme(prev => prev === 'dark' ? 'light' : 'dark');
 
   useEffect(() => {
     const initAuth = async () => {
@@ -45,11 +59,9 @@ function App() {
   }, []); // Only run once on mount
 
   const refreshSummary = async () => {
-    // This is now handled by components internally if needed, 
-    // but kept here for profile updates or simple refreshes if shared state exists.
     if (!user) return;
     try {
-      const profileData = await api.getMe();
+      const profileData = await api.getMe(false);
       setUser(profileData.user);
     } catch (error) {
       console.error('Refresh failed', error);
@@ -104,7 +116,7 @@ function App() {
       <header className="mobile-header">
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <div style={{ 
-            background: 'linear-gradient(135deg, var(--color-orange), hsl(340, 90%, 50%))', 
+            background: 'var(--aura-gradient)', 
             width: '28px', 
             height: '28px', 
             borderRadius: '7px',
@@ -116,8 +128,10 @@ function App() {
           </div>
           <h2 style={{ fontSize: '1.1rem', fontWeight: '800' }} className="text-gradient">AuraFit</h2>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <UserIcon size={18} color="var(--text-secondary)" />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <button onClick={toggleTheme} className="btn btn-ghost btn-icon" style={{ padding: '8px', background: 'var(--icon-bg)' }}>
+            {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+          </button>
         </div>
       </header>
 
@@ -125,13 +139,14 @@ function App() {
         <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
           <div className="brand-lockup" style={{ display: 'flex', alignItems: 'center', gap: '10px', paddingLeft: '4px', marginBottom: '40px' }}>
             <div style={{ 
-              background: 'linear-gradient(135deg, var(--color-orange), hsl(340, 90%, 50%))', 
+              background: 'var(--aura-gradient)', 
               width: '32px', 
               height: '32px', 
               borderRadius: '9px',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center'
+              justifyContent: 'center',
+              boxShadow: 'var(--aura-glow)'
             }}>
               <Dumbbell size={18} color="white" strokeWidth={2.5} />
             </div>
@@ -150,6 +165,16 @@ function App() {
               </button>
             ))}
           </nav>
+
+          <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <button className="nav-button" onClick={toggleTheme} style={{ background: 'var(--icon-bg)', border: '1px solid var(--glass-card-border)' }}>
+              {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+              <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
+            </button>
+            <button className="nav-button logout-btn" onClick={handleLogout} style={{ color: '#f87171' }}>
+              <LogOut size={20} /> <span>Logout</span>
+            </button>
+          </div>
         </div>
       </aside>
 

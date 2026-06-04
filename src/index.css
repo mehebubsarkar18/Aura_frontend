@@ -35,61 +35,53 @@
   --icon-bg: rgba(255, 255, 255, 0.05);
 }
 
-/* Make icons inherit color so classes can tint them */
-.graph-card-header-icon svg, .btn-icon svg { color: inherit !important; }
-
-@media (min-width: 1400px) {
-  :root {
-    font-size: 17px;
-  }
+[data-theme='light'] {
+  --bg-primary: #f8faff; /* Very light blue-tinted gray */
+  --glass-card-bg: rgba(255, 255, 255, 0.8);
+  --glass-card-border: rgba(36, 43, 94, 0.08); /* HireHub Navy tint */
+  --text-primary: #1e293b; /* Slate 800 */
+  --text-secondary: #475569; /* Slate 600 */
+  --text-muted: #94a3b8; /* Slate 400 */
+  --shadow-main: 0 10px 40px -10px rgba(36, 43, 94, 0.12);
+  --glow-main: 0 0 20px rgba(0, 210, 133, 0.1);
+  --sidebar-bg: #ffffff;
+  --input-bg: #f1f5f9;
+  --card-overlay: rgba(36, 43, 94, 0.02);
+  --card-overlay-hover: rgba(36, 43, 94, 0.05);
+  --icon-bg: rgba(36, 43, 94, 0.04);
 }
 
-
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  font-family: var(--font-family);
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-  min-height: 100vh;
-  overflow-x: hidden;
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.2);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--glass-card-border);
-  border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.15);
-}
-
-/* Glassmorphism Class Utilities */
+/* Base styles refinement for light/dark compatibility */
 .glass-panel {
   background: var(--glass-card-bg);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--glass-card-border);
-  border-radius: 18px; /* Reduced from 24px */
-  box-shadow: var(--shadow-main), inset 0 1px 1px 0 rgba(255, 255, 255, 0.03);
+  border-radius: 18px;
+  box-shadow: var(--shadow-main);
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[data-theme='light'] .btn-ghost {
+  background: #f1f5f9;
+  border-color: #e2e8f0;
+  color: #1e293b;
+}
+
+[data-theme='light'] .premium-graph-card {
+  background: #ffffff;
+  border-color: rgba(36, 43, 94, 0.05);
+  box-shadow: 0 10px 30px rgba(36, 43, 94, 0.04);
+}
+
+[data-theme='light'] .text-gradient {
+  background: linear-gradient(135deg, #1e293b 30%, #475569);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+[data-theme='light'] .glow-orb {
+  opacity: 0.35;
 }
 
 .glass-panel-hover:hover {
