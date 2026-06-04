@@ -308,7 +308,7 @@
     position: fixed !important;
     bottom: 0 !important;
     left: 0 !important;
-    transform: none !important;
+    right: 0 !important;
     width: 100% !important;
     max-width: none !important;
     height: 70px !important;
@@ -319,8 +319,9 @@
     justify-content: space-around !important;
     align-items: center !important;
     box-shadow: 0 -5px 25px rgba(0,0,0,0.5) !important;
-    z-index: 2000 !important;
+    z-index: 9999 !important;
     padding: 0 !important;
+    margin: 0 !important;
   }
 
   .nav-item {
