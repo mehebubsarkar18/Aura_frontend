@@ -11,6 +11,14 @@ import pilatesIcon from '../assets/workout-icons/icons8-pilates-50.png';
 import meditationIcon from '../assets/workout-icons/icons8-meditation-50.png';
 import gymnasticsIcon from '../assets/workout-icons/icons8-gymnastics-50.png';
 
+// Import Lottie animations
+import jumpingJacksAnim from '../assets/workout-animations/JUMPING JACLS.json';
+import pushUpsAnim from '../assets/workout-animations/PUSH UPS.json';
+import reverseCrunchesAnim from '../assets/workout-animations/REVERSE CRUNCHES.json';
+import splitJumpAnim from '../assets/workout-animations/SPLIT JUMP.json';
+import squatReachUpsAnim from '../assets/workout-animations/SQUAT REACH UPS.json';
+import squatKicksAnim from '../assets/workout-animations/squat_kicks.json';
+
 const PRESETS = [
   { 
     id: 0, 
@@ -20,7 +28,7 @@ const PRESETS = [
     durationMin: 10, 
     calsPerMin: 12,
     benefits: ['Builds muscle', 'Increases strength', 'Boosts metabolism'],
-    lottieUrl: 'https://lottie.host/8c659424-6045-420a-867c-9694e963b652/qX0vKzO9R9.json'
+    lottieData: pushUpsAnim
   },
   { 
     id: 1, 
@@ -30,7 +38,7 @@ const PRESETS = [
     durationMin: 7, 
     calsPerMin: 15,
     benefits: ['Burns calories', 'Improves endurance', 'Supports fat loss'],
-    lottieUrl: 'https://lottie.host/93f9c6d4-8c85-4876-8f94-6b9909780004/Uv1vS8uG4Z.json'
+    lottieData: jumpingJacksAnim
   },
   { 
     id: 2, 
@@ -40,37 +48,37 @@ const PRESETS = [
     durationMin: 5, 
     calsPerMin: 8,
     benefits: ['Improves functional strength', 'Enhances balance', 'Better mobility'],
-    lottieUrl: 'https://lottie.host/57f648d8-7489-4e78-8f8d-4f6b99780005/Tz1vS8uG4Z.json'
+    lottieData: squatReachUpsAnim
   },
   { 
     id: 3, 
-    name: 'Yoga & Flow', 
+    name: 'Split Jump', 
     icon: yogaIcon, 
     color: 'var(--color-green)', 
     durationMin: 15, 
     calsPerMin: 4,
     benefits: ['Enhances flexibility', 'Improves posture', 'Promotes relaxation'],
-    lottieUrl: 'https://lottie.host/620a1324-4f9e-49b2-a400-0259e8601677/8F47q5wXF3.json'
+    lottieData: splitJumpAnim
   },
   { 
     id: 4, 
-    name: 'Pilates Core', 
+    name: 'Reverse Crunches', 
     icon: pilatesIcon, 
     color: 'var(--color-violet)', 
     durationMin: 10, 
     calsPerMin: 7,
     benefits: ['Strengthens core', 'Improves stability', 'Better posture'],
-    lottieUrl: 'https://lottie.host/a7e034e3-8531-482d-8e4b-74a496468745/v3f98WfO8S.json'
+    lottieData: reverseCrunchesAnim
   },
   { 
     id: 5, 
-    name: 'Mindful Rest', 
+    name: 'Squat Kicks', 
     icon: meditationIcon, 
     color: '#94a3b8', 
     durationMin: 3, 
     calsPerMin: 2,
     benefits: ['Reduces stress', 'Improves recovery', 'Sharpens mental focus'],
-    lottieUrl: 'https://lottie.host/8e7f1e6b-734e-486d-9653-e380f3310034/0D3z0I7V0u.json'
+    lottieData: squatKicksAnim
   }
 ];
 
@@ -109,7 +117,6 @@ const WorkoutTracker = ({ onWorkoutLogged, onViewHistory, initialViewHistory = f
   const [timerRunning, setTimerRunning] = useState(false);
   const [routineName, setRoutineName] = useState('');
   const [activeIcon, setActiveIcon] = useState(null);
-  const [activeLottie, setActiveLottie] = useState(null);
   const [lottieData, setLottieData] = useState(null);
   const [totalDuration, setTotalDuration] = useState(0);
   const [calsPerMin, setCalsPerMin] = useState(5);
@@ -149,7 +156,7 @@ const WorkoutTracker = ({ onWorkoutLogged, onViewHistory, initialViewHistory = f
           const preset = PRESETS.find(p => p.id === session.presetId);
           if (preset) {
             setActiveIcon(preset.icon);
-            setActiveLottie(preset.lottieUrl);
+            setLottieData(preset.lottieData);
           }
         } else {
           localStorage.removeItem('aura_workout_session');
@@ -157,16 +164,6 @@ const WorkoutTracker = ({ onWorkoutLogged, onViewHistory, initialViewHistory = f
       }
     }
   }, [fetchHistory, initialViewHistory]);
-
-  // Fetch Lottie data when activeLottie changes
-  useEffect(() => {
-    if (activeLottie) {
-      fetch(activeLottie)
-        .then(res => res.json())
-        .then(data => setLottieData(data))
-        .catch(err => console.error('Failed to load Lottie', err));
-    }
-  }, [activeLottie]);
 
   // Save session progress to localStorage
   useEffect(() => {
@@ -195,7 +192,7 @@ const WorkoutTracker = ({ onWorkoutLogged, onViewHistory, initialViewHistory = f
         setCalsPerMin(session.calsPerMin);
         setInProgressId(preset.id);
         setActiveIcon(preset.icon);
-        setActiveLottie(preset.lottieUrl);
+        setLottieData(preset.lottieData);
         setActiveSession(true);
         setTimerRunning(true);
         return;
@@ -205,7 +202,7 @@ const WorkoutTracker = ({ onWorkoutLogged, onViewHistory, initialViewHistory = f
     // New session
     setRoutineName(preset.name);
     setActiveIcon(preset.icon);
-    setActiveLottie(preset.lottieUrl);
+    setLottieData(preset.lottieData);
     setCalsPerMin(preset.calsPerMin);
     setTotalDuration(preset.durationMin);
     setTimeLeft(preset.durationMin * 60); // Convert min to sec
@@ -239,7 +236,6 @@ const WorkoutTracker = ({ onWorkoutLogged, onViewHistory, initialViewHistory = f
       setActiveSession(false);
       setTimerRunning(false);
       setInProgressId(null);
-      setActiveLottie(null);
       setLottieData(null);
       localStorage.removeItem('aura_workout_session');
       onWorkoutLogged();

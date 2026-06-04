@@ -1,4 +1,10 @@
 import { Dumbbell, ArrowRight, ShieldCheck, Activity, Heart, Droplet, TrendingUp, Flame } from 'lucide-react';
+import Lottie from 'lottie-react';
+
+// Import Lottie animations
+import jumpingJacksAnim from '../assets/workout-animations/JUMPING JACLS.json';
+import pushUpsAnim from '../assets/workout-animations/PUSH UPS.json';
+import splitJumpAnim from '../assets/workout-animations/SPLIT JUMP.json';
 
 const LandingPage = ({ onGetStarted, onLogin }) => {
   return (
@@ -174,20 +180,22 @@ const LandingPage = ({ onGetStarted, onLogin }) => {
             background: 'linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)',
             boxShadow: '0 25px 50px rgba(0,0,0,0.4)',
             border: '1px solid rgba(255,255,255,0.1)',
-            animation: 'float-slow 6s ease-in-out infinite'
+            animation: 'float-slow 6s ease-in-out infinite',
+            overflow: 'hidden',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
           }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
+            <div style={{ position: 'absolute', top: '16px', left: '16px', right: '16px', display: 'flex', justifyContent: 'space-between', zIndex: 3 }}>
               <div style={{ height: '7px', width: '70px', background: 'rgba(255,255,255,0.1)', borderRadius: '8px' }} />
               <div style={{ height: '14px', width: '14px', background: 'var(--color-orange)', borderRadius: '4px' }} />
             </div>
             
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px', marginBottom: '20px' }}>
-              {[1, 2, 3].map(i => (
-                <div key={i} style={{ height: '50px', background: 'rgba(255,255,255,0.03)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)' }} />
-              ))}
+            <div style={{ width: '180px', height: '180px', opacity: 0.8 }}>
+              <Lottie animationData={jumpingJacksAnim} loop={true} />
             </div>
 
-            <div style={{ height: '60px', width: '100%', background: 'linear-gradient(90deg, transparent, rgba(253, 90, 32, 0.1), transparent)', borderRadius: '8px', position: 'relative', overflow: 'hidden' }}>
+            <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '40px', background: 'linear-gradient(90deg, transparent, rgba(253, 90, 32, 0.1), transparent)', borderRadius: '8px', overflow: 'hidden' }}>
               <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '40%', background: 'var(--color-orange)', opacity: 0.2, clipPath: 'polygon(0 50%, 20% 40%, 40% 60%, 60% 30%, 80% 50%, 100% 20%, 100% 100%, 0 100%)' }} />
             </div>
           </div>
@@ -245,9 +253,9 @@ const LandingPage = ({ onGetStarted, onLogin }) => {
             position: 'absolute',
             top: '-5%',
             left: '5%',
-            width: '80px',
-            height: '80px',
-            borderRadius: '20px',
+            width: '100px',
+            height: '100px',
+            borderRadius: '24px',
             overflow: 'hidden',
             zIndex: 3,
             boxShadow: '0 12px 28px rgba(253, 90, 32, 0.25)',
@@ -260,17 +268,8 @@ const LandingPage = ({ onGetStarted, onLogin }) => {
             justifyContent: 'center',
             animation: 'float-medium 5s ease-in-out infinite'
           }}>
-            <div style={{ 
-              width: '44px', 
-              height: '44px', 
-              borderRadius: '14px', 
-              background: 'var(--color-orange)', 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'center',
-              boxShadow: '0 6px 12px rgba(253, 90, 32, 0.4)'
-            }}>
-              <Dumbbell size={24} color="white" strokeWidth={2.5} />
+            <div style={{ width: '80px', height: '80px' }}>
+              <Lottie animationData={pushUpsAnim} loop={true} />
             </div>
           </div>
 
@@ -320,7 +319,7 @@ const LandingPage = ({ onGetStarted, onLogin }) => {
         }}>
           {[
             { 
-              icon: Dumbbell, 
+              icon: () => <div style={{ width: '100%', height: '100%' }}><Lottie animationData={splitJumpAnim} loop={true} /></div>, 
               title: 'Smart Workouts', 
               desc: 'Choose from specialized HIIT, Strength, and Yoga routines with real-time tracking and intensity analysis.',
               color: 'var(--color-orange)'
@@ -349,9 +348,10 @@ const LandingPage = ({ onGetStarted, onLogin }) => {
                 justifyContent: 'center',
                 marginBottom: '20px',
                 color: feature.color,
-                border: `1px solid ${feature.color}20`
+                border: `1px solid ${feature.color}20`,
+                overflow: 'hidden'
               }}>
-                <feature.icon size={24} />
+                {typeof feature.icon === 'function' ? <feature.icon /> : <feature.icon size={24} />}
               </div>
               <h3 style={{ fontSize: '1.15rem', fontWeight: '700', marginBottom: '10px' }}>{feature.title}</h3>
               <p style={{ color: 'var(--text-secondary)', lineHeight: '1.6', fontSize: '0.9rem' }}>{feature.desc}</p>

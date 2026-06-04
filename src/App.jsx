@@ -11,6 +11,10 @@ import WellnessMonitor from './components/WellnessMonitor';
 import Settings from './components/Settings';
 import AuraChat from './components/AuraChat';
 import { LayoutDashboard, Dumbbell, Droplet, Heart, User as UserIcon, Settings as SettingsIcon, Bot, LogOut } from 'lucide-react';
+import Lottie from 'lottie-react';
+
+// Import loading animation
+import loadingAnim from './assets/workout-animations/JUMPING JACLS.json';
 
 function App() {
   const [user, setUser] = useState(() => {
@@ -74,13 +78,11 @@ function App() {
 
   if (loading) {
     return (
-      <div className="app-loading-container" style={{ background: 'var(--bg-primary)', height: '100vh' }}>
-        <div className="aura-pulse">
-          <div></div>
-          <div></div>
-          <div></div>
+      <div className="app-loading-container" style={{ background: 'var(--bg-primary)', height: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '20px' }}>
+        <div style={{ width: '200px', height: '200px' }}>
+          <Lottie animationData={loadingAnim} loop={true} />
         </div>
-        <div className="loading-text">LOADING YOUR AURA</div>
+        <div className="loading-text" style={{ letterSpacing: '4px', fontWeight: '800', color: 'var(--color-orange)' }}>LOADING YOUR AURA</div>
       </div>
     );
   }
