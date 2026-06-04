@@ -565,8 +565,8 @@ const Dashboard = ({ user }) => {
     <div className="dashboard-page" style={{ display: 'flex', flexDirection: 'column', gap: '32px', width: '100%' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
         <div>
-          <h1 className="text-gradient page-title" style={{ fontSize: '2.5rem', fontWeight: '800' }}>Performance Metrics</h1>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <h1 className="text-gradient page-title" style={{ fontSize: '1.6rem', fontWeight: '800' }}>Performance Matrix</h1>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '6px' }}>
             <Calendar size={18} /> {new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
           </p>
         </div>

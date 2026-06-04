@@ -68,10 +68,12 @@
   border-radius: 20px;
   flex-shrink: 0;
   height: calc(100vh - 32px);
-  z-index: 50;
+  z-index: 1000;
   background: var(--sidebar-bg);
   backdrop-filter: blur(20px);
   transition: all 0.3s ease;
+  position: sticky;
+  top: 16px;
 }
 
 .brand-lockup h2 {
