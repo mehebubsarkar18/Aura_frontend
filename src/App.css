@@ -7,24 +7,61 @@
   transition: background-color 0.3s ease;
 }
 
+.main-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.app-header {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  padding: 0 32px;
+  background: var(--sidebar-bg);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--glass-card-border);
+  z-index: 100;
+}
+
+.header-profile-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--card-overlay);
+  border: 1px solid var(--glass-card-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: all 0.3s ease;
+}
+
+.header-profile-btn:hover, .header-profile-btn.active {
+  background: var(--aura-gradient);
+  color: white;
+  border-color: transparent;
+  box-shadow: var(--aura-glow);
+}
+
 .main-content {
   flex: 1;
   padding: 24px;
   width: 100%;
   overflow-y: auto;
-  height: 100vh;
   scrollbar-width: thin;
   scrollbar-color: var(--glass-card-border) transparent;
 }
 
 /* Sidebar Styling - Desktop Only */
 .app-sidebar {
-  width: 260px; 
+  width: 280px; 
   margin: 16px 0 16px 16px; 
   padding: 32px 20px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   border: 1px solid var(--glass-card-border);
   border-radius: 20px;
   flex-shrink: 0;
@@ -44,40 +81,48 @@
 .app-nav {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 }
 
 .nav-button {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 10px 18px;
+  gap: 16px;
+  padding: 12px 20px;
   width: 100%;
   background: transparent;
-  border: 1px solid transparent;
+  border: none;
   color: var(--text-secondary);
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 1rem;
   text-align: left;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  border-radius: 10px;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.nav-icon-wrapper {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 .nav-button:hover {
   background: rgba(128, 128, 128, 0.08);
   color: var(--text-primary);
-  transform: translateX(6px);
 }
 
 .nav-button.active {
   background: var(--aura-gradient);
-  border-color: rgba(255, 255, 255, 0.1);
   color: white;
   font-weight: 700;
   box-shadow: var(--aura-glow);
 }
 
-/* Mobile Header - Strictly Hidden on PC */
+/* Hide Mobile Header on PC */
 .mobile-header {
   display: none !important;
 }
