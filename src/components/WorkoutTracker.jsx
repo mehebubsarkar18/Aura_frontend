@@ -108,7 +108,6 @@ const BenefitsModal = ({ workout, onClose }) => {
     </div>
   );
 };
-// ... rest of state and effects ...
 
 const WorkoutTracker = ({ onWorkoutLogged, onViewHistory, initialViewHistory = false, onBack }) => {
   const getTodayDateString = () => {
@@ -122,6 +121,7 @@ const WorkoutTracker = ({ onWorkoutLogged, onViewHistory, initialViewHistory = f
   const [timerRunning, setTimerRunning] = useState(false);
   const [routineName, setRoutineName] = useState('');
   const [activeIcon, setActiveIcon] = useState(null);
+  const [lottieData, setLottieData] = useState(null);
   const [totalDuration, setTotalDuration] = useState(0);
   const [calsPerMin, setCalsPerMin] = useState(5);
   const [inProgressId, setInProgressId] = useState(null);
@@ -160,6 +160,7 @@ const WorkoutTracker = ({ onWorkoutLogged, onViewHistory, initialViewHistory = f
           const preset = PRESETS.find(p => p.id === session.presetId);
           if (preset) {
             setActiveIcon(preset.icon);
+            setLottieData(preset.lottieData);
           }
         } else {
           localStorage.removeItem('aura_workout_session');
@@ -195,6 +196,7 @@ const WorkoutTracker = ({ onWorkoutLogged, onViewHistory, initialViewHistory = f
         setCalsPerMin(session.calsPerMin);
         setInProgressId(preset.id);
         setActiveIcon(preset.icon);
+        setLottieData(preset.lottieData);
         setActiveSession(true);
         setTimerRunning(true);
         return;
@@ -204,6 +206,7 @@ const WorkoutTracker = ({ onWorkoutLogged, onViewHistory, initialViewHistory = f
     // New session
     setRoutineName(preset.name);
     setActiveIcon(preset.icon);
+    setLottieData(preset.lottieData);
     setCalsPerMin(preset.calsPerMin);
     setTotalDuration(preset.durationMin);
     setTimeLeft(preset.durationMin * 60); // Convert min to sec
@@ -237,6 +240,7 @@ const WorkoutTracker = ({ onWorkoutLogged, onViewHistory, initialViewHistory = f
       setActiveSession(false);
       setTimerRunning(false);
       setInProgressId(null);
+      setLottieData(null);
       localStorage.removeItem('aura_workout_session');
       onWorkoutLogged();
     } catch (error) {
