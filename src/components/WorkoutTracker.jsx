@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { api } from '../utils/api';
 import { Play, Pause, Calendar, Clock, Flame, Dumbbell, ArrowLeft } from 'lucide-react';
+import SafeAnimation from './SafeAnimation';
 
 // Import workout icons
 import pushupsIcon from '../assets/workout-icons/icons8-pushups-50.png';
@@ -18,7 +19,8 @@ const PRESETS = [
     color: 'var(--color-orange)', 
     durationMin: 10, 
     calsPerMin: 12,
-    benefits: ['Builds muscle', 'Increases strength', 'Boosts metabolism']
+    benefits: ['Builds muscle', 'Increases strength', 'Boosts metabolism'],
+    animationName: 'push_ups'
   },
   { 
     id: 1, 
@@ -72,8 +74,12 @@ const BenefitsModal = ({ workout, onClose }) => {
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', zIndex: 1200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', backdropFilter: 'blur(10px)' }} onClick={onClose}>
       <div className="glass-panel" style={{ maxWidth: '400px', width: '100%', padding: '32px', textAlign: 'center', position: 'relative', border: '1px solid var(--glass-card-border)', boxShadow: '0 20px 50px rgba(0,0,0,0.5)' }} onClick={e => e.stopPropagation()}>
-        <div style={{ width: '80px', height: '80px', borderRadius: '20px', background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', boxShadow: '0 8px 16px rgba(0,0,0,0.1)' }}>
-          <img src={workout.icon} alt="" style={{ width: '40px' }} />
+        <div style={{ width: '120px', height: '120px', borderRadius: '24px', background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', boxShadow: '0 8px 16px rgba(0,0,0,0.1)', overflow: 'hidden' }}>
+          {workout.animationName ? (
+            <SafeAnimation animationName={workout.animationName} fallbackIcon={workout.icon} />
+          ) : (
+            <img src={workout.icon} alt="" style={{ width: '60px' }} />
+          )}
         </div>
         <h2 style={{ fontSize: '1.8rem', fontWeight: '900', marginBottom: '16px' }} className="text-gradient">{workout.name}</h2>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'flex-start', textAlign: 'left', background: 'rgba(255,255,255,0.03)', padding: '20px', borderRadius: '16px' }}>
@@ -303,8 +309,12 @@ const WorkoutTracker = ({ onWorkoutLogged, onViewHistory, initialViewHistory = f
                 {inProgressId === p.id && (
                   <div style={{ position: 'absolute', top: '10px', right: '10px', background: 'var(--color-orange)', color: 'white', padding: '2px 8px', borderRadius: '100px', fontSize: '0.6rem', fontWeight: '800', letterSpacing: '0.05em' }}>IN PROGRESS</div>
                 )}
-                <div style={{ width: '60px', height: '60px', borderRadius: '16px', background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px', boxShadow: '0 6px 12px rgba(0,0,0,0.05)' }}>
-                  <img src={p.icon} alt={p.name} style={{ width: '32px' }} />
+                <div style={{ width: '60px', height: '60px', borderRadius: '16px', background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px', boxShadow: '0 6px 12px rgba(0,0,0,0.05)', overflow: 'hidden' }}>
+                  {p.animationName ? (
+                    <SafeAnimation animationName={p.animationName} fallbackIcon={p.icon} />
+                  ) : (
+                    <img src={p.icon} alt={p.name} style={{ width: '32px' }} />
+                  )}
                 </div>
                 <h3 style={{ fontSize: '1.15rem', fontWeight: '800', marginBottom: '6px', color: 'var(--text-primary)' }}>{p.name}</h3>
                 <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', fontWeight: '700' }}>
@@ -347,8 +357,12 @@ const WorkoutTracker = ({ onWorkoutLogged, onViewHistory, initialViewHistory = f
 
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50vh' }}>
             <div className="glass-panel" style={{ padding: '32px 20px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px', maxWidth: '400px', width: '100%', textAlign: 'center' }}>
-             <div className="active-icon-anim" style={{ width: '100px', height: '100px', borderRadius: '24px', background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid var(--color-orange)', boxShadow: '0 15px 30px rgba(253, 90, 32, 0.2)' }}>
-                <img src={activeIcon} alt="" style={{ width: '50px' }} />
+             <div className="active-icon-anim" style={{ width: '180px', height: '180px', borderRadius: '24px', background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid var(--color-orange)', boxShadow: '0 15px 30px rgba(253, 90, 32, 0.2)', overflow: 'hidden' }}>
+                {activeAnimation ? (
+                  <SafeAnimation animationName={activeAnimation} fallbackIcon={activeIcon} />
+                ) : (
+                  <img src={activeIcon} alt="" style={{ width: '50px' }} />
+                )}
              </div>
              
              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
