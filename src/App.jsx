@@ -106,7 +106,7 @@ function App() {
     <div className="app-container">
       <aside className="glass-panel app-sidebar">
         <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-          <div className="brand-lockup" style={{ display: 'flex', alignItems: 'center', gap: '12px', paddingLeft: '8px', marginBottom: '48px' }}>
+          <div className="brand-lockup" style={{ display: 'flex', alignItems: 'center', gap: '12px', paddingLeft: '16px', marginBottom: '48px' }}>
             <div style={{ 
               background: 'var(--aura-gradient)', 
               width: '36px', 
