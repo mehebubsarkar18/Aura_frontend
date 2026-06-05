@@ -547,9 +547,10 @@ const Dashboard = ({ user }) => {
   const cachedWeightRes = api.getCached('weight_history');
   
   const getInitialWeightHistory = () => {
-    if (cachedWeightRes) {
-      return cachedWeightRes.map((d, idx) => ({ 
-        day: idx === 0 && cachedWeightRes.length > 1 ? 'Start' : (d.loggedAt ? new Date(d.loggedAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }) : '---'), 
+    const rawData = cachedWeightRes?.data || cachedWeightRes;
+    if (Array.isArray(rawData)) {
+      return rawData.map((d, idx) => ({ 
+        day: idx === 0 && rawData.length > 1 ? 'Start' : (d.loggedAt ? new Date(d.loggedAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }) : '---'), 
         val: d.weight 
       }));
     }
@@ -568,10 +569,11 @@ const Dashboard = ({ user }) => {
 
   const fetchData = useCallback(async (date) => {
     const processData = (wRes, hRes, sRes) => {
-      let wData = (wRes || []).map((d, idx) => ({ 
-        day: idx === 0 && (wRes || []).length > 1 ? 'Start' : (d.loggedAt ? new Date(d.loggedAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }) : '---'), 
+      const rawWData = wRes?.data || wRes;
+      let wData = Array.isArray(rawWData) ? rawWData.map((d, idx) => ({ 
+        day: idx === 0 && rawWData.length > 1 ? 'Start' : (d.loggedAt ? new Date(d.loggedAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }) : '---'), 
         val: d.weight 
-      }));
+      })) : [];
 
       if (wData.length === 0 && user.weight) {
         wData = [{ day: 'Start', val: user.weight }];
