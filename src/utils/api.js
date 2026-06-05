@@ -423,6 +423,22 @@ export const api = {
     return data;
   },
 
+  // Report endpoints
+  getReportData: async (type) => {
+    return await fetchWithRefresh(`${API_BASE_URL}/reports/summary?type=${type}`, {
+      method: 'GET',
+      headers: getHeaders(),
+    });
+  },
+
+  shareReport: async (type, email, reportData) => {
+    return await fetchWithRefresh(`${API_BASE_URL}/reports/share`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify({ type, email, reportData }),
+    });
+  },
+
   // AI endpoints
   askAI: async (message, userContext) => {
     return await fetchWithRefresh(`${API_BASE_URL}/ai/chat`, {

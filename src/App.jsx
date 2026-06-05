@@ -5,12 +5,13 @@ import LandingPage from './components/LandingPage';
 import LoginRegister from './components/LoginRegister';
 import ProfileSetup from './components/ProfileSetup';
 import Dashboard from './components/Dashboard';
+import Reports from './components/Reports';
 import WorkoutTracker from './components/WorkoutTracker';
 import NutritionHydration from './components/NutritionHydration';
 import WellnessMonitor from './components/WellnessMonitor';
 import Settings from './components/Settings';
 import AuraChat from './components/AuraChat';
-import { LayoutDashboard, Dumbbell, Droplet, Heart, User as UserIcon, Settings as SettingsIcon, Bot, LogOut } from 'lucide-react';
+import { LayoutDashboard, BarChart2, Dumbbell, Droplet, Heart, User as UserIcon, Settings as SettingsIcon, Bot, LogOut } from 'lucide-react';
 
 function App() {
   const [user, setUser] = useState(() => {
@@ -124,6 +125,7 @@ function App() {
           <nav className="app-nav" style={{ flex: 1 }}>
             {[
               { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+              { id: 'reports', icon: BarChart2, label: 'Reports' },
               { id: 'workouts', icon: Dumbbell, label: 'Workouts' },
               { id: 'nutrition', icon: Droplet, label: 'Nutrition' },
               { id: 'wellness', icon: Heart, label: 'Wellness' },
@@ -192,6 +194,7 @@ function App() {
         <nav className="bottom-nav">
           {[
             { id: 'dashboard', icon: LayoutDashboard },
+            { id: 'reports', icon: BarChart2 },
             { id: 'workouts', icon: Dumbbell },
             { id: 'nutrition', icon: Droplet },
             { id: 'wellness', icon: Heart },
@@ -209,6 +212,7 @@ function App() {
 
         <main className="main-content">
           {activeTab === 'dashboard' && <Dashboard user={user} />}
+          {activeTab === 'reports' && <Reports user={user} />}
           
           {activeTab === 'workouts' && <WorkoutTracker onWorkoutLogged={refreshSummary} onViewHistory={() => setActiveTab('workout-history')} />}
           {activeTab === 'workout-history' && <WorkoutTracker initialViewHistory={true} onBack={() => setActiveTab('workouts')} />}
