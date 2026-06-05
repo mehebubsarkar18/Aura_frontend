@@ -68,15 +68,21 @@ const Reports = ({ user }) => {
     doc.setFontSize(14);
     doc.text(`${type.charAt(0).toUpperCase() + type.slice(1)} Summary`, 20, 40);
     doc.text(`Generated: ${new Date().toLocaleDateString()}`, 20, 50);
+
+    const calcPct = (curr, prev) => {
+      if (!prev) return curr > 0 ? '+100%' : '0%';
+      const diff = ((curr - prev) / prev) * 100;
+      return `${diff > 0 ? '+' : ''}${diff.toFixed(1)}%`;
+    };
     
     const tableData = [
       ['Metric', 'Current Period', 'Previous Period', 'Change %'],
-      ['Calories Burned', `${current.metrics.caloriesBurned} kcal`, `${previous.metrics.caloriesBurned} kcal`, `${(((current.metrics.caloriesBurned - previous.metrics.caloriesBurned) / (previous.metrics.caloriesBurned || 1)) * 100).toFixed(1)}%`],
-      ['Calories Consumed', `${current.metrics.caloriesConsumed} kcal`, `${previous.metrics.caloriesConsumed} kcal`, `${(((current.metrics.caloriesConsumed - previous.metrics.caloriesConsumed) / (previous.metrics.caloriesConsumed || 1)) * 100).toFixed(1)}%`],
-      ['Active Minutes', `${current.metrics.activeMinutes} min`, `${previous.metrics.activeMinutes} min`, `${(((current.metrics.activeMinutes - previous.metrics.activeMinutes) / (previous.metrics.activeMinutes || 1)) * 100).toFixed(1)}%`],
-      ['Workouts', current.metrics.workoutCount, previous.metrics.workoutCount, `${(((current.metrics.workoutCount - previous.metrics.workoutCount) / (previous.metrics.workoutCount || 1)) * 100).toFixed(1)}%`],
-      ['Hydration', `${current.metrics.waterMl} mL`, `${previous.metrics.waterMl} mL`, `${(((current.metrics.waterMl - previous.metrics.waterMl) / (previous.metrics.waterMl || 1)) * 100).toFixed(1)}%`],
-      ['Avg Sleep', `${(current.metrics.avgSleep / 60).toFixed(1)} hrs`, `${(previous.metrics.avgSleep / 60).toFixed(1)} hrs`, `${(((current.metrics.avgSleep - previous.metrics.avgSleep) / (previous.metrics.avgSleep || 1)) * 100).toFixed(1)}%`],
+      ['Calories Burned', `${current.metrics.caloriesBurned} kcal`, `${previous.metrics.caloriesBurned} kcal`, calcPct(current.metrics.caloriesBurned, previous.metrics.caloriesBurned)],
+      ['Calories Consumed', `${current.metrics.caloriesConsumed} kcal`, `${previous.metrics.caloriesConsumed} kcal`, calcPct(current.metrics.caloriesConsumed, previous.metrics.caloriesConsumed)],
+      ['Active Minutes', `${current.metrics.activeMinutes} min`, `${previous.metrics.activeMinutes} min`, calcPct(current.metrics.activeMinutes, previous.metrics.activeMinutes)],
+      ['Workouts', current.metrics.workoutCount, previous.metrics.workoutCount, calcPct(current.metrics.workoutCount, previous.metrics.workoutCount)],
+      ['Hydration', `${current.metrics.waterMl} mL`, `${previous.metrics.waterMl} mL`, calcPct(current.metrics.waterMl, previous.metrics.waterMl)],
+      ['Avg Sleep', `${(current.metrics.avgSleep / 60).toFixed(1)} hrs`, `${(previous.metrics.avgSleep / 60).toFixed(1)} hrs`, calcPct(current.metrics.avgSleep, previous.metrics.avgSleep)],
       ['Weight Change', `${current.metrics.weightChange} kg`, `${previous.metrics.weightChange} kg`, '-']
     ];
     
@@ -85,7 +91,7 @@ const Reports = ({ user }) => {
       head: [tableData[0]],
       body: tableData.slice(1),
       theme: 'grid',
-      headStyles: { fillStyle: [253, 90, 32] }
+      headStyles: { fillColor: [253, 90, 32] }
     });
     
     doc.save(`AuraFit_${type}_Report.pdf`);
@@ -107,10 +113,16 @@ const Reports = ({ user }) => {
 
   if (loading) return (
     <div className="loading-screen" style={{ height: '70vh' }}>
-      <Loader2 className="animate-spin" size={48} color="var(--color-orange)" />
-      <div className="loading-text" style={{ marginTop: '16px' }}>GENERATING REPORT...</div>
+      <div className="aura-pulse">
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+      <div className="loading-text" style={{ marginTop: '16px' }}>SYNCING YOUR INSIGHTS</div>
     </div>
   );
+
+  if (!reportData) return null;
 
   return (
     <div className="reports-page" style={{ display: 'flex', flexDirection: 'column', gap: '32px', width: '100%' }}>
