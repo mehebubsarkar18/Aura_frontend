@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { api } from '../utils/api';
-import { FileText, Download, Send, TrendingUp, TrendingDown, Minus, Loader2, Calendar, Mail } from 'lucide-react';
+import { FileText, Download, TrendingUp, TrendingDown, Minus, Calendar } from 'lucide-react';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
@@ -36,9 +36,6 @@ const Reports = ({ user }) => {
   const [reportType, setReportType] = useState('weekly');
   const [reportData, setReportData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [sharing, setSharing] = useState(false);
-  const [shareEmail, setShareEmail] = useState(user?.email || '');
-  const [showShareModal, setShowShareModal] = useState(false);
 
   const fetchReport = async (type) => {
     setLoading(true);
@@ -102,20 +99,6 @@ const Reports = ({ user }) => {
     }
   };
 
-  const handleShareEmail = async (e) => {
-    e.preventDefault();
-    setSharing(true);
-    try {
-      await api.shareReport(reportType, shareEmail, reportData);
-      alert('Report shared successfully!');
-      setShowShareModal(false);
-    } catch (err) {
-      alert('Failed to share report: ' + err.message);
-    } finally {
-      setSharing(false);
-    }
-  };
-
   if (loading) return (
     <div className="loading-screen" style={{ height: '70vh' }}>
       <div className="aura-pulse">
@@ -171,11 +154,8 @@ const Reports = ({ user }) => {
         </div>
         
         <div style={{ display: 'flex', gap: '12px' }}>
-          <button onClick={generatePDF} className="btn btn-ghost" style={{ border: '1px solid var(--glass-card-border)', display: 'flex', gap: '8px' }}>
-            <Download size={18} /> PDF
-          </button>
-          <button onClick={() => setShowShareModal(true)} className="btn btn-primary" style={{ display: 'flex', gap: '8px' }}>
-            <Send size={18} /> Share
+          <button onClick={generatePDF} className="btn btn-primary" style={{ display: 'flex', gap: '8px' }}>
+            <Download size={18} /> Download PDF
           </button>
         </div>
       </div>
@@ -210,41 +190,10 @@ const Reports = ({ user }) => {
           </ul>
         </div>
       </div>
-
-      {showShareModal && (
-        <div className="modal-overlay" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.85)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
-          <div style={{ maxWidth: '400px', width: '100%', padding: '32px', border: '1px solid var(--color-orange)', background: '#1a1b1e', borderRadius: '24px', boxShadow: '0 20px 40px rgba(0,0,0,0.4)' }}>
-            <h3 style={{ fontSize: '1.4rem', fontWeight: '900', marginBottom: '12px', color: 'white' }}>Share Report</h3>
-            <p style={{ color: 'var(--text-secondary)', marginBottom: '24px', fontSize: '0.9rem' }}>We'll generate a PDF and send it to the email address below.</p>
-            
-            <form onSubmit={handleShareEmail}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '24px' }}>
-                <label style={{ fontSize: '0.85rem', fontWeight: '700', color: 'var(--text-muted)' }}>Email Address</label>
-                <div style={{ position: 'relative' }}>
-                  <Mail size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
-                  <input 
-                    type="email" 
-                    className="glass-input" 
-                    value={shareEmail} 
-                    onChange={e => setShareEmail(e.target.value)} 
-                    required 
-                    style={{ width: '100%', paddingLeft: '40px', background: 'rgba(255,255,255,0.03)' }}
-                  />
-                </div>
-              </div>
-              
-              <div style={{ display: 'flex', gap: '12px' }}>
-                <button type="button" onClick={() => setShowShareModal(false)} className="btn btn-ghost" style={{ flex: 1 }}>Cancel</button>
-                <button type="submit" disabled={sharing} className="btn btn-primary" style={{ flex: 2, display: 'flex', gap: '8px', justifyContent: 'center' }}>
-                  {sharing ? <Loader2 className="animate-spin" size={18} /> : <Send size={18} />} {sharing ? 'Sending...' : 'Send Report'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
+
+export default Reports;
 
 export default Reports;
