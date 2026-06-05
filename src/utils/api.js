@@ -1,5 +1,17 @@
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
 
+let isRefreshing = false;
+let refreshSubscribers = [];
+
+const subscribeTokenRefresh = (cb) => {
+  refreshSubscribers.push(cb);
+};
+
+const onTokenRefreshed = (token) => {
+  refreshSubscribers.map((cb) => cb(token));
+  refreshSubscribers = [];
+};
+
 const getHeaders = () => {
   const token = localStorage.getItem('token');
   const headers = {
@@ -11,7 +23,58 @@ const getHeaders = () => {
   return headers;
 };
 
-const handleResponse = async (response) => {
+const handleResponse = async (response, originalRequest) => {
+  if (response.status === 401) {
+    // If we're already refreshing, queue this request
+    if (isRefreshing) {
+      return new Promise((resolve) => {
+        subscribeTokenRefresh((token) => {
+          resolve(fetchWithRefresh(originalRequest.url, {
+            ...originalRequest.options,
+            headers: {
+              ...originalRequest.options.headers,
+              'Authorization': `Bearer ${token}`
+            }
+          }));
+        });
+      });
+    }
+
+    isRefreshing = true;
+    try {
+      const refreshRes = await fetch(`${API_BASE_URL}/auth/refresh`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+      });
+
+      if (refreshRes.ok) {
+        const data = await refreshRes.json();
+        localStorage.setItem('token', data.token);
+        isRefreshing = false;
+        onTokenRefreshed(data.token);
+        
+        // Retry original request
+        return fetchWithRefresh(originalRequest.url, {
+          ...originalRequest.options,
+          headers: {
+            ...originalRequest.options.headers,
+            'Authorization': `Bearer ${data.token}`
+          }
+        });
+      } else {
+        // Refresh failed, logout
+        isRefreshing = false;
+        api.logout();
+        throw new Error('Session expired. Please log in again.');
+      }
+    } catch (err) {
+      isRefreshing = false;
+      api.logout();
+      throw err;
+    }
+  }
+
   let data;
   try {
     data = await response.json();
@@ -26,6 +89,20 @@ const handleResponse = async (response) => {
     throw new Error(data.error || data.message || 'Something went wrong');
   }
   return data;
+};
+
+const fetchWithRefresh = async (url, options = {}) => {
+  const res = await fetch(url, {
+    ...options,
+    credentials: 'include',
+  });
+  
+  // We only want to handle refresh if it's NOT the refresh call itself
+  if (res.status === 401 && !url.includes('/auth/refresh') && !url.includes('/auth/login')) {
+    return handleResponse(res, { url, options });
+  }
+
+  return handleResponse(res);
 };
 
 // Simple caching logic
@@ -74,6 +151,7 @@ export const api = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
+      credentials: 'include',
     });
     const data = await handleResponse(res);
     if (data.token) {
@@ -88,6 +166,7 @@ export const api = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ fullName, email, password }),
+      credentials: 'include',
     });
     const data = await handleResponse(res);
     if (data.token) {
@@ -103,50 +182,54 @@ export const api = {
       const cached = getCache(cacheKey);
       if (cached) return cached;
     }
-    const res = await fetch(`${API_BASE_URL}/auth/me`, {
+    const data = await fetchWithRefresh(`${API_BASE_URL}/auth/me`, {
       method: 'GET',
       headers: getHeaders(),
     });
-    const data = await handleResponse(res);
     setCache(cacheKey, data);
     return data;
   },
 
   completeOnboarding: async (profileData) => {
-    const res = await fetch(`${API_BASE_URL}/auth/onboarding`, {
+    return await fetchWithRefresh(`${API_BASE_URL}/auth/onboarding`, {
       method: 'POST',
       headers: getHeaders(),
       body: JSON.stringify(profileData),
     });
-    const data = await handleResponse(res);
     clearCache('user_me');
-    return data;
   },
 
   updateGoals: async (goals) => {
-    const res = await fetch(`${API_BASE_URL}/auth/goals`, {
+    const data = await fetchWithRefresh(`${API_BASE_URL}/auth/goals`, {
       method: 'PUT',
       headers: getHeaders(),
       body: JSON.stringify(goals),
     });
-    const data = await handleResponse(res);
     clearCache('dashboard'); // Specific cache invalidation
     clearCache('user_me');
     return data;
   },
 
   changePassword: async (passwordData) => {
-    const res = await fetch(`${API_BASE_URL}/auth/password`, {
+    return await fetchWithRefresh(`${API_BASE_URL}/auth/password`, {
       method: 'PUT',
       headers: getHeaders(),
       body: JSON.stringify(passwordData),
     });
-    return await handleResponse(res);
   },
 
-  logout: () => {
+  logout: async () => {
+    try {
+      await fetch(`${API_BASE_URL}/auth/logout`, {
+        method: 'POST',
+        credentials: 'include',
+      });
+    } catch (err) {
+      console.error('Logout error', err);
+    }
     localStorage.removeItem('token');
     clearCache();
+    window.location.reload(); // Force reload to clear state
   },
 
   getPublicStats: async () => {
@@ -158,12 +241,11 @@ export const api = {
   },
 
   submitPublicRating: async (rating) => {
-    const res = await fetch(`${API_BASE_URL}/auth/rating`, {
+    return await fetchWithRefresh(`${API_BASE_URL}/auth/rating`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ rating }),
     });
-    return await handleResponse(res);
   },
 
   // Dashboard endpoint
@@ -177,11 +259,11 @@ export const api = {
     const url = date 
       ? `${API_BASE_URL}/dashboard/summary?date=${date}`
       : `${API_BASE_URL}/dashboard/summary`;
-    const res = await fetch(url, {
+    
+    const data = await fetchWithRefresh(url, {
       method: 'GET',
       headers: getHeaders(),
     });
-    const data = await handleResponse(res);
     setCache(cacheKey, data);
     return data;
   },
@@ -193,11 +275,10 @@ export const api = {
       if (cached) return cached;
     }
 
-    const res = await fetch(`${API_BASE_URL}/dashboard/history`, {
+    const data = await fetchWithRefresh(`${API_BASE_URL}/dashboard/history`, {
       method: 'GET',
       headers: getHeaders(),
     });
-    const data = await handleResponse(res);
     setCache(cacheKey, data);
     return data;
   },
@@ -211,73 +292,71 @@ export const api = {
       if (cached) return cached;
     }
 
-    const res = await fetch(`${API_BASE_URL}/workouts/history`, {
+    const data = await fetchWithRefresh(`${API_BASE_URL}/workouts/history`, {
       method: 'GET',
       headers: getHeaders(),
     });
-    const data = await handleResponse(res);
     setCache(cacheKey, data);
     return data;
   },
 
   logWorkout: async (workoutData) => {
-    const res = await fetch(`${API_BASE_URL}/workouts/log`, {
+    const data = await fetchWithRefresh(`${API_BASE_URL}/workouts/log`, {
       method: 'POST',
       headers: getHeaders(),
       body: JSON.stringify(workoutData),
     });
     clearCache('dashboard');
     clearCache('workout');
-    return await handleResponse(res);
+    return data;
   },
 
   // Nutrition endpoints
   getTodayNutrition: async () => {
-    const res = await fetch(`${API_BASE_URL}/nutrition/today`, {
+    return await fetchWithRefresh(`${API_BASE_URL}/nutrition/today`, {
       method: 'GET',
       headers: getHeaders(),
     });
-    return await handleResponse(res);
   },
 
   getNutritionHistory: async (date) => {
     const url = date 
       ? `${API_BASE_URL}/nutrition/history?date=${date}`
       : `${API_BASE_URL}/nutrition/history`;
-    const res = await fetch(url, {
+    
+    return await fetchWithRefresh(url, {
       method: 'GET',
       headers: getHeaders(),
     });
-    return await handleResponse(res);
   },
 
   logFood: async (foodData) => {
-    const res = await fetch(`${API_BASE_URL}/nutrition/food`, {
+    const data = await fetchWithRefresh(`${API_BASE_URL}/nutrition/food`, {
       method: 'POST',
       headers: getHeaders(),
       body: JSON.stringify(foodData),
     });
     clearCache('dashboard');
-    return await handleResponse(res);
+    return data;
   },
 
   logWater: async (amountMl) => {
-    const res = await fetch(`${API_BASE_URL}/nutrition/water`, {
+    const data = await fetchWithRefresh(`${API_BASE_URL}/nutrition/water`, {
       method: 'POST',
       headers: getHeaders(),
       body: JSON.stringify({ amountMl }),
     });
     clearCache('dashboard');
-    return await handleResponse(res);
+    return data;
   },
 
   deleteFood: async (foodId) => {
-    const res = await fetch(`${API_BASE_URL}/nutrition/food/${foodId}`, {
+    const data = await fetchWithRefresh(`${API_BASE_URL}/nutrition/food/${foodId}`, {
       method: 'DELETE',
       headers: getHeaders(),
     });
     clearCache('dashboard');
-    return await handleResponse(res);
+    return data;
   },
 
   // Wellness endpoints
@@ -288,34 +367,33 @@ export const api = {
       if (cached) return cached;
     }
 
-    const res = await fetch(`${API_BASE_URL}/wellness/history`, {
+    const data = await fetchWithRefresh(`${API_BASE_URL}/wellness/history`, {
       method: 'GET',
       headers: getHeaders(),
     });
-    const data = await handleResponse(res);
     setCache(cacheKey, data);
     return data;
   },
 
   logWellness: async (wellnessData) => {
-    const res = await fetch(`${API_BASE_URL}/wellness/log`, {
+    const data = await fetchWithRefresh(`${API_BASE_URL}/wellness/log`, {
       method: 'POST',
       headers: getHeaders(),
       body: JSON.stringify(wellnessData),
     });
     clearCache('dashboard');
     clearCache('wellness');
-    return await handleResponse(res);
+    return data;
   },
   
   deleteWellnessLog: async (id) => {
-    const res = await fetch(`${API_BASE_URL}/wellness/log/${id}`, {
+    const data = await fetchWithRefresh(`${API_BASE_URL}/wellness/log/${id}`, {
       method: 'DELETE',
       headers: getHeaders(),
     });
     clearCache('dashboard');
     clearCache('wellness');
-    return await handleResponse(res);
+    return data;
   },
 
   // Weight endpoints
@@ -326,33 +404,31 @@ export const api = {
       if (cached) return cached;
     }
 
-    const res = await fetch(`${API_BASE_URL}/weight/history`, {
+    const data = await fetchWithRefresh(`${API_BASE_URL}/weight/history`, {
       method: 'GET',
       headers: getHeaders(),
     });
-    const data = await handleResponse(res);
     setCache(cacheKey, data);
     return data;
   },
 
   logWeight: async (weightData) => {
-    const res = await fetch(`${API_BASE_URL}/weight/log`, {
+    const data = await fetchWithRefresh(`${API_BASE_URL}/weight/log`, {
       method: 'POST',
       headers: getHeaders(),
       body: JSON.stringify(weightData),
     });
     clearCache('dashboard');
     clearCache('weight');
-    return await handleResponse(res);
+    return data;
   },
 
   // AI endpoints
   askAI: async (message, userContext) => {
-    const res = await fetch(`${API_BASE_URL}/ai/chat`, {
+    return await fetchWithRefresh(`${API_BASE_URL}/ai/chat`, {
       method: 'POST',
       headers: getHeaders(),
       body: JSON.stringify({ message, userContext }),
     });
-    return await handleResponse(res);
   },
 };
