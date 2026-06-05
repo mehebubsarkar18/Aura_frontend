@@ -195,5 +195,3 @@ const Reports = ({ user }) => {
 };
 
 export default Reports;
-
-export default Reports;
