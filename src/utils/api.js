@@ -250,15 +250,20 @@ export const api = {
 
   // Dashboard endpoint
   getTodaySummary: async (date, useCache = true) => {
-    const cacheKey = `dashboard_summary_${date || 'today'}`;
+    // If date is today's local date, we treat it as 'today' for cache and backend consistency
+    const todayStr = new Date().toISOString().split('T')[0];
+    const isToday = !date || date === todayStr;
+    const cacheKey = `dashboard_summary_${isToday ? 'today' : date}`;
+    
     if (useCache) {
       const cached = getCache(cacheKey);
       if (cached) return cached;
     }
 
-    const url = date 
-      ? `${API_BASE_URL}/dashboard/summary?date=${date}`
-      : `${API_BASE_URL}/dashboard/summary`;
+    // If it's today, we don't send the date param so the backend uses its own getTodayRange()
+    const url = isToday
+      ? `${API_BASE_URL}/dashboard/summary`
+      : `${API_BASE_URL}/dashboard/summary?date=${date}`;
     
     const data = await fetchWithRefresh(url, {
       method: 'GET',
@@ -308,6 +313,7 @@ export const api = {
     });
     clearCache('dashboard');
     clearCache('workout');
+    clearCache('reports');
     return data;
   },
 
@@ -337,6 +343,7 @@ export const api = {
       body: JSON.stringify(foodData),
     });
     clearCache('dashboard');
+    clearCache('reports');
     return data;
   },
 
@@ -347,6 +354,7 @@ export const api = {
       body: JSON.stringify({ amountMl }),
     });
     clearCache('dashboard');
+    clearCache('reports');
     return data;
   },
 
@@ -356,6 +364,7 @@ export const api = {
       headers: getHeaders(),
     });
     clearCache('dashboard');
+    clearCache('reports');
     return data;
   },
 
@@ -383,6 +392,7 @@ export const api = {
     });
     clearCache('dashboard');
     clearCache('wellness');
+    clearCache('reports');
     return data;
   },
   
@@ -393,6 +403,7 @@ export const api = {
     });
     clearCache('dashboard');
     clearCache('wellness');
+    clearCache('reports');
     return data;
   },
 
@@ -420,15 +431,24 @@ export const api = {
     });
     clearCache('dashboard');
     clearCache('weight');
+    clearCache('reports');
     return data;
   },
 
   // Report endpoints
-  getReportData: async (type) => {
-    return await fetchWithRefresh(`${API_BASE_URL}/reports/summary?type=${type}`, {
+  getReportData: async (type, useCache = true) => {
+    const cacheKey = `reports_summary_${type}`;
+    if (useCache) {
+      const cached = getCache(cacheKey);
+      if (cached) return cached;
+    }
+
+    const data = await fetchWithRefresh(`${API_BASE_URL}/reports/summary?type=${type}`, {
       method: 'GET',
       headers: getHeaders(),
     });
+    setCache(cacheKey, data);
+    return data;
   },
 
   shareReport: async (type, email, reportData) => {

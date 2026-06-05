@@ -538,24 +538,28 @@ const Dashboard = ({ user }) => {
   const [selectedDate] = useState(getTodayDateString());
   
   // Synchronous initial data from cache for ultra-fast loading
-  const cachedSummaryRes = api.getCached(`dashboard_summary_${selectedDate || 'today'}`);
+  const todayStr = new Date().toISOString().split('T')[0];
+  const isSelectedToday = !selectedDate || selectedDate === todayStr;
+  const cacheKey = `dashboard_summary_${isSelectedToday ? 'today' : selectedDate}`;
+  
+  const cachedSummaryRes = api.getCached(cacheKey);
   const cachedHistoryRes = api.getCached('dashboard_history');
   const cachedWeightRes = api.getCached('weight_history');
   
   const getInitialWeightHistory = () => {
-    if (cachedWeightRes && cachedWeightRes.data) {
-      return cachedWeightRes.data.map((d, idx) => ({ 
-        day: idx === 0 && cachedWeightRes.data.length > 1 ? 'Start' : (d.loggedAt ? new Date(d.loggedAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }) : '---'), 
+    if (cachedWeightRes) {
+      return cachedWeightRes.map((d, idx) => ({ 
+        day: idx === 0 && cachedWeightRes.length > 1 ? 'Start' : (d.loggedAt ? new Date(d.loggedAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }) : '---'), 
         val: d.weight 
       }));
     }
     return user?.weight ? [{ day: 'Start', val: user.weight }] : [];
   };
 
-  const [summary, setSummary] = useState(cachedSummaryRes?.summary || null);
+  const [summary, setSummary] = useState(cachedSummaryRes?.summary || cachedSummaryRes || null);
   const [weightHistory, setWeightHistory] = useState(getInitialWeightHistory());
-  const [rawHistory, setRawHistory] = useState(cachedHistoryRes?.history || []);
-  const [loading, setLoading] = useState(!cachedSummaryRes); // Don't show loader if we have cached summary
+  const [rawHistory, setRawHistory] = useState(cachedHistoryRes?.history || cachedHistoryRes || []);
+  const [loading, setLoading] = useState(!cachedSummaryRes); 
   const [newWeight, setNewWeight] = useState('');
   const [loggingWeight, setLoggingWeight] = useState(false);
   
@@ -564,8 +568,8 @@ const Dashboard = ({ user }) => {
 
   const fetchData = useCallback(async (date) => {
     const processData = (wRes, hRes, sRes) => {
-      let wData = (wRes.data || []).map((d, idx) => ({ 
-        day: idx === 0 && (wRes.data || []).length > 1 ? 'Start' : (d.loggedAt ? new Date(d.loggedAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }) : '---'), 
+      let wData = (wRes || []).map((d, idx) => ({ 
+        day: idx === 0 && (wRes || []).length > 1 ? 'Start' : (d.loggedAt ? new Date(d.loggedAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }) : '---'), 
         val: d.weight 
       }));
 
@@ -576,11 +580,10 @@ const Dashboard = ({ user }) => {
       }
 
       setWeightHistory(wData);
-      if (hRes && hRes.success) setRawHistory(hRes.history || []);
-      if (sRes && sRes.success) setSummary(sRes.summary);
+      if (hRes) setRawHistory(hRes.history || hRes || []);
+      if (sRes) setSummary(sRes.summary || sRes);
     };
 
-    // Always fetch fresh data in background
     try {
       const [wRes, hRes, sRes] = await Promise.all([
         api.getWeightHistory(false), 

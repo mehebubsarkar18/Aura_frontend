@@ -34,18 +34,30 @@ const StatCard = ({ title, current, previous, unit, inverse = false }) => {
 
 const Reports = ({ user }) => {
   const [reportType, setReportType] = useState('weekly');
-  const [reportData, setReportData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  
+  // Synchronous initial data from cache
+  const cachedData = api.getCached(`reports_summary_${reportType}`);
+  
+  const [reportData, setReportData] = useState(cachedData || null);
+  const [loading, setLoading] = useState(!cachedData);
 
   const calculateBMI = (weight) => {
     if (!weight || !user.height) return 0;
     return (weight / ((user.height / 100) ** 2)).toFixed(1);
   };
 
-  const fetchReport = async (type) => {
-    setLoading(true);
+  const fetchReport = async (type, useCache = true) => {
+    // If we're changing types and don't have cache, show loader
+    const currentCached = api.getCached(`reports_summary_${type}`);
+    if (!currentCached) {
+      setLoading(true);
+    } else if (type !== reportType) {
+      // If we have cache for the new type, show it immediately
+      setReportData(currentCached);
+    }
+
     try {
-      const data = await api.getReportData(type);
+      const data = await api.getReportData(type, useCache);
       setReportData(data);
     } catch (err) {
       console.error('Failed to fetch report', err);
@@ -55,7 +67,7 @@ const Reports = ({ user }) => {
   };
 
   useEffect(() => {
-    fetchReport(reportType);
+    fetchReport(reportType, false); // Always refresh in background
   }, [reportType]);
 
   const generatePDF = () => {
