@@ -212,9 +212,9 @@ const Reports = ({ user }) => {
       </div>
 
       {showShareModal && (
-        <div className="modal-overlay" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
-          <div className="glass-panel" style={{ maxWidth: '400px', width: '100%', padding: '32px', border: '1px solid var(--color-orange)' }}>
-            <h3 style={{ fontSize: '1.4rem', fontWeight: '900', marginBottom: '12px' }}>Share Report</h3>
+        <div className="modal-overlay" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.85)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
+          <div style={{ maxWidth: '400px', width: '100%', padding: '32px', border: '1px solid var(--color-orange)', background: '#1a1b1e', borderRadius: '24px', boxShadow: '0 20px 40px rgba(0,0,0,0.4)' }}>
+            <h3 style={{ fontSize: '1.4rem', fontWeight: '900', marginBottom: '12px', color: 'white' }}>Share Report</h3>
             <p style={{ color: 'var(--text-secondary)', marginBottom: '24px', fontSize: '0.9rem' }}>We'll generate a PDF and send it to the email address below.</p>
             
             <form onSubmit={handleShareEmail}>
@@ -228,7 +228,7 @@ const Reports = ({ user }) => {
                     value={shareEmail} 
                     onChange={e => setShareEmail(e.target.value)} 
                     required 
-                    style={{ width: '100%', paddingLeft: '40px' }}
+                    style={{ width: '100%', paddingLeft: '40px', background: 'rgba(255,255,255,0.03)' }}
                   />
                 </div>
               </div>
