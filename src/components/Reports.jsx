@@ -172,7 +172,6 @@ const Reports = ({ user }) => {
         <StatCard title="Calories Burned" current={reportData.current.metrics.caloriesBurned} previous={reportData.previous.metrics.caloriesBurned} unit="kcal" />
         <StatCard title="Calories In" current={reportData.current.metrics.caloriesConsumed} previous={reportData.previous.metrics.caloriesConsumed} unit="kcal" inverse={true} />
         <StatCard title="Active Minutes" current={reportData.current.metrics.activeMinutes} previous={reportData.previous.metrics.activeMinutes} unit="min" />
-        <StatCard title="Hydration" current={reportData.current.metrics.waterMl} previous={reportData.previous.metrics.waterMl} unit="mL" />
         <StatCard title="Avg Sleep" current={reportData.current.metrics.avgSleep / 60} previous={reportData.previous.metrics.avgSleep / 60} unit="hrs" />
         <StatCard title="Workouts" current={reportData.current.metrics.workoutCount} previous={reportData.previous.metrics.workoutCount} unit="sessions" />
       </div>
@@ -190,10 +189,6 @@ const Reports = ({ user }) => {
             <li style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '12px', borderBottom: '1px solid var(--glass-card-border)' }}>
               <span style={{ color: 'var(--text-secondary)' }}>Current BMI</span>
               <span style={{ fontWeight: '800' }}>{currentBMI}</span>
-            </li>
-            <li style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '12px', borderBottom: '1px solid var(--glass-card-border)' }}>
-              <span style={{ color: 'var(--text-secondary)' }}>Protein Intake</span>
-              <span style={{ fontWeight: '800' }}>{Math.round(reportData.current.metrics.protein)}g</span>
             </li>
           </ul>
         </div>
