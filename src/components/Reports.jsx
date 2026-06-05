@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { api } from '../utils/api';
 import { FileText, Download, Send, TrendingUp, TrendingDown, Minus, Loader2, Calendar, Mail } from 'lucide-react';
 import { jsPDF } from 'jspdf';
-import 'jspdf-autotable';
+import autoTable from 'jspdf-autotable';
 
 const StatCard = ({ title, current, previous, unit, inverse = false }) => {
   const diff = previous !== 0 ? ((current - previous) / previous) * 100 : 0;
@@ -59,42 +59,47 @@ const Reports = ({ user }) => {
   const generatePDF = () => {
     if (!reportData) return;
     
-    const doc = new jsPDF();
-    const { current, previous, type } = reportData;
-    
-    doc.setFontSize(22);
-    doc.text('AuraFit Fitness Report', 105, 20, { align: 'center' });
-    
-    doc.setFontSize(14);
-    doc.text(`${type.charAt(0).toUpperCase() + type.slice(1)} Summary`, 20, 40);
-    doc.text(`Generated: ${new Date().toLocaleDateString()}`, 20, 50);
+    try {
+      const doc = new jsPDF();
+      const { current, previous, type } = reportData;
+      
+      doc.setFontSize(22);
+      doc.text('AuraFit Fitness Report', 105, 20, { align: 'center' });
+      
+      doc.setFontSize(14);
+      doc.text(`${type.charAt(0).toUpperCase() + type.slice(1)} Summary`, 20, 40);
+      doc.text(`Generated: ${new Date().toLocaleDateString()}`, 20, 50);
 
-    const calcPct = (curr, prev) => {
-      if (!prev) return curr > 0 ? '+100%' : '0%';
-      const diff = ((curr - prev) / prev) * 100;
-      return `${diff > 0 ? '+' : ''}${diff.toFixed(1)}%`;
-    };
-    
-    const tableData = [
-      ['Metric', 'Current Period', 'Previous Period', 'Change %'],
-      ['Calories Burned', `${current.metrics.caloriesBurned} kcal`, `${previous.metrics.caloriesBurned} kcal`, calcPct(current.metrics.caloriesBurned, previous.metrics.caloriesBurned)],
-      ['Calories Consumed', `${current.metrics.caloriesConsumed} kcal`, `${previous.metrics.caloriesConsumed} kcal`, calcPct(current.metrics.caloriesConsumed, previous.metrics.caloriesConsumed)],
-      ['Active Minutes', `${current.metrics.activeMinutes} min`, `${previous.metrics.activeMinutes} min`, calcPct(current.metrics.activeMinutes, previous.metrics.activeMinutes)],
-      ['Workouts', current.metrics.workoutCount, previous.metrics.workoutCount, calcPct(current.metrics.workoutCount, previous.metrics.workoutCount)],
-      ['Hydration', `${current.metrics.waterMl} mL`, `${previous.metrics.waterMl} mL`, calcPct(current.metrics.waterMl, previous.metrics.waterMl)],
-      ['Avg Sleep', `${(current.metrics.avgSleep / 60).toFixed(1)} hrs`, `${(previous.metrics.avgSleep / 60).toFixed(1)} hrs`, calcPct(current.metrics.avgSleep, previous.metrics.avgSleep)],
-      ['Weight Change', `${current.metrics.weightChange} kg`, `${previous.metrics.weightChange} kg`, '-']
-    ];
-    
-    doc.autoTable({
-      startY: 60,
-      head: [tableData[0]],
-      body: tableData.slice(1),
-      theme: 'grid',
-      headStyles: { fillColor: [253, 90, 32] }
-    });
-    
-    doc.save(`AuraFit_${type}_Report.pdf`);
+      const calcPct = (curr, prev) => {
+        if (!prev) return curr > 0 ? '+100%' : '0%';
+        const diff = ((curr - prev) / prev) * 100;
+        return `${diff > 0 ? '+' : ''}${diff.toFixed(1)}%`;
+      };
+      
+      const tableData = [
+        ['Metric', 'Current Period', 'Previous Period', 'Change %'],
+        ['Calories Burned', `${current.metrics.caloriesBurned} kcal`, `${previous.metrics.caloriesBurned} kcal`, calcPct(current.metrics.caloriesBurned, previous.metrics.caloriesBurned)],
+        ['Calories Consumed', `${current.metrics.caloriesConsumed} kcal`, `${previous.metrics.caloriesConsumed} kcal`, calcPct(current.metrics.caloriesConsumed, previous.metrics.caloriesConsumed)],
+        ['Active Minutes', `${current.metrics.activeMinutes} min`, `${previous.metrics.activeMinutes} min`, calcPct(current.metrics.activeMinutes, previous.metrics.activeMinutes)],
+        ['Workouts', current.metrics.workoutCount, previous.metrics.workoutCount, calcPct(current.metrics.workoutCount, previous.metrics.workoutCount)],
+        ['Hydration', `${current.metrics.waterMl} mL`, `${previous.metrics.waterMl} mL`, calcPct(current.metrics.waterMl, previous.metrics.waterMl)],
+        ['Avg Sleep', `${(current.metrics.avgSleep / 60).toFixed(1)} hrs`, `${(previous.metrics.avgSleep / 60).toFixed(1)} hrs`, calcPct(current.metrics.avgSleep, previous.metrics.avgSleep)],
+        ['Weight Change', `${current.metrics.weightChange} kg`, `${previous.metrics.weightChange} kg`, '-']
+      ];
+      
+      autoTable(doc, {
+        startY: 60,
+        head: [tableData[0]],
+        body: tableData.slice(1),
+        theme: 'grid',
+        headStyles: { fillColor: [253, 90, 32] }
+      });
+      
+      doc.save(`AuraFit_${type}_Report.pdf`);
+    } catch (error) {
+      console.error('PDF Generation Error:', error);
+      alert('Failed to generate PDF. Please check the console for details.');
+    }
   };
 
   const handleShareEmail = async (e) => {
