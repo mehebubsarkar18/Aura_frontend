@@ -37,6 +37,11 @@ const Reports = ({ user }) => {
   const [reportData, setReportData] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const calculateBMI = (weight) => {
+    if (!weight || !user.height) return 0;
+    return (weight / ((user.height / 100) ** 2)).toFixed(1);
+  };
+
   const fetchReport = async (type) => {
     setLoading(true);
     try {
@@ -73,14 +78,6 @@ const Reports = ({ user }) => {
         return `${diff > 0 ? '+' : ''}${diff.toFixed(1)}%`;
       };
 
-      const calculateBMI = (weight) => {
-        if (!weight || !user.height) return 0;
-        return (weight / ((user.height / 100) ** 2)).toFixed(1);
-      };
-
-      const currentBMI = calculateBMI(current.metrics.endWeight || user.weight);
-      const prevBMI = calculateBMI(previous.metrics.endWeight || user.weight);
-      
       const tableData = [
         ['Metric', 'Current Period', 'Previous Period', 'Change %'],
         ['Calories Burned', `${current.metrics.caloriesBurned} kcal`, `${previous.metrics.caloriesBurned} kcal`, calcPct(current.metrics.caloriesBurned, previous.metrics.caloriesBurned)],
@@ -90,7 +87,7 @@ const Reports = ({ user }) => {
         ['Hydration', `${current.metrics.waterMl} mL`, `${previous.metrics.waterMl} mL`, calcPct(current.metrics.waterMl, previous.metrics.waterMl)],
         ['Avg Sleep', `${(current.metrics.avgSleep / 60).toFixed(1)} hrs`, `${(previous.metrics.avgSleep / 60).toFixed(1)} hrs`, calcPct(current.metrics.avgSleep, previous.metrics.avgSleep)],
         ['Weight (End)', `${current.metrics.endWeight || user.weight} kg`, `${previous.metrics.endWeight || user.weight} kg`, calcPct(current.metrics.endWeight || user.weight, previous.metrics.endWeight || user.weight)],
-        ['BMI (End)', currentBMI, prevBMI, calcPct(currentBMI, prevBMI)]
+        ['BMI (End)', calculateBMI(current.metrics.endWeight || user.weight), calculateBMI(previous.metrics.endWeight || user.weight), calcPct(calculateBMI(current.metrics.endWeight || user.weight), calculateBMI(previous.metrics.endWeight || user.weight))]
       ];
       
       autoTable(doc, {
@@ -120,6 +117,8 @@ const Reports = ({ user }) => {
   );
 
   if (!reportData) return null;
+
+  const currentBMI = calculateBMI(reportData.current.metrics.endWeight || user.weight);
 
   return (
     <div className="reports-page" style={{ display: 'flex', flexDirection: 'column', gap: '32px', width: '100%' }}>
