@@ -106,7 +106,7 @@ const Settings = ({ user, onGoalsUpdated, onLogout }) => {
             <input type="number" className="glass-input" value={caloriesGoal} onChange={e => setCaloriesGoal(e.target.value)} style={{ padding: '14px 18px' }} />
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            <label style={{ fontSize: '1rem', color: 'var(--text-secondary)', fontWeight: '700', paddingLeft: '4px' }}>Active Minutes</label>
+            <label style={{ fontSize: '1rem', color: 'var(--text-secondary)', fontWeight: '700', paddingLeft: '4px' }}>Workout</label>
             <input type="number" className="glass-input" value={activeMinutesGoal} onChange={e => setActiveMinutesGoal(e.target.value)} style={{ padding: '14px 18px' }} />
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
