@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { api } from '../utils/api';
-import { Lock, LogOut, Target, User } from 'lucide-react';
+import { Lock, LogOut, Target, User, Eye, EyeOff } from 'lucide-react';
 
 const Settings = ({ user, onGoalsUpdated, onLogout }) => {
   const [caloriesGoal, setCaloriesGoal] = useState(user.dailyGoals.calories);
@@ -12,6 +12,9 @@ const Settings = ({ user, onGoalsUpdated, onLogout }) => {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [changingPassword, setChangingPassword] = useState(false);
   const [passwordStatus, setPasswordStatus] = useState({ type: '', message: '' });
 
@@ -143,33 +146,99 @@ const Settings = ({ user, onGoalsUpdated, onLogout }) => {
         </div>
         <form onSubmit={handleChangePassword} style={{ display: 'flex', flexDirection: 'column', gap: '24px', width: '100%', alignItems: 'stretch' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px' }}>
-            <input 
-              type="password" 
-              className="glass-input" 
-              placeholder="Current Password" 
-              value={currentPassword}
-              onChange={e => setCurrentPassword(e.target.value)}
-              required
-              style={{ padding: '14px 18px', fontSize: '1rem' }}
-            />
-            <input 
-              type="password" 
-              className="glass-input" 
-              placeholder="New Password" 
-              value={newPassword}
-              onChange={e => setNewPassword(e.target.value)}
-              required
-              style={{ padding: '14px 18px', fontSize: '1rem' }}
-            />
-            <input 
-              type="password" 
-              className="glass-input" 
-              placeholder="Confirm New Password" 
-              value={confirmPassword}
-              onChange={e => setConfirmPassword(e.target.value)}
-              required
-              style={{ padding: '14px 18px', fontSize: '1rem' }}
-            />
+            <div style={{ position: 'relative' }}>
+              <input 
+                type={showCurrentPassword ? "text" : "password"} 
+                className="glass-input" 
+                placeholder="Current Password" 
+                value={currentPassword}
+                onChange={e => setCurrentPassword(e.target.value)}
+                required
+                style={{ padding: '14px 48px 14px 18px', fontSize: '1rem', width: '100%' }}
+              />
+              <button
+                type="button"
+                onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                style={{
+                  position: 'absolute',
+                  right: '12px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'none',
+                  border: 'none',
+                  color: 'var(--text-muted)',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: '4px'
+                }}
+              >
+                {showCurrentPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+            <div style={{ position: 'relative' }}>
+              <input 
+                type={showNewPassword ? "text" : "password"} 
+                className="glass-input" 
+                placeholder="New Password" 
+                value={newPassword}
+                onChange={e => setNewPassword(e.target.value)}
+                required
+                style={{ padding: '14px 48px 14px 18px', fontSize: '1rem', width: '100%' }}
+              />
+              <button
+                type="button"
+                onClick={() => setShowNewPassword(!showNewPassword)}
+                style={{
+                  position: 'absolute',
+                  right: '12px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'none',
+                  border: 'none',
+                  color: 'var(--text-muted)',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: '4px'
+                }}
+              >
+                {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+            <div style={{ position: 'relative' }}>
+              <input 
+                type={showConfirmPassword ? "text" : "password"} 
+                className="glass-input" 
+                placeholder="Confirm New Password" 
+                value={confirmPassword}
+                onChange={e => setConfirmPassword(e.target.value)}
+                required
+                style={{ padding: '14px 48px 14px 18px', fontSize: '1rem', width: '100%' }}
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                style={{
+                  position: 'absolute',
+                  right: '12px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'none',
+                  border: 'none',
+                  color: 'var(--text-muted)',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: '4px'
+                }}
+              >
+                {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
           </div>
           {passwordStatus.message && (
             <div style={{ 

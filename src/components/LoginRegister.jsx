@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { api } from '../utils/api';
-import { Lock, Mail, User, ShieldAlert, ArrowLeft, Dumbbell } from 'lucide-react';
+import { Lock, Mail, User, ShieldAlert, ArrowLeft, Dumbbell, Eye, EyeOff } from 'lucide-react';
 
 const LoginRegister = ({ onAuthSuccess, onBack, initialIsLogin = true }) => {
   const [isLogin, setIsLogin] = useState(initialIsLogin);
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [loading, setLoading] = useState(false);
@@ -171,14 +172,34 @@ const LoginRegister = ({ onAuthSuccess, onBack, initialIsLogin = true }) => {
             <div style={{ position: 'relative' }}>
               <Lock size={16} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 className="glass-input"
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                style={{ width: '100%', paddingLeft: '44px', minHeight: '48px', fontSize: '0.95rem' }}
+                style={{ width: '100%', paddingLeft: '44px', paddingRight: '44px', minHeight: '48px', fontSize: '0.95rem' }}
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                style={{
+                  position: 'absolute',
+                  right: '12px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'none',
+                  border: 'none',
+                  color: 'var(--text-muted)',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: '4px'
+                }}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
             </div>
           </div>
 
