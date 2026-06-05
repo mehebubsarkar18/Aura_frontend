@@ -82,8 +82,7 @@ const Reports = ({ user }) => {
         ['Metric', 'Current Period', 'Previous Period', 'Change %'],
         ['Calories Burned', `${current.metrics.caloriesBurned} kcal`, `${previous.metrics.caloriesBurned} kcal`, calcPct(current.metrics.caloriesBurned, previous.metrics.caloriesBurned)],
         ['Calories Consumed', `${current.metrics.caloriesConsumed} kcal`, `${previous.metrics.caloriesConsumed} kcal`, calcPct(current.metrics.caloriesConsumed, previous.metrics.caloriesConsumed)],
-        ['Workout', `${current.metrics.activeMinutes} min`, `${previous.metrics.activeMinutes} min`, calcPct(current.metrics.activeMinutes, previous.metrics.activeMinutes)],
-        ['Workouts', current.metrics.workoutCount, previous.metrics.workoutCount, calcPct(current.metrics.workoutCount, previous.metrics.workoutCount)],
+        ['Workouts', `${current.metrics.activeMinutes} min`, `${previous.metrics.activeMinutes} min`, calcPct(current.metrics.activeMinutes, previous.metrics.activeMinutes)],
         ['Hydration', `${current.metrics.waterMl} mL`, `${previous.metrics.waterMl} mL`, calcPct(current.metrics.waterMl, previous.metrics.waterMl)],
         ['Avg Sleep', `${(current.metrics.avgSleep / 60).toFixed(1)} hrs`, `${(previous.metrics.avgSleep / 60).toFixed(1)} hrs`, calcPct(current.metrics.avgSleep, previous.metrics.avgSleep)],
         ['Weight (End)', `${current.metrics.endWeight || user.weight} kg`, `${previous.metrics.endWeight || user.weight} kg`, calcPct(current.metrics.endWeight || user.weight, previous.metrics.endWeight || user.weight)],
@@ -171,9 +170,8 @@ const Reports = ({ user }) => {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px' }}>
         <StatCard title="Calories Burned" current={reportData.current.metrics.caloriesBurned} previous={reportData.previous.metrics.caloriesBurned} unit="kcal" />
         <StatCard title="Calories In" current={reportData.current.metrics.caloriesConsumed} previous={reportData.previous.metrics.caloriesConsumed} unit="kcal" inverse={true} />
-        <StatCard title="Workout" current={reportData.current.metrics.activeMinutes} previous={reportData.previous.metrics.activeMinutes} unit="min" />
+        <StatCard title="Workouts" current={reportData.current.metrics.activeMinutes} previous={reportData.previous.metrics.activeMinutes} unit="min" />
         <StatCard title="Avg Sleep" current={reportData.current.metrics.avgSleep / 60} previous={reportData.previous.metrics.avgSleep / 60} unit="hrs" />
-        <StatCard title="Workouts" current={reportData.current.metrics.workoutCount} previous={reportData.previous.metrics.workoutCount} unit="sessions" />
       </div>
 
       <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
