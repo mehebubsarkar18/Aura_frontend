@@ -582,8 +582,26 @@ const Dashboard = ({ user }) => {
       }
 
       setWeightHistory(wData);
-      if (hRes) setRawHistory(hRes.history || hRes || []);
-      if (sRes) setSummary(sRes.summary || sRes);
+      
+      const freshHistory = hRes?.history || hRes || [];
+      const freshSummary = sRes?.summary || sRes;
+
+      // Stitch today's summary into the last entry of history if dates match or if it's "Today"
+      if (freshHistory.length > 0 && freshSummary) {
+        const lastIdx = freshHistory.length - 1;
+        freshHistory[lastIdx] = {
+          ...freshHistory[lastIdx],
+          activeMinutes: freshSummary.activeMinutes || 0,
+          caloriesBurned: freshSummary.caloriesBurned || 0,
+          caloriesConsumed: freshSummary.caloriesConsumed || 0,
+          waterMl: freshSummary.waterConsumedMl || 0,
+          sleepMinutes: freshSummary.sleepMinutes || 0,
+          moodEmoji: freshSummary.moodEmoji || freshHistory[lastIdx].moodEmoji
+        };
+      }
+
+      setRawHistory(freshHistory);
+      setSummary(freshSummary);
     };
 
     try {

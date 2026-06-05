@@ -250,8 +250,9 @@ export const api = {
 
   // Dashboard endpoint
   getTodaySummary: async (date, useCache = true) => {
-    // If date is today's local date, we treat it as 'today' for cache and backend consistency
-    const todayStr = new Date().toISOString().split('T')[0];
+    // We use a local date string for the cache key to stay consistent with the user's "today"
+    const localDate = new Date();
+    const todayStr = `${localDate.getFullYear()}-${String(localDate.getMonth() + 1).padStart(2, '0')}-${String(localDate.getDate()).padStart(2, '0')}`;
     const isToday = !date || date === todayStr;
     const cacheKey = `dashboard_summary_${isToday ? 'today' : date}`;
     
@@ -260,10 +261,18 @@ export const api = {
       if (cached) return cached;
     }
 
-    // If it's today, we don't send the date param so the backend uses its own getTodayRange()
-    const url = isToday
-      ? `${API_BASE_URL}/dashboard/summary`
-      : `${API_BASE_URL}/dashboard/summary?date=${date}`;
+    let url;
+    if (isToday) {
+      // Calculate local day boundaries as UTC strings
+      const startOfDay = new Date();
+      startOfDay.setHours(0, 0, 0, 0);
+      const endOfDay = new Date();
+      endOfDay.setHours(23, 59, 59, 999);
+      
+      url = `${API_BASE_URL}/dashboard/summary?start=${startOfDay.toISOString()}&end=${endOfDay.toISOString()}`;
+    } else {
+      url = `${API_BASE_URL}/dashboard/summary?date=${date}`;
+    }
     
     const data = await fetchWithRefresh(url, {
       method: 'GET',
