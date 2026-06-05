@@ -72,6 +72,14 @@ const Reports = ({ user }) => {
         const diff = ((curr - prev) / prev) * 100;
         return `${diff > 0 ? '+' : ''}${diff.toFixed(1)}%`;
       };
+
+      const calculateBMI = (weight) => {
+        if (!weight || !user.height) return 0;
+        return (weight / ((user.height / 100) ** 2)).toFixed(1);
+      };
+
+      const currentBMI = calculateBMI(current.metrics.endWeight || user.weight);
+      const prevBMI = calculateBMI(previous.metrics.endWeight || user.weight);
       
       const tableData = [
         ['Metric', 'Current Period', 'Previous Period', 'Change %'],
@@ -81,7 +89,8 @@ const Reports = ({ user }) => {
         ['Workouts', current.metrics.workoutCount, previous.metrics.workoutCount, calcPct(current.metrics.workoutCount, previous.metrics.workoutCount)],
         ['Hydration', `${current.metrics.waterMl} mL`, `${previous.metrics.waterMl} mL`, calcPct(current.metrics.waterMl, previous.metrics.waterMl)],
         ['Avg Sleep', `${(current.metrics.avgSleep / 60).toFixed(1)} hrs`, `${(previous.metrics.avgSleep / 60).toFixed(1)} hrs`, calcPct(current.metrics.avgSleep, previous.metrics.avgSleep)],
-        ['Weight Change', `${current.metrics.weightChange} kg`, `${previous.metrics.weightChange} kg`, '-']
+        ['Weight (End)', `${current.metrics.endWeight || user.weight} kg`, `${previous.metrics.endWeight || user.weight} kg`, calcPct(current.metrics.endWeight || user.weight, previous.metrics.endWeight || user.weight)],
+        ['BMI (End)', currentBMI, prevBMI, calcPct(currentBMI, prevBMI)]
       ];
       
       autoTable(doc, {
@@ -180,12 +189,12 @@ const Reports = ({ user }) => {
               <span style={{ fontWeight: '800' }}>{reportData.current.metrics.weightChange > 0 ? '+' : ''}{reportData.current.metrics.weightChange} kg</span>
             </li>
             <li style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '12px', borderBottom: '1px solid var(--glass-card-border)' }}>
-              <span style={{ color: 'var(--text-secondary)' }}>Protein Intake</span>
-              <span style={{ fontWeight: '800' }}>{Math.round(reportData.current.metrics.protein)}g</span>
+              <span style={{ color: 'var(--text-secondary)' }}>Current BMI</span>
+              <span style={{ fontWeight: '800' }}>{currentBMI}</span>
             </li>
             <li style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '12px', borderBottom: '1px solid var(--glass-card-border)' }}>
-              <span style={{ color: 'var(--text-secondary)' }}>Mindfulness Practice</span>
-              <span style={{ fontWeight: '800' }}>{reportData.current.metrics.mindfulnessMinutes} min</span>
+              <span style={{ color: 'var(--text-secondary)' }}>Protein Intake</span>
+              <span style={{ fontWeight: '800' }}>{Math.round(reportData.current.metrics.protein)}g</span>
             </li>
           </ul>
         </div>

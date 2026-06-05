@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { api } from '../utils/api';
-import { Heart, ArrowLeft, Wind, Star, Sparkles, Trash2 } from 'lucide-react';
+import { Heart, ArrowLeft, Star, Sparkles, Trash2 } from 'lucide-react';
 
 const EMOJIS = [
   { char: '😄', label: 'Great' },
@@ -46,8 +46,7 @@ const WellnessMonitor = ({ onWellnessLogged, onViewHistory, initialViewHistory =
         sleepDurationMin: Math.round(Number(sleepHours) * 60),
         sleepQuality: 'Restful',
         moodEmoji,
-        moodNote: '',
-        mindfulnessDurationMin: 0
+        moodNote: ''
       });
       setSleepHours('');
       setMoodEmoji(null);
@@ -105,12 +104,11 @@ const WellnessMonitor = ({ onWellnessLogged, onViewHistory, initialViewHistory =
                     <div style={{ width: 50, height: 50, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.4rem', background: 'var(--icon-bg)' }}>{log.moodEmoji}</div>
                     <div style={{ flex: 1 }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <div style={{ fontWeight: 800, color: 'var(--text-primary)', fontSize: '0.95rem' }}>{log.sleepDurationMin > 0 ? `${(Math.round(log.sleepDurationMin/6)/10)}h Sleep` : 'Mindfulness Session'}</div>
+                        <div style={{ fontWeight: 800, color: 'var(--text-primary)', fontSize: '0.95rem' }}>{(Math.round(log.sleepDurationMin/6)/10)}h Sleep</div>
                         <div style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', fontWeight: 700 }}>{new Date(log.loggedAt).toLocaleString(undefined, { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</div>
                       </div>
                       <div style={{ display: 'flex', gap: 10, marginTop: 4 }}>
                         <div style={{ display: 'flex', gap: 4, alignItems: 'center', color: 'var(--color-violet)', fontWeight: 700, fontSize: '0.8rem' }}><Star size={10} />{log.sleepQuality}</div>
-                        {log.mindfulnessDurationMin > 0 && <div style={{ display: 'flex', gap: 4, alignItems: 'center', color: 'var(--color-cyan)', fontWeight: 700, fontSize: '0.8rem' }}><Wind size={10} />{log.mindfulnessDurationMin}m</div>}
                       </div>
                     </div>
                   </div>
@@ -202,12 +200,11 @@ const WellnessMonitor = ({ onWellnessLogged, onViewHistory, initialViewHistory =
                       <div style={{ width: 60, height: 60, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.8rem', background: 'var(--icon-bg)' }}>{log.moodEmoji}</div>
                       <div style={{ flex: 1 }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <div style={{ fontWeight: 800, color: 'var(--text-primary)', fontSize: '0.95rem' }}>{log.sleepDurationMin > 0 ? `${(Math.round(log.sleepDurationMin/6)/10)}h Sleep` : 'Mindfulness Session'}</div>
+                          <div style={{ fontWeight: 800, color: 'var(--text-primary)', fontSize: '0.95rem' }}>{(Math.round(log.sleepDurationMin/6)/10)}h Sleep</div>
                           <div style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', fontWeight: 700 }}>{new Date(log.loggedAt).toLocaleString('en-IN', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</div>
                         </div>
                         <div style={{ display: 'flex', gap: 10, marginTop: 6 }}>
                           <div style={{ display: 'flex', gap: 4, alignItems: 'center', color: 'var(--color-violet)', fontWeight: 800, fontSize: '0.8rem' }}><Star size={12} />{log.sleepQuality}</div>
-                          {log.mindfulnessDurationMin > 0 && <div style={{ display: 'flex', gap: 4, alignItems: 'center', color: 'var(--color-cyan)', fontWeight: 800, fontSize: '0.8rem' }}><Wind size={12} />{log.mindfulnessDurationMin}m</div>}
                         </div>
                       </div>
                     </div>

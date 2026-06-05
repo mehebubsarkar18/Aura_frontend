@@ -153,21 +153,46 @@ const GoalAchievementView = ({ history = [], goals, todaySummary }) => {
 
 const WeightModule = ({ data, user, loggingWeight, newWeight, setNewWeight, handleWeightUpdate }) => {
   const [showHistory, setShowHistory] = useState(false);
+  const [viewType, setViewType] = useState('weight'); // 'weight' or 'bmi'
   
   if (!data || data.length === 0) return <div className="glass-panel premium-graph-card" style={{ padding: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>No weight data yet</div>;
 
-  const maxWeight = Math.max(...data.map(d => d.val)) + 2;
-  const minWeight = Math.min(...data.map(d => d.val)) - 2;
-  const range = maxWeight - minWeight || 1;
-  const height = 180; 
-  const width = 400;
+  const height = user?.height || 0;
+  const calculateBMI = (weight) => {
+    if (!weight || !height) return 0;
+    return (weight / ((height / 100) ** 2)).toFixed(1);
+  };
+
+  const getBMICategory = (bmi) => {
+    if (bmi < 18.5) return { label: 'Underweight', color: '#60a5fa' };
+    if (bmi < 25) return { label: 'Normal', color: '#4ade80' };
+    if (bmi < 30) return { label: 'Overweight', color: '#fbbf24' };
+    return { label: 'Obese', color: '#f87171' };
+  };
+
+  const currentWeight = data[data.length - 1]?.val || user?.weight;
+  const currentBMI = calculateBMI(currentWeight);
+  const bmiInfo = getBMICategory(currentBMI);
+
+  // Prepare data for graph based on viewType
+  const graphData = data.map(d => ({
+    ...d,
+    displayVal: viewType === 'weight' ? d.val : calculateBMI(d.val)
+  }));
+
+  const maxVal = Math.max(...graphData.map(d => Number(d.displayVal))) * 1.05;
+  const minVal = Math.min(...graphData.map(d => Number(d.displayVal))) * 0.95;
+  const range = maxVal - minVal || 1;
+  const graphHeight = 180; 
+  const graphWidth = 400;
   
   const topInset = 20;
-  const bottomInset = 40; // space for day labels
-  const effectiveHeight = height - topInset - bottomInset;
-  const pointsArray = data.map((d, i) => {
-    const x = data.length > 1 ? (i / (data.length - 1)) * width : width / 2;
-    const normalized = (d.val - minWeight) / range;
+  const bottomInset = 40;
+  const effectiveHeight = graphHeight - topInset - bottomInset;
+  
+  const pointsArray = graphData.map((d, i) => {
+    const x = graphData.length > 1 ? (i / (graphData.length - 1)) * graphWidth : graphWidth / 2;
+    const normalized = (Number(d.displayVal) - minVal) / range;
     const y = topInset + (1 - normalized) * effectiveHeight;
     return { x, y };
   });
@@ -176,8 +201,44 @@ const WeightModule = ({ data, user, loggingWeight, newWeight, setNewWeight, hand
   return (
     <div className="glass-panel premium-graph-card" style={{ padding: '16px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '280px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-        <h3 style={{ fontSize: '1.1rem', fontWeight: '800' }}>{showHistory ? 'Weight History' : 'Current Weight'}</h3>
+        <h3 style={{ fontSize: '1.1rem', fontWeight: '800' }}>
+          {showHistory ? (viewType === 'weight' ? 'Weight History' : 'BMI Trend') : (viewType === 'weight' ? 'Current Weight' : 'Current BMI')}
+        </h3>
         <div style={{ display: 'flex', gap: '6px' }}>
+          {showHistory && (
+            <div style={{ display: 'flex', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', padding: '2px' }}>
+              <button 
+                onClick={() => setViewType('weight')} 
+                style={{ 
+                  padding: '2px 8px', 
+                  fontSize: '0.65rem', 
+                  borderRadius: '6px',
+                  background: viewType === 'weight' ? 'rgba(255,255,255,0.1)' : 'transparent',
+                  border: 'none',
+                  color: viewType === 'weight' ? 'white' : 'var(--text-muted)',
+                  fontWeight: '700',
+                  cursor: 'pointer'
+                }}
+              >
+                WT
+              </button>
+              <button 
+                onClick={() => setViewType('bmi')} 
+                style={{ 
+                  padding: '2px 8px', 
+                  fontSize: '0.65rem', 
+                  borderRadius: '6px',
+                  background: viewType === 'bmi' ? 'rgba(255,255,255,0.1)' : 'transparent',
+                  border: 'none',
+                  color: viewType === 'bmi' ? 'white' : 'var(--text-muted)',
+                  fontWeight: '700',
+                  cursor: 'pointer'
+                }}
+              >
+                BMI
+              </button>
+            </div>
+          )}
           <button onClick={() => setShowHistory(!showHistory)} className="btn btn-ghost btn-history-orange" style={{ padding: '3px 8px', fontSize: '0.7rem' }}>
             {showHistory ? 'TODAY' : 'HISTORY'}
           </button>
@@ -189,65 +250,82 @@ const WeightModule = ({ data, user, loggingWeight, newWeight, setNewWeight, hand
 
       {!showHistory ? (
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-          <div style={{ textAlign: 'center' }}>
-            <div className="text-gradient" style={{ fontSize: '2.2rem', fontWeight: '950', lineHeight: 1 }}>{data[data.length-1]?.val || user?.weight}</div>
-            <div style={{ fontSize: '0.75rem', fontWeight: '700', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: '1px' }}>Kilograms</div>
+          <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+            <div style={{ textAlign: 'center' }}>
+              <div className="text-gradient" style={{ fontSize: '2.2rem', fontWeight: '950', lineHeight: 1 }}>{currentWeight}</div>
+              <div style={{ fontSize: '0.7rem', fontWeight: '700', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginTop: '2px' }}>Weight (kg)</div>
+            </div>
+            <div style={{ width: '1px', height: '40px', background: 'rgba(255,255,255,0.1)' }} />
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: '2.2rem', fontWeight: '950', lineHeight: 1, color: bmiInfo.color }}>{currentBMI}</div>
+              <div style={{ fontSize: '0.7rem', fontWeight: '700', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginTop: '2px' }}>BMI</div>
+            </div>
           </div>
           
-          <form onSubmit={handleWeightUpdate} style={{ display: 'flex', gap: '5px', width: '100%', maxWidth: '160px', position: 'relative', zIndex: 1 }}>
+          <div style={{ 
+            padding: '4px 12px', 
+            borderRadius: '100px', 
+            background: `${bmiInfo.color}15`, 
+            color: bmiInfo.color, 
+            fontSize: '0.75rem', 
+            fontWeight: '800',
+            marginTop: '4px'
+          }}>
+            {bmiInfo.label.toUpperCase()}
+          </div>
+
+          <form onSubmit={handleWeightUpdate} style={{ display: 'flex', gap: '5px', width: '100%', maxWidth: '160px', position: 'relative', zIndex: 1, marginTop: '8px' }}>
              <input type="number" step="0.1" className="glass-input" value={newWeight} onChange={e => setNewWeight(e.target.value)} placeholder="New log" style={{ flex: 1, padding: '4px 8px', fontSize: '0.75rem' }} />
              <button type="submit" disabled={loggingWeight} className="btn btn-primary" style={{ padding: '4px 10px', fontSize: '0.75rem' }}>LOG</button>
           </form>
         </div>
       ) : (
         <div className="graph-container-inner" style={{ height: '180px', width: '100%', marginTop: '12px' }}>
-          <svg viewBox={`0 0 ${width} ${height}`} style={{ width: '100%', height: '100%', overflow: 'visible' }}>
+          <svg viewBox={`0 0 ${graphWidth} ${graphHeight}`} style={{ width: '100%', height: '100%', overflow: 'visible' }}>
             <defs>
               <linearGradient id="weightGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="var(--color-violet)" stopOpacity="0.34" />
-                <stop offset="100%" stopColor="var(--color-violet)" stopOpacity="0" />
+                <stop offset="0%" stopColor={viewType === 'weight' ? 'var(--color-violet)' : bmiInfo.color} stopOpacity="0.34" />
+                <stop offset="100%" stopColor={viewType === 'weight' ? 'var(--color-violet)' : bmiInfo.color} stopOpacity="0" />
               </linearGradient>
             </defs>
             
-            {/* Grid Lines */}
             {[0, 0.25, 0.5, 0.75, 1].map(v => (
-              <line key={v} x1="0" y1={height * v} x2={width} y2={height * v} stroke="rgba(0,0,0,0.04)" strokeWidth="1" />
+              <line key={v} x1="0" y1={graphHeight * v} x2={graphWidth} y2={graphHeight * v} stroke="rgba(0,0,0,0.04)" strokeWidth="1" />
             ))}
 
-            {/* Area Fill */}
-            {data.length > 1 && (
+            {graphData.length > 1 && (
               <polygon
                 fill="url(#weightGradient)"
-                points={`0,${height} ${points} ${width},${height}`}
+                points={`0,${graphHeight} ${points} ${graphWidth},${graphHeight}`}
                 style={{ transition: 'all 0.5s ease' }}
               />
             )}
 
-            {data.length > 1 ? (
+            {graphData.length > 1 ? (
               <polyline
                 fill="none"
-                stroke="var(--color-violet)"
+                stroke={viewType === 'weight' ? 'var(--color-violet)' : bmiInfo.color}
                 strokeWidth="3"
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 points={points}
-                style={{ filter: 'drop-shadow(0 0 10px rgba(156,162,255,0.4))' }}
+                style={{ filter: `drop-shadow(0 0 10px ${viewType === 'weight' ? 'rgba(156,162,255,0.4)' : bmiInfo.color + '40'})` }}
               />
             ) : null}
             
-            {data.map((d, i) => {
+            {graphData.map((d, i) => {
               const { x, y } = pointsArray[i];
               return (
                 <g key={i} className="chart-bar-wrapper">
                   <circle 
                     cx={x} cy={y} r="3.5" 
                     fill="var(--bg-primary)" 
-                    stroke="var(--color-violet)" 
+                    stroke={viewType === 'weight' ? 'var(--color-violet)' : bmiInfo.color} 
                     strokeWidth="2" 
                     style={{ transition: 'all 0.3s ease', cursor: 'pointer' }}
                   />
-                  <text x={x} y={y - 10} textAnchor="middle" fontSize="9" fill="var(--text-primary)" fontWeight="950" className="graph-label-value">{d.val}</text>
-                  <text x={x} y={height + 15} textAnchor="middle" fontSize="9" fill="var(--text-secondary)" fontWeight="900">{d.day}</text>
+                  <text x={x} y={y - 10} textAnchor="middle" fontSize="9" fill="var(--text-primary)" fontWeight="950" className="graph-label-value">{d.displayVal}</text>
+                  <text x={x} y={graphHeight + 15} textAnchor="middle" fontSize="9" fill="var(--text-secondary)" fontWeight="900">{d.day}</text>
                 </g>
               );
             })}
