@@ -11,7 +11,7 @@ const Settings = ({ user, onGoalsUpdated, onLogout }) => {
 
   // New Profile States
   const [weight, setWeight] = useState(user.weight || '');
-  const [heightMode, setHeightMode] = useState('cm'); // 'cm' or 'ft'
+  const [heightMode, setHeightMode] = useState('ft'); // Default to 'ft'
   const [heightCm, setHeightCm] = useState(user.height || '');
   const [heightFt, setHeightFt] = useState('');
   const [heightIn, setHeightIn] = useState('');
@@ -48,7 +48,7 @@ const Settings = ({ user, onGoalsUpdated, onLogout }) => {
 
       const data = await api.updateProfile({
         weight: Number(weight),
-        height: finalHeight,
+        height: Math.round(finalHeight * 10) / 10,
         fitnessGoal
       });
       
@@ -110,91 +110,91 @@ const Settings = ({ user, onGoalsUpdated, onLogout }) => {
   };
 
   return (
-    <div className="settings-page" style={{ display: 'flex', flexDirection: 'column', gap: '24px', width: '100%', margin: 0, alignItems: 'stretch', padding: '16px' }}>
-      <h1 className="text-gradient page-title" style={{ fontSize: '1.8rem', marginBottom: '8px' }}>Settings</h1>
+    <div className="settings-page" style={{ display: 'flex', flexDirection: 'column', gap: '20px', width: '100%', margin: 0, alignItems: 'stretch', padding: '12px' }}>
+      <h1 className="text-gradient page-title" style={{ fontSize: '1.6rem', marginBottom: '4px' }}>Settings</h1>
 
       {/* Personal Identity Card (Non-editable) */}
-      <section className="glass-panel" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px', width: '100%', alignItems: 'stretch' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <div style={{ background: 'rgba(253, 90, 32, 0.1)', padding: '10px', borderRadius: '12px', color: 'var(--color-orange)' }}>
-            <User size={22} />
+      <section className="glass-panel" style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '20px', width: '100%', alignItems: 'stretch' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ background: 'rgba(253, 90, 32, 0.1)', padding: '8px', borderRadius: '10px', color: 'var(--color-orange)' }}>
+            <User size={20} />
           </div>
           <div>
-            <h3 style={{ fontSize: '1.2rem', fontWeight: '800' }}>Personal Identity</h3>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginTop: '2px' }}>Permanent account and identity details</p>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: '800' }}>Personal Identity</h3>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', marginTop: '1px' }}>Permanent account details</p>
           </div>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px', width: '100%' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-            <label style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: '700', paddingLeft: '4px' }}>Full Name</label>
-            <input type="text" className="glass-input" value={user.fullName} readOnly style={{ opacity: 0.8, cursor: 'not-allowed', padding: '10px 14px', fontSize: '0.9rem' }} />
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '12px', width: '100%' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: '700', paddingLeft: '2px' }}>Full Name</label>
+            <input type="text" className="glass-input" value={user.fullName} readOnly style={{ opacity: 0.8, cursor: 'not-allowed', padding: '8px 12px', fontSize: '0.85rem' }} />
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-            <label style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: '700', paddingLeft: '4px' }}>Email Address</label>
-            <input type="text" className="glass-input" value={user.email} readOnly style={{ opacity: 0.8, cursor: 'not-allowed', padding: '10px 14px', fontSize: '0.9rem' }} />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: '700', paddingLeft: '2px' }}>Email Address</label>
+            <input type="text" className="glass-input" value={user.email} readOnly style={{ opacity: 0.8, cursor: 'not-allowed', padding: '8px 12px', fontSize: '0.85rem' }} />
           </div>
         </div>
       </section>
 
       {/* Biometrics & Goals Card (Editable) */}
-      <section className="glass-panel" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px', width: '100%', alignItems: 'stretch' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <div style={{ background: 'rgba(34, 211, 238, 0.1)', padding: '10px', borderRadius: '12px', color: 'var(--color-cyan)' }}>
-            <Target size={22} />
+      <section className="glass-panel" style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '20px', width: '100%', alignItems: 'stretch' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ background: 'rgba(34, 211, 238, 0.1)', padding: '8px', borderRadius: '10px', color: 'var(--color-cyan)' }}>
+            <Target size={20} />
           </div>
           <div>
-            <h3 style={{ fontSize: '1.2rem', fontWeight: '800' }}>Biometrics & Goals</h3>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginTop: '2px' }}>Update your measurements and fitness objectives</p>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: '800' }}>Biometrics & Goals</h3>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', marginTop: '1px' }}>Measurements and fitness objectives</p>
           </div>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px', width: '100%' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-            <label style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: '700', paddingLeft: '4px' }}>Weight (kg)</label>
-            <input type="number" className="glass-input" value={weight} onChange={e => setWeight(e.target.value)} style={{ padding: '10px 14px', fontSize: '0.9rem' }} />
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '12px', width: '100%' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: '700', paddingLeft: '2px' }}>Weight (kg)</label>
+            <input type="number" className="glass-input" value={weight} onChange={e => setWeight(e.target.value)} style={{ padding: '8px 12px', fontSize: '0.85rem' }} />
           </div>
           
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingRight: '4px' }}>
-              <label style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: '700', paddingLeft: '4px' }}>Height</label>
-              <div style={{ display: 'flex', background: 'var(--icon-bg)', borderRadius: '6px', padding: '2px' }}>
-                <button 
-                  onClick={() => setHeightMode('cm')} 
-                  style={{ 
-                    padding: '2px 8px', fontSize: '0.7rem', borderRadius: '4px', border: 'none', cursor: 'pointer',
-                    background: heightMode === 'cm' ? 'var(--color-cyan)' : 'transparent',
-                    color: heightMode === 'cm' ? '#000' : 'var(--text-secondary)',
-                    fontWeight: '700'
-                  }}
-                >CM</button>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingRight: '2px' }}>
+              <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: '700', paddingLeft: '2px' }}>Height</label>
+              <div style={{ display: 'flex', background: 'var(--icon-bg)', borderRadius: '5px', padding: '1px' }}>
                 <button 
                   onClick={() => setHeightMode('ft')} 
                   style={{ 
-                    padding: '2px 8px', fontSize: '0.7rem', borderRadius: '4px', border: 'none', cursor: 'pointer',
+                    padding: '1px 6px', fontSize: '0.65rem', borderRadius: '3px', border: 'none', cursor: 'pointer',
                     background: heightMode === 'ft' ? 'var(--color-cyan)' : 'transparent',
                     color: heightMode === 'ft' ? '#000' : 'var(--text-secondary)',
                     fontWeight: '700'
                   }}
                 >FT+IN</button>
+                <button 
+                  onClick={() => setHeightMode('cm')} 
+                  style={{ 
+                    padding: '1px 6px', fontSize: '0.65rem', borderRadius: '3px', border: 'none', cursor: 'pointer',
+                    background: heightMode === 'cm' ? 'var(--color-cyan)' : 'transparent',
+                    color: heightMode === 'cm' ? '#000' : 'var(--text-secondary)',
+                    fontWeight: '700'
+                  }}
+                >CM</button>
               </div>
             </div>
             
             {heightMode === 'cm' ? (
-              <input type="number" className="glass-input" placeholder="cm" value={heightCm} onChange={e => setHeightCm(e.target.value)} style={{ padding: '10px 14px', fontSize: '0.9rem' }} />
+              <input type="number" className="glass-input" placeholder="cm" value={heightCm} onChange={e => setHeightCm(e.target.value)} style={{ padding: '8px 12px', fontSize: '0.85rem' }} />
             ) : (
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-                <input type="number" className="glass-input" placeholder="ft" value={heightFt} onChange={e => setHeightFt(e.target.value)} style={{ padding: '10px 14px', fontSize: '0.9rem' }} />
-                <input type="number" className="glass-input" placeholder="in" value={heightIn} onChange={e => setHeightIn(e.target.value)} style={{ padding: '10px 14px', fontSize: '0.9rem' }} />
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
+                <input type="number" className="glass-input" placeholder="ft" value={heightFt} onChange={e => setHeightFt(e.target.value)} style={{ padding: '8px 12px', fontSize: '0.85rem' }} />
+                <input type="number" className="glass-input" placeholder="in" value={heightIn} onChange={e => setHeightIn(e.target.value)} style={{ padding: '8px 12px', fontSize: '0.85rem' }} />
               </div>
             )}
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-            <label style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: '700', paddingLeft: '4px' }}>Fitness Goal</label>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: '700', paddingLeft: '2px' }}>Fitness Goal</label>
             <select 
               className="glass-input" 
               value={fitnessGoal} 
               onChange={e => setFitnessGoal(e.target.value)} 
-              style={{ padding: '10px 14px', appearance: 'none', background: 'var(--input-bg)', fontSize: '0.9rem' }}
+              style={{ padding: '8px 12px', appearance: 'none', background: 'var(--input-bg)', fontSize: '0.85rem' }}
             >
               <option value="lose-weight">Lose Weight</option>
               <option value="maintain-fit">Stay Fit</option>
@@ -208,42 +208,42 @@ const Settings = ({ user, onGoalsUpdated, onLogout }) => {
           className="btn btn-orange" 
           style={{ 
             alignSelf: 'flex-end', 
-            fontSize: '0.95rem',
+            fontSize: '0.9rem',
             fontWeight: '900',
-            padding: '10px 20px'
+            padding: '8px 16px'
           }}
         >
-          <User size={18} /> {savingProfile ? 'SAVING...' : 'SAVE PROFILE'}
+          <User size={16} /> {savingProfile ? 'SAVING...' : 'SAVE PROFILE'}
         </button>
       </section>
 
       {/* Daily Goals Section */}
-      <section className="glass-panel" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px', width: '100%', alignItems: 'stretch' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <div style={{ background: 'rgba(34, 211, 238, 0.1)', padding: '10px', borderRadius: '12px', color: 'var(--color-cyan)' }}>
-            <Target size={22} />
+      <section className="glass-panel" style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '20px', width: '100%', alignItems: 'stretch' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ background: 'rgba(34, 211, 238, 0.1)', padding: '8px', borderRadius: '10px', color: 'var(--color-cyan)' }}>
+            <Target size={20} />
           </div>
           <div>
-            <h3 style={{ fontSize: '1.2rem', fontWeight: '800' }}>Daily Health Goals</h3>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginTop: '2px' }}>Set your daily targets for activity and nutrition</p>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: '800' }}>Daily Health Goals</h3>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', marginTop: '1px' }}>Targets for activity and nutrition</p>
           </div>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '16px', width: '100%' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-            <label style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: '700', paddingLeft: '4px' }}>Calories (kcal)</label>
-            <input type="number" className="glass-input" value={caloriesGoal} onChange={e => setCaloriesGoal(e.target.value)} style={{ padding: '10px 14px', fontSize: '0.9rem' }} />
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '12px', width: '100%' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: '700', paddingLeft: '2px' }}>Calories (kcal)</label>
+            <input type="number" className="glass-input" value={caloriesGoal} onChange={e => setCaloriesGoal(e.target.value)} style={{ padding: '8px 12px', fontSize: '0.85rem' }} />
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-            <label style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: '700', paddingLeft: '4px' }}>Workouts</label>
-            <input type="number" className="glass-input" value={activeMinutesGoal} onChange={e => setActiveMinutesGoal(e.target.value)} style={{ padding: '10px 14px', fontSize: '0.9rem' }} />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: '700', paddingLeft: '2px' }}>Workouts</label>
+            <input type="number" className="glass-input" value={activeMinutesGoal} onChange={e => setActiveMinutesGoal(e.target.value)} style={{ padding: '8px 12px', fontSize: '0.85rem' }} />
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-            <label style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: '700', paddingLeft: '4px' }}>Water (mL)</label>
-            <input type="number" className="glass-input" value={waterGoal} onChange={e => setWaterGoal(e.target.value)} style={{ padding: '10px 14px', fontSize: '0.9rem' }} />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: '700', paddingLeft: '2px' }}>Water (mL)</label>
+            <input type="number" className="glass-input" value={waterGoal} onChange={e => setWaterGoal(e.target.value)} style={{ padding: '8px 12px', fontSize: '0.85rem' }} />
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-            <label style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: '700', paddingLeft: '4px' }}>Sleep (min)</label>
-            <input type="number" className="glass-input" value={sleepGoal} onChange={e => setSleepGoal(e.target.value)} style={{ padding: '10px 14px', fontSize: '0.9rem' }} />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: '700', paddingLeft: '2px' }}>Sleep (min)</label>
+            <input type="number" className="glass-input" value={sleepGoal} onChange={e => setSleepGoal(e.target.value)} style={{ padding: '8px 12px', fontSize: '0.85rem' }} />
           </div>
         </div>
         <button 
@@ -252,28 +252,28 @@ const Settings = ({ user, onGoalsUpdated, onLogout }) => {
           className="btn btn-cyan" 
           style={{ 
             alignSelf: 'flex-end', 
-            fontSize: '0.95rem',
+            fontSize: '0.9rem',
             fontWeight: '900',
-            padding: '10px 20px'
+            padding: '8px 16px'
           }}
         >
-          <Target size={18} /> {savingGoals ? 'SAVING...' : 'UPDATE GOALS'}
+          <Target size={16} /> {savingGoals ? 'SAVING...' : 'UPDATE GOALS'}
         </button>
       </section>
 
       {/* Security Section */}
-      <section className="glass-panel" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px', width: '100%', alignItems: 'stretch' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <div style={{ background: 'rgba(168, 85, 247, 0.1)', padding: '10px', borderRadius: '12px', color: 'var(--color-violet)' }}>
-            <Lock size={22} />
+      <section className="glass-panel" style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '20px', width: '100%', alignItems: 'stretch' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ background: 'rgba(168, 85, 247, 0.1)', padding: '8px', borderRadius: '10px', color: 'var(--color-violet)' }}>
+            <Lock size={20} />
           </div>
           <div>
-            <h3 style={{ fontSize: '1.2rem', fontWeight: '800' }}>Security</h3>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginTop: '2px' }}>Update your password and secure your account</p>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: '800' }}>Security</h3>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', marginTop: '1px' }}>Account security details</p>
           </div>
         </div>
-        <form onSubmit={handleChangePassword} style={{ display: 'flex', flexDirection: 'column', gap: '16px', width: '100%', alignItems: 'stretch' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
+        <form onSubmit={handleChangePassword} style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%', alignItems: 'stretch' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '10px' }}>
             <div style={{ position: 'relative' }}>
               <input 
                 type={showCurrentPassword ? "text" : "password"} 
@@ -282,14 +282,14 @@ const Settings = ({ user, onGoalsUpdated, onLogout }) => {
                 value={currentPassword}
                 onChange={e => setCurrentPassword(e.target.value)}
                 required
-                style={{ padding: '10px 40px 10px 14px', fontSize: '0.9rem', width: '100%' }}
+                style={{ padding: '8px 32px 8px 12px', fontSize: '0.85rem', width: '100%' }}
               />
               <button
                 type="button"
                 onClick={() => setShowCurrentPassword(!showCurrentPassword)}
                 style={{
                   position: 'absolute',
-                  right: '10px',
+                  right: '8px',
                   top: '50%',
                   transform: 'translateY(-50%)',
                   background: 'none',
@@ -299,10 +299,10 @@ const Settings = ({ user, onGoalsUpdated, onLogout }) => {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  padding: '4px'
+                  padding: '2px'
                 }}
               >
-                {showCurrentPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                {showCurrentPassword ? <EyeOff size={14} /> : <Eye size={14} />}
               </button>
             </div>
             <div style={{ position: 'relative' }}>
@@ -313,14 +313,14 @@ const Settings = ({ user, onGoalsUpdated, onLogout }) => {
                 value={newPassword}
                 onChange={e => setNewPassword(e.target.value)}
                 required
-                style={{ padding: '10px 40px 10px 14px', fontSize: '0.9rem', width: '100%' }}
+                style={{ padding: '8px 32px 8px 12px', fontSize: '0.85rem', width: '100%' }}
               />
               <button
                 type="button"
                 onClick={() => setShowNewPassword(!showNewPassword)}
                 style={{
                   position: 'absolute',
-                  right: '10px',
+                  right: '8px',
                   top: '50%',
                   transform: 'translateY(-50%)',
                   background: 'none',
@@ -330,10 +330,10 @@ const Settings = ({ user, onGoalsUpdated, onLogout }) => {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  padding: '4px'
+                  padding: '2px'
                 }}
               >
-                {showNewPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                {showNewPassword ? <EyeOff size={14} /> : <Eye size={14} />}
               </button>
             </div>
             <div style={{ position: 'relative' }}>
@@ -344,14 +344,14 @@ const Settings = ({ user, onGoalsUpdated, onLogout }) => {
                 value={confirmPassword}
                 onChange={e => setConfirmPassword(e.target.value)}
                 required
-                style={{ padding: '10px 40px 10px 14px', fontSize: '0.9rem', width: '100%' }}
+                style={{ padding: '8px 32px 8px 12px', fontSize: '0.85rem', width: '100%' }}
               />
               <button
                 type="button"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 style={{
                   position: 'absolute',
-                  right: '10px',
+                  right: '8px',
                   top: '50%',
                   transform: 'translateY(-50%)',
                   background: 'none',
@@ -361,20 +361,20 @@ const Settings = ({ user, onGoalsUpdated, onLogout }) => {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  padding: '4px'
+                  padding: '2px'
                 }}
               >
-                {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                {showConfirmPassword ? <EyeOff size={14} /> : <Eye size={14} />}
               </button>
             </div>
           </div>
           {passwordStatus.message && (
             <div style={{ 
-              fontSize: '0.85rem', 
+              fontSize: '0.8rem', 
               color: passwordStatus.type === 'error' ? '#f87171' : 'var(--color-green)', 
-              padding: '12px 16px',
+              padding: '10px 14px',
               background: passwordStatus.type === 'error' ? 'rgba(239, 68, 68, 0.08)' : 'rgba(34, 197, 94, 0.08)',
-              borderRadius: '12px',
+              borderRadius: '10px',
               fontWeight: '700'
             }}>
               {passwordStatus.message}
@@ -386,9 +386,9 @@ const Settings = ({ user, onGoalsUpdated, onLogout }) => {
             className="btn btn-violet"
             style={{ 
               alignSelf: 'flex-end',
-              fontSize: '0.95rem',
+              fontSize: '0.9rem',
               fontWeight: '900',
-              padding: '10px 20px'
+              padding: '8px 16px'
             }}
           >
             {changingPassword ? 'UPDATING...' : 'CHANGE PASSWORD'}
@@ -397,24 +397,24 @@ const Settings = ({ user, onGoalsUpdated, onLogout }) => {
       </section>
 
       {/* Logout Section */}
-      <section className="glass-panel" style={{ padding: '24px', border: '1px solid rgba(239, 68, 68, 0.2)', width: '100%', alignItems: 'stretch' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+      <section className="glass-panel" style={{ padding: '20px', border: '1px solid rgba(239, 68, 68, 0.2)', width: '100%', alignItems: 'stretch' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <div>
-            <h3 style={{ fontSize: '1.2rem', fontWeight: '800', color: '#f87171' }}>Danger Zone</h3>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginTop: '4px' }}>Signing out will end your session on this device</p>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: '800', color: '#f87171' }}>Danger Zone</h3>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', marginTop: '2px' }}>Sign out of your session</p>
           </div>
           <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
             <button 
               onClick={onLogout} 
               className="btn btn-red" 
               style={{ 
-                borderRadius: '16px',
+                borderRadius: '12px',
                 fontWeight: '900',
-                fontSize: '0.95rem',
-                padding: '10px 20px'
+                fontSize: '0.9rem',
+                padding: '8px 16px'
               }}
             >
-              <LogOut size={18} /> SIGN OUT
+              <LogOut size={16} /> SIGN OUT
             </button>
           </div>
         </div>
