@@ -97,15 +97,15 @@ const Settings = ({ user, onGoalsUpdated, onLogout }) => {
     <div className="settings-page" style={{ display: 'flex', flexDirection: 'column', gap: '32px', width: '100%', margin: 0, alignItems: 'stretch', padding: '24px' }}>
       <h1 className="text-gradient page-title">Settings</h1>
 
-      {/* Account Profile Section */}
+      {/* Personal Identity Card (Non-editable) */}
       <section className="glass-panel" style={{ padding: '32px', display: 'flex', flexDirection: 'column', gap: '32px', width: '100%', alignItems: 'stretch' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
           <div style={{ background: 'rgba(253, 90, 32, 0.1)', padding: '14px', borderRadius: '16px', color: 'var(--color-orange)' }}>
             <User size={28} />
           </div>
           <div>
-            <h3 style={{ fontSize: '1.6rem', fontWeight: '800' }}>Account Profile</h3>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '1.05rem', marginTop: '4px' }}>Personal information and account details</p>
+            <h3 style={{ fontSize: '1.6rem', fontWeight: '800' }}>Personal Identity</h3>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '1.05rem', marginTop: '4px' }}>Permanent account and identity details</p>
           </div>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px', width: '100%' }}>
@@ -118,29 +118,35 @@ const Settings = ({ user, onGoalsUpdated, onLogout }) => {
             <input type="text" className="glass-input" value={user.email} readOnly style={{ opacity: 0.8, cursor: 'not-allowed', padding: '14px 18px' }} />
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <label style={{ fontSize: '1rem', color: 'var(--text-secondary)', fontWeight: '700', paddingLeft: '4px' }}>Age</label>
+            <input type="number" className="glass-input" value={user.age} readOnly style={{ opacity: 0.8, cursor: 'not-allowed', padding: '14px 18px' }} />
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <label style={{ fontSize: '1rem', color: 'var(--text-secondary)', fontWeight: '700', paddingLeft: '4px' }}>Gender</label>
+            <input type="text" className="glass-input" value={user.gender} readOnly style={{ opacity: 0.8, cursor: 'not-allowed', padding: '14px 18px', textTransform: 'capitalize' }} />
+          </div>
+        </div>
+      </section>
+
+      {/* Biometrics & Goals Card (Editable) */}
+      <section className="glass-panel" style={{ padding: '32px', display: 'flex', flexDirection: 'column', gap: '32px', width: '100%', alignItems: 'stretch' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+          <div style={{ background: 'rgba(34, 211, 238, 0.1)', padding: '14px', borderRadius: '16px', color: 'var(--color-cyan)' }}>
+            <Target size={28} />
+          </div>
+          <div>
+            <h3 style={{ fontSize: '1.6rem', fontWeight: '800' }}>Biometrics & Goals</h3>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '1.05rem', marginTop: '4px' }}>Update your measurements and fitness objectives</p>
+          </div>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px', width: '100%' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             <label style={{ fontSize: '1rem', color: 'var(--text-secondary)', fontWeight: '700', paddingLeft: '4px' }}>Weight (kg)</label>
             <input type="number" className="glass-input" value={weight} onChange={e => setWeight(e.target.value)} style={{ padding: '14px 18px' }} />
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             <label style={{ fontSize: '1rem', color: 'var(--text-secondary)', fontWeight: '700', paddingLeft: '4px' }}>Height (cm)</label>
             <input type="number" className="glass-input" value={height} onChange={e => setHeight(e.target.value)} style={{ padding: '14px 18px' }} />
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            <label style={{ fontSize: '1rem', color: 'var(--text-secondary)', fontWeight: '700', paddingLeft: '4px' }}>Age</label>
-            <input type="number" className="glass-input" value={age} onChange={e => setAge(e.target.value)} style={{ padding: '14px 18px' }} />
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            <label style={{ fontSize: '1rem', color: 'var(--text-secondary)', fontWeight: '700', paddingLeft: '4px' }}>Gender</label>
-            <select 
-              className="glass-input" 
-              value={gender} 
-              onChange={e => setGender(e.target.value)} 
-              style={{ padding: '14px 18px', appearance: 'none', background: 'var(--input-bg)' }}
-            >
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="other">Other</option>
-            </select>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             <label style={{ fontSize: '1rem', color: 'var(--text-secondary)', fontWeight: '700', paddingLeft: '4px' }}>Fitness Goal</label>
