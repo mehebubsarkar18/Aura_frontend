@@ -476,12 +476,4 @@ export const api = {
       body: JSON.stringify({ message, userContext }),
     });
   },
-
-  analyzeFoodImage: async (image) => {
-    return await fetchWithRefresh(`${API_BASE_URL}/ai/analyze-food`, {
-      method: 'POST',
-      headers: getHeaders(),
-      body: JSON.stringify({ image }),
-    });
-  },
 };
