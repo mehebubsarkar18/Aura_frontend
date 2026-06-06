@@ -199,6 +199,17 @@ export const api = {
     clearCache('user_me');
   },
 
+  updateProfile: async (profileData) => {
+    const data = await fetchWithRefresh(`${API_BASE_URL}/auth/profile`, {
+      method: 'PUT',
+      headers: getHeaders(),
+      body: JSON.stringify(profileData),
+    });
+    clearCache('user_me');
+    clearCache('dashboard');
+    return data;
+  },
+
   updateGoals: async (goals) => {
     const data = await fetchWithRefresh(`${API_BASE_URL}/auth/goals`, {
       method: 'PUT',

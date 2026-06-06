@@ -9,6 +9,14 @@ const Settings = ({ user, onGoalsUpdated, onLogout }) => {
   const [sleepGoal, setSleepGoal] = useState(user.dailyGoals.sleepMinutes);
   const [savingGoals, setSavingGoals] = useState(false);
 
+  // New Profile States
+  const [weight, setWeight] = useState(user.weight || '');
+  const [height, setHeight] = useState(user.height || '');
+  const [age, setAge] = useState(user.age || '');
+  const [gender, setGender] = useState(user.gender || 'male');
+  const [fitnessGoal, setFitnessGoal] = useState(user.fitnessGoal || 'maintain-fit');
+  const [savingProfile, setSavingProfile] = useState(false);
+
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -17,6 +25,29 @@ const Settings = ({ user, onGoalsUpdated, onLogout }) => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [changingPassword, setChangingPassword] = useState(false);
   const [passwordStatus, setPasswordStatus] = useState({ type: '', message: '' });
+
+  const handleUpdateProfile = async () => {
+    setSavingProfile(true);
+    try {
+      const data = await api.updateProfile({
+        weight: Number(weight),
+        height: Number(height),
+        age: Number(age),
+        gender,
+        fitnessGoal
+      });
+      // Update local goal states since backend recalculates them
+      setCaloriesGoal(data.user.dailyGoals.calories);
+      setWaterGoal(data.user.dailyGoals.waterMl);
+      
+      onGoalsUpdated(data.user);
+      alert('Profile updated and goals recalculated!');
+    } catch (err) {
+      alert('Failed to save profile: ' + err.message);
+    } finally {
+      setSavingProfile(false);
+    }
+  };
 
   const handleSaveGoals = async () => {
     setSavingGoals(true);
@@ -86,7 +117,57 @@ const Settings = ({ user, onGoalsUpdated, onLogout }) => {
             <label style={{ fontSize: '1rem', color: 'var(--text-secondary)', fontWeight: '700', paddingLeft: '4px' }}>Email Address</label>
             <input type="text" className="glass-input" value={user.email} readOnly style={{ opacity: 0.8, cursor: 'not-allowed', padding: '14px 18px' }} />
           </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <label style={{ fontSize: '1rem', color: 'var(--text-secondary)', fontWeight: '700', paddingLeft: '4px' }}>Weight (kg)</label>
+            <input type="number" className="glass-input" value={weight} onChange={e => setWeight(e.target.value)} style={{ padding: '14px 18px' }} />
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <label style={{ fontSize: '1rem', color: 'var(--text-secondary)', fontWeight: '700', paddingLeft: '4px' }}>Height (cm)</label>
+            <input type="number" className="glass-input" value={height} onChange={e => setHeight(e.target.value)} style={{ padding: '14px 18px' }} />
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <label style={{ fontSize: '1rem', color: 'var(--text-secondary)', fontWeight: '700', paddingLeft: '4px' }}>Age</label>
+            <input type="number" className="glass-input" value={age} onChange={e => setAge(e.target.value)} style={{ padding: '14px 18px' }} />
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <label style={{ fontSize: '1rem', color: 'var(--text-secondary)', fontWeight: '700', paddingLeft: '4px' }}>Gender</label>
+            <select 
+              className="glass-input" 
+              value={gender} 
+              onChange={e => setGender(e.target.value)} 
+              style={{ padding: '14px 18px', appearance: 'none', background: 'var(--input-bg)' }}
+            >
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <label style={{ fontSize: '1rem', color: 'var(--text-secondary)', fontWeight: '700', paddingLeft: '4px' }}>Fitness Goal</label>
+            <select 
+              className="glass-input" 
+              value={fitnessGoal} 
+              onChange={e => setFitnessGoal(e.target.value)} 
+              style={{ padding: '14px 18px', appearance: 'none', background: 'var(--input-bg)' }}
+            >
+              <option value="lose-weight">Lose Weight</option>
+              <option value="maintain-fit">Stay Fit</option>
+              <option value="gain-muscle">Gain Muscle</option>
+            </select>
+          </div>
         </div>
+        <button 
+          onClick={handleUpdateProfile} 
+          disabled={savingProfile} 
+          className="btn btn-orange" 
+          style={{ 
+            alignSelf: 'flex-end', 
+            fontSize: '1.1rem',
+            fontWeight: '900'
+          }}
+        >
+          <User size={22} /> {savingProfile ? 'SAVING...' : 'SAVE PROFILE'}
+        </button>
       </section>
 
       {/* Daily Goals Section */}
