@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { api } from '../utils/api';
 import { INDIAN_FOOD_DATABASE } from '../utils/foodDatabase';
-import { Utensils, Droplet, Plus, Trash2, Search, Beef, Wheat, Pizza, ArrowLeft, Calendar } from 'lucide-react';
+import { Utensils, Droplet, Plus, Trash2, Search, Beef, Wheat, Pizza, ArrowLeft, Calendar, Camera, Loader2 } from 'lucide-react';
 
 const NutritionHydration = ({ user, onLogsUpdated, onViewHistory, initialViewHistory = false, onBack }) => {
   const getTodayDateString = () => {
@@ -24,11 +24,13 @@ const NutritionHydration = ({ user, onLogsUpdated, onViewHistory, initialViewHis
   const [carbs, setCarbs] = useState('');
   const [fat, setFat] = useState('');
   const [quantity, setQuantity] = useState(1);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   // Search states
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const suggestionRef = useRef(null);
+  const fileInputRef = useRef(null);
 
   const fetchHistory = useCallback(async () => {
     try {
@@ -123,6 +125,49 @@ const NutritionHydration = ({ user, onLogsUpdated, onViewHistory, initialViewHis
     setCarbs(food.carbs);
     setFat(food.fat);
     setShowSuggestions(false);
+  };
+
+  const handleAISnap = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file');
+      return;
+    }
+
+    setIsAnalyzing(true);
+    try {
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        const base64Image = reader.result;
+        try {
+          const result = await api.analyzeFoodImage(base64Image);
+          if (result && result.success) {
+            setFoodItem(result.foodItem || '');
+            setCalories(result.calories || '');
+            setProtein(result.protein || '');
+            setCarbs(result.carbs || '');
+            setFat(result.fat || '');
+          }
+        } catch (error) {
+          console.error('AI Analysis failed:', error);
+          alert('AI Analysis failed: ' + error.message);
+        } finally {
+          setIsAnalyzing(false);
+        }
+      };
+      reader.readAsDataURL(file);
+    } catch (error) {
+      console.error('File reading failed:', error);
+      alert('Failed to read image file');
+      setIsAnalyzing(false);
+    }
   };
 
   const handleLogFood = async (e) => {
@@ -321,9 +366,37 @@ const NutritionHydration = ({ user, onLogsUpdated, onViewHistory, initialViewHis
 
       <div className="tracker-secondary" style={{ gridColumn: 'span 5', display: 'flex', flexDirection: 'column', gap: '16px' }}>
         <div className="glass-panel" style={{ padding: '20px' }}>
-          <h3 style={{ fontSize: '1.15rem', fontWeight: '800', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--text-primary)' }}>
-            <Plus size={20} style={{ color: 'var(--color-orange)' }} /> Log Meal
-          </h3>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+            <h3 style={{ fontSize: '1.15rem', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--text-primary)', margin: 0 }}>
+              <Plus size={20} style={{ color: 'var(--color-orange)' }} /> Log Meal
+            </h3>
+            <button 
+              type="button" 
+              onClick={handleAISnap}
+              disabled={isAnalyzing}
+              className="btn btn-primary" 
+              style={{ 
+                padding: '6px 12px', 
+                fontSize: '0.8rem', 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '6px',
+                background: 'linear-gradient(135deg, #a855f7, #7c3aed)' // Purple AI theme
+              }}
+            >
+              {isAnalyzing ? <Loader2 size={14} className="animate-spin" /> : <Camera size={14} />}
+              {isAnalyzing ? 'Analyzing...' : 'AI Snap'}
+            </button>
+          </div>
+          
+          <input 
+            type="file" 
+            ref={fileInputRef} 
+            onChange={handleFileChange} 
+            accept="image/*" 
+            style={{ display: 'none' }} 
+          />
+
           <form onSubmit={handleLogFood} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
             <div className="food-search-container" style={{ position: 'relative' }} ref={suggestionRef}>
               <label style={{ fontSize: '0.85rem', fontWeight: '700', color: 'var(--text-secondary)', display: 'block', marginBottom: '6px' }}>Food Name</label>
