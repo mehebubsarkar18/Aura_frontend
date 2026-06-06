@@ -273,11 +273,6 @@ const WeightModule = ({ data, user, loggingWeight, newWeight, setNewWeight, hand
           }}>
             {bmiInfo.label.toUpperCase()}
           </div>
-
-          <form onSubmit={handleWeightUpdate} style={{ display: 'flex', gap: '5px', width: '100%', maxWidth: '160px', position: 'relative', zIndex: 1, marginTop: '8px' }}>
-             <input type="number" step="0.1" className="glass-input" value={newWeight} onChange={e => setNewWeight(e.target.value)} placeholder="New log" style={{ flex: 1, padding: '4px 8px', fontSize: '0.75rem' }} />
-             <button type="submit" disabled={loggingWeight} className="btn btn-primary" style={{ padding: '4px 10px', fontSize: '0.75rem' }}>LOG</button>
-          </form>
         </div>
       ) : (
         <div className="graph-container-inner" style={{ height: '180px', width: '100%', marginTop: '12px' }}>
